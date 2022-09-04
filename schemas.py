@@ -3,7 +3,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel
 
-from models import PlatformEnum, TestRunStatus
+from enums import PlatformEnum, Status
 
 
 class OrganisationIn(BaseModel):
@@ -28,21 +28,28 @@ class Repository(BaseModel):
 
 
 class NewTestRun(BaseModel):
+    id: int
     project_id: int
     branch: str
     sha: str
 
 
+class SpecFile(BaseModel):
+    file: str
+    started: Optional[datetime] = None
+    finished: Optional[datetime] = None
+
+
 class TestRun(NewTestRun):
     started: datetime
     finished: Optional[datetime] = None
-    status: TestRunStatus
+    active: bool
+    status: Status
+    files: List[SpecFile] = []
+    remaining: List[SpecFile] = []
 
-
-class TestRunUpdate(BaseModel):
-    started: datetime
-    finished: Optional[datetime] = None
-    status: TestRunStatus
+    class Config:
+        orm_mode = True
 
 
 class CodeFrame(BaseModel):
