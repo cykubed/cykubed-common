@@ -21,8 +21,8 @@ class NewProject(BaseModel):
 
 
 class Repository(BaseModel):
+    id: str
     name: str
-    slug: str
     url: str
     workspace: Optional[str]
     platform: PlatformEnum
