@@ -4,6 +4,7 @@ from typing import Optional, List
 from pydantic import BaseModel
 
 from enums import PlatformEnum, Status
+from models import TestRunStatus
 
 
 class OrganisationIn(BaseModel):
@@ -33,6 +34,12 @@ class NewTestRun(BaseModel):
     branch: str
     sha: str
 
+
+class TestRunUpdate(BaseModel):
+    started: datetime
+    finished: Optional[datetime] = None
+
+    status: TestRunStatus
 
 class SpecFile(BaseModel):
     file: str
