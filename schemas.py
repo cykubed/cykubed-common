@@ -24,7 +24,7 @@ class Repository(BaseModel):
     id: str
     name: str
     url: str
-    workspace: Optional[str]
+    owner: str
     platform: PlatformEnum
 
 
