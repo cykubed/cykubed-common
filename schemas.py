@@ -33,6 +33,8 @@ class NewTestRun(BaseModel):
     branch: str
     sha: str
     parallelism: int
+    build_cmd = 'ng build --output-path=dist'
+    server_cmd = 'ng serve'
 
 
 class TestRunUpdate(BaseModel):
