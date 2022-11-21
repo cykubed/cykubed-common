@@ -35,6 +35,7 @@ class NewTestRun(BaseModel):
     parallelism: int
     build_cmd = 'ng build --output-path=dist'
     server_cmd = 'ng serve'
+    server_port: int = 4200
 
 
 class TestRunUpdate(BaseModel):
