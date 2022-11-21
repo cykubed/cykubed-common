@@ -32,6 +32,7 @@ class NewTestRun(BaseModel):
     project_id: int
     branch: str
     sha: str
+    parallelism: int
 
 
 class TestRunUpdate(BaseModel):
