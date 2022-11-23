@@ -3,7 +3,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel
 
-from enums import PlatformEnum, Status
+from enums import PlatformEnum, Status, TestResultStatus
 
 
 class OrganisationIn(BaseModel):
@@ -62,31 +62,37 @@ class TestRun(NewTestRun):
     class Config:
         orm_mode = True
 
+#
+# Test results
+#
+
 
 class CodeFrame(BaseModel):
     line: int
     column: int
-    file: str
     frame: str
+    language: str
 
 
 class TestResultError(BaseModel):
-    name: str
+    title: str
+    type: str
     message: str
     stack: str
     code_frame: CodeFrame
-    screenshots: List[str]
-    videos: List[str]
+    screenshot: Optional[str]
+    video: Optional[str]
 
 
 class TestResult(BaseModel):
     title: str
-    failed: bool
-    body: str
-    num_attempts: int
-    duration: Optional[int]; display_error: Optional[str]
+    status: TestResultStatus
+    retry: int
+    duration: Optional[int]
     started_at: Optional[datetime]
+    finished_at: Optional[datetime]
     error: Optional[TestResultError]
+    manual_screenshots: List[str]
 
 
 class SpecResult(BaseModel):

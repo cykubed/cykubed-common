@@ -15,3 +15,9 @@ class Status(str, enum.Enum):
     timeout = 'timeout'
     failed = 'failed'
     passed = 'passed'
+
+
+class TestResultStatus(str, enum.Enum):
+    passed = 'passed'
+    skipped = 'skipped'
+    failed = 'failed'
