@@ -31,6 +31,7 @@ class NewTestRun(BaseModel):
     id: int
     project_id: int
     branch: str
+    url: str
     sha: str
     parallelism: int
     build_cmd = 'ng build --output-path=dist'
