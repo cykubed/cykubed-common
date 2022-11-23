@@ -3,7 +3,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel
 
-from enums import PlatformEnum, Status, TestResultStatus
+from .enums import PlatformEnum, Status, TestResultStatus
 
 
 class OrganisationIn(BaseModel):
@@ -93,12 +93,12 @@ class TestResult(BaseModel):
     started_at: Optional[datetime]
     finished_at: Optional[datetime]
     error: Optional[TestResultError]
-    manual_screenshots: List[str]
+    manual_screenshots: Optional[List[str]]
 
 
 class SpecResult(BaseModel):
     file: str
-    results: List[TestResult]
+    tests: List[TestResult]
 
 
 class Results(BaseModel):
