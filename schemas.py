@@ -1,15 +1,9 @@
 from datetime import datetime
 from typing import Optional, List
 
-import orjson
 from pydantic import BaseModel
 
 from .enums import PlatformEnum, Status, TestResultStatus
-
-
-def orjson_dumps(v, *, default):
-    # orjson.dumps returns bytes, to match standard json.dumps we need to decode
-    return orjson.dumps(v, default=default).decode()
 
 
 class OrganisationIn(BaseModel):
@@ -103,10 +97,6 @@ class TestResult(BaseModel):
 
 
 class SpecResult(BaseModel):
-    class Config:
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
-
     file: str
     tests: List[TestResult]
 
