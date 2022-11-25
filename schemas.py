@@ -10,13 +10,18 @@ class OrganisationIn(BaseModel):
     name: str
 
 
-class NewProject(BaseModel):
+class Project(BaseModel):
+    id: int
     name: str
-    repository: str
-    url: str
     slug: Optional[str]
     workspace: Optional[str]
     platform: PlatformEnum
+    url: str
+    parallelism: int
+    build_cmd = 'ng build --output-path=dist'
+    server_cmd = 'ng serve'
+    server_port: int = 4200
+    # TODO add reporting
 
 
 class Repository(BaseModel):
@@ -33,14 +38,9 @@ class SpecList(BaseModel):
 
 class NewTestRun(BaseModel):
     id: int
-    project_id: int
+    project: Project
     branch: str
-    url: str
     sha: str
-    parallelism: int
-    build_cmd = 'ng build --output-path=dist'
-    server_cmd = 'ng serve'
-    server_port: int = 4200
 
 
 class TestRunUpdate(BaseModel):
