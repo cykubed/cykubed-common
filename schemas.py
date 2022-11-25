@@ -27,6 +27,10 @@ class Repository(BaseModel):
     platform: PlatformEnum
 
 
+class SpecList(BaseModel):
+    specs: List[str]
+
+
 class NewTestRun(BaseModel):
     id: int
     project_id: int
