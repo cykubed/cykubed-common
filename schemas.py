@@ -20,6 +20,16 @@ class UserProfile(BaseModel):
 class OrganisationIn(BaseModel):
     name: str
 
+class UserProfile(BaseModel):
+    name: str
+    avatar_url = Optional[str]
+    token: str
+    email: str
+    integrations: Optional[str]
+    hub_token: Optional[str]
+    organisation_id:  int
+    organisation_name: str
+
 
 class Project(BaseModel):
     id: int
@@ -41,6 +51,10 @@ class Repository(BaseModel):
     url: str
     owner: str
     platform: PlatformEnum
+
+
+class SpecList(BaseModel):
+    specs: list[str]
 
 
 class NewTestRun(BaseModel):
