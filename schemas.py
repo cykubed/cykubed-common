@@ -6,6 +6,17 @@ from pydantic import BaseModel
 from .enums import PlatformEnum, Status, TestResultStatus
 
 
+class UserProfile(BaseModel):
+    name: str
+    avatar_url: Optional[str]
+    token: str
+    email: str
+    integrations: list[str]
+    hub_token: str
+    organisation_id: int
+    organisation_name: str
+
+
 class OrganisationIn(BaseModel):
     name: str
 
