@@ -21,8 +21,7 @@ class UserProfile(BaseModel):
     organisation_name: str
 
 
-class Project(BaseModel):
-    id: int
+class NewProject(BaseModel):
     name: str
     slug: Optional[str]
     workspace: Optional[str]
@@ -34,6 +33,9 @@ class Project(BaseModel):
     server_port: int = 4200
     # TODO add reporting
 
+
+class Project(NewProject):
+    id: int
 
 class Repository(BaseModel):
     id: str
