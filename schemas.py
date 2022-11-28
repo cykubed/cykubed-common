@@ -58,6 +58,7 @@ class NewTestRun(BaseModel):
     """
     Sent to the hub to kick off a run
     """
+    id: int
     project: Project
     branch: str
     sha: Optional[str]
