@@ -37,6 +37,7 @@ class NewProject(BaseModel):
 class Project(NewProject):
     id: int
 
+
 class Repository(BaseModel):
     id: str
     name: str
@@ -45,15 +46,21 @@ class Repository(BaseModel):
     platform: PlatformEnum
 
 
-class SpecList(BaseModel):
+class TestRunSpecs(BaseModel):
+    """
+    Sent by the hub to update the list of specs and the SHA
+    """
+    sha: str
     specs: list[str]
 
 
 class NewTestRun(BaseModel):
-    id: int
+    """
+    Sent to the hub to kick off a run
+    """
     project: Project
     branch: str
-    sha: str
+    sha: Optional[str]
 
 
 class TestRunUpdate(BaseModel):
