@@ -8,7 +8,8 @@ class PlatformEnum(str, enum.Enum):
     GITHUB = 'github'
 
 
-class Status(str, enum.Enum):
+class TestRunStatus(str, enum.Enum):
+    started = 'started'
     building = 'building'
     cancelled = 'cancelled'
     running = 'running'

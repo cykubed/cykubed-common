@@ -3,7 +3,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel
 
-from .enums import PlatformEnum, Status, TestResultStatus
+from .enums import PlatformEnum, TestRunStatus, TestResultStatus
 
 
 class OrganisationIn(BaseModel):
@@ -37,6 +37,9 @@ class NewProject(BaseModel):
 class Project(NewProject):
     id: int
 
+    class Config:
+        orm_mode = True
+
 
 class Repository(BaseModel):
     id: str
@@ -53,6 +56,13 @@ class TestRunSpecs(BaseModel):
     sha: str
     specs: list[str]
 
+    class Config:
+        orm_mode = True
+
+
+class TestRunStatusUpdate(BaseModel):
+    status: TestRunStatus
+
 
 class NewTestRun(BaseModel):
     """
@@ -63,12 +73,15 @@ class NewTestRun(BaseModel):
     branch: str
     sha: Optional[str]
 
+    class Config:
+        orm_mode = True
+
 
 class TestRunUpdate(BaseModel):
     started: datetime
     finished: Optional[datetime] = None
 
-    status: Status
+    status: TestRunStatus
 
 
 class SpecFile(BaseModel):
@@ -81,7 +94,7 @@ class TestRun(NewTestRun):
     started: datetime
     finished: Optional[datetime] = None
     active: bool
-    status: Status
+    status: TestRunStatus
     files: List[SpecFile] = []
     remaining: List[SpecFile] = []
 
