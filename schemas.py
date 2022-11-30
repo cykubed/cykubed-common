@@ -90,17 +90,24 @@ class SpecFile(BaseModel):
     finished: Optional[datetime] = None
 
 
-class TestRunDetail(NewTestRun):
-    project: Project
+class TestRunSummary(NewTestRun):
     started: datetime
     finished: Optional[datetime] = None
+    total_files: int
+    completed_file: int
     status: TestRunStatus
     active: bool
+    progress_percentage: int
+
+
+class TestRunDetail(TestRunSummary):
     files: List[SpecFile] = []
     remaining: List[SpecFile] = []
 
     class Config:
         orm_mode = True
+
+
 
 #
 # Test results
