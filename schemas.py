@@ -90,11 +90,12 @@ class SpecFile(BaseModel):
     finished: Optional[datetime] = None
 
 
-class TestRun(NewTestRun):
+class TestRunDetail(NewTestRun):
+    project: Project
     started: datetime
     finished: Optional[datetime] = None
-    active: bool
     status: TestRunStatus
+    active: bool
     files: List[SpecFile] = []
     remaining: List[SpecFile] = []
 
