@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus
 
@@ -89,20 +89,29 @@ class SpecFile(BaseModel):
     started: Optional[datetime] = None
     finished: Optional[datetime] = None
 
+    class Config:
+        orm_mode = True
+
 
 class TestRunSummary(NewTestRun):
     started: datetime
     finished: Optional[datetime] = None
     total_files: int
-    completed_file: int
+    completed_files: int
     status: TestRunStatus
     active: bool
     progress_percentage: int
 
+    class Config:
+        orm_mode = True
+
 
 class TestRunDetail(TestRunSummary):
-    files: List[SpecFile] = []
-    remaining: List[SpecFile] = []
+    files: list[SpecFile] = []
+
+    @validator('files', pre=True)
+    def _iter_to_list(cls, v):
+        return list(v)
 
     class Config:
         orm_mode = True
