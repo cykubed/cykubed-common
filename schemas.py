@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import Optional, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
-from .enums import PlatformEnum, Status, TestResultStatus
+from .enums import PlatformEnum, TestRunStatus, TestResultStatus
 
 
 class OrganisationIn(BaseModel):
@@ -37,6 +37,9 @@ class NewProject(BaseModel):
 class Project(NewProject):
     id: int
 
+    class Config:
+        orm_mode = True
+
 
 class Repository(BaseModel):
     id: str
@@ -53,6 +56,13 @@ class TestRunSpecs(BaseModel):
     sha: str
     specs: list[str]
 
+    class Config:
+        orm_mode = True
+
+
+class TestRunStatusUpdate(BaseModel):
+    status: TestRunStatus
+
 
 class NewTestRun(BaseModel):
     """
@@ -63,12 +73,15 @@ class NewTestRun(BaseModel):
     branch: str
     sha: Optional[str]
 
+    class Config:
+        orm_mode = True
+
 
 class TestRunUpdate(BaseModel):
     started: datetime
     finished: Optional[datetime] = None
 
-    status: Status
+    status: TestRunStatus
 
 
 class SpecFile(BaseModel):
@@ -76,17 +89,34 @@ class SpecFile(BaseModel):
     started: Optional[datetime] = None
     finished: Optional[datetime] = None
 
+    class Config:
+        orm_mode = True
 
-class TestRun(NewTestRun):
+
+class TestRunSummary(NewTestRun):
     started: datetime
     finished: Optional[datetime] = None
+    total_files: int
+    completed_files: int
+    status: TestRunStatus
     active: bool
-    status: Status
-    files: List[SpecFile] = []
-    remaining: List[SpecFile] = []
+    progress_percentage: int
 
     class Config:
         orm_mode = True
+
+
+class TestRunDetail(TestRunSummary):
+    files: list[SpecFile] = []
+
+    @validator('files', pre=True)
+    def _iter_to_list(cls, v):
+        return list(v)
+
+    class Config:
+        orm_mode = True
+
+
 
 #
 # Test results
