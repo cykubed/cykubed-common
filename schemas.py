@@ -46,6 +46,8 @@ class Repository(BaseModel):
     name: str
     url: str
     owner: str
+    owner_avatar_url: Optional[str]
+    pushed_at: Optional[datetime]
     platform: PlatformEnum
 
 
