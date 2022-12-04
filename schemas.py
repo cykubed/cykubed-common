@@ -151,7 +151,6 @@ class TestResult(BaseModel):
     started_at: Optional[datetime]
     finished_at: Optional[datetime]
     error: Optional[TestResultError]
-    manual_screenshots: Optional[List[str]]
 
 
 class SpecResult(BaseModel):
