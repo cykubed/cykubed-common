@@ -144,6 +144,7 @@ class TestResultError(BaseModel):
 
 class TestResult(BaseModel):
     title: str
+    context: str
     status: TestResultStatus
     retry: int = 0
     duration: Optional[int]
