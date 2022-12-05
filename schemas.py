@@ -137,7 +137,6 @@ class TestResultError(BaseModel):
     stack: str
     code_frame: CodeFrame
     screenshot: Optional[str]
-    video: Optional[str]
 
 
 class TestResult(BaseModel):
@@ -149,12 +148,12 @@ class TestResult(BaseModel):
     started_at: Optional[datetime]
     finished_at: Optional[datetime]
     error: Optional[TestResultError]
-    manual_screenshots: Optional[List[str]]
 
 
 class SpecResult(BaseModel):
     file: str
     tests: List[TestResult]
+    video: Optional[str]
 
 
 class Results(BaseModel):
