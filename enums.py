@@ -18,6 +18,9 @@ class TestRunStatus(str, enum.Enum):
     passed = 'passed'
 
 
+ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.building, TestRunStatus.running]
+
+
 class TestResultStatus(str, enum.Enum):
     passed = 'passed'
     skipped = 'skipped'
