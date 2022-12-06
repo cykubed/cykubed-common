@@ -113,7 +113,8 @@ class TestRunSummary(NewTestRun):
     total_files: Optional[int]
     completed_files: Optional[int]
     status: TestRunStatus
-    active: bool = False
+    active: bool
+    duration: Optional[int]
     progress_percentage: int
     commit: Optional[CommitDetails_Pydantic]
 
