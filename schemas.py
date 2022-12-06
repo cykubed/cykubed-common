@@ -2,7 +2,9 @@ from datetime import datetime
 from typing import Optional, List
 
 from pydantic import BaseModel, validator
+from tortoise.contrib.pydantic import pydantic_model_creator
 
+import models
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus
 
 
@@ -51,6 +53,13 @@ class Repository(BaseModel):
     platform: PlatformEnum
 
 
+class TestRunSpec(BaseModel):
+    file: str
+
+    class Config:
+        orm_mode = True
+
+
 class TestRunSpecs(BaseModel):
     """
     Sent by the hub to update the list of specs and the SHA
@@ -95,14 +104,18 @@ class SpecFile(BaseModel):
         orm_mode = True
 
 
+CommitDetails_Pydantic = pydantic_model_creator(models.CommitDetails, name='CommitDetails', exclude=['id'])
+
+
 class TestRunSummary(NewTestRun):
     started: datetime
     finished: Optional[datetime] = None
-    total_files: int
-    completed_files: int
+    total_files: Optional[int]
+    completed_files: Optional[int]
     status: TestRunStatus
-    active: bool
+    active: bool = False
     progress_percentage: int
+    commit: Optional[CommitDetails_Pydantic]
 
     class Config:
         orm_mode = True
