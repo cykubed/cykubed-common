@@ -5,7 +5,7 @@ from pydantic import BaseModel, validator
 from tortoise.contrib.pydantic import pydantic_model_creator
 
 import models
-from .enums import PlatformEnum, TestRunStatus, TestResultStatus
+from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions
 
 
 class OrganisationIn(BaseModel):
@@ -179,3 +179,18 @@ class Results(BaseModel):
     skipped: int = 0
     passes: int = 0
     failures: int = 0
+
+
+class HubStateModel(BaseModel):
+    first_connected: Optional[datetime]
+    connected: bool
+
+    class Config:
+        orm_mode = True
+
+
+class AppSocketMessage(BaseModel):
+    action: AppWebSocketActions
+    testrun: Optional[TestRunSummary]
+    hubstate: Optional[HubStateModel]
+    log: Optional[str]

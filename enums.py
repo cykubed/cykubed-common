@@ -25,3 +25,10 @@ class TestResultStatus(str, enum.Enum):
     passed = 'passed'
     skipped = 'skipped'
     failed = 'failed'
+
+
+class AppWebSocketActions(str, enum.Enum):
+    testrun = 'testrun'
+    buildlob = 'buildlog'
+    hub = 'hub'
+
