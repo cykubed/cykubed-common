@@ -2,8 +2,10 @@ from datetime import datetime
 from typing import Optional, List
 
 from pydantic import BaseModel, validator
+from tortoise.contrib.pydantic import pydantic_model_creator
 
-from .enums import PlatformEnum, TestRunStatus, TestResultStatus
+import models
+from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions
 
 
 class OrganisationIn(BaseModel):
@@ -46,7 +48,17 @@ class Repository(BaseModel):
     name: str
     url: str
     owner: str
+    owner_avatar_url: Optional[str]
+    pushed_at: Optional[datetime]
     platform: PlatformEnum
+
+
+class TestRunSpec(BaseModel):
+    id: int
+    file: str
+
+    class Config:
+        orm_mode = True
 
 
 class TestRunSpecs(BaseModel):
@@ -93,20 +105,31 @@ class SpecFile(BaseModel):
         orm_mode = True
 
 
-class TestRunSummary(NewTestRun):
+CommitDetails_Pydantic = pydantic_model_creator(models.CommitDetails, name='CommitDetails', exclude=['id'])
+
+
+class TestRunCommon(NewTestRun):
     started: datetime
     finished: Optional[datetime] = None
-    total_files: int
-    completed_files: int
     status: TestRunStatus
     active: bool
+    duration: Optional[int]
     progress_percentage: int
+    commit: Optional[CommitDetails_Pydantic]
 
     class Config:
         orm_mode = True
 
 
-class TestRunDetail(TestRunSummary):
+class TestRunSummary(TestRunCommon):
+    total_files: Optional[int]
+    completed_files: Optional[int]
+
+    class Config:
+        orm_mode = True
+
+
+class TestRunDetail(TestRunCommon):
     files: list[SpecFile] = []
 
     @validator('files', pre=True)
@@ -163,3 +186,29 @@ class Results(BaseModel):
     skipped: int = 0
     passes: int = 0
     failures: int = 0
+
+
+class HubStateModel(BaseModel):
+    first_connected: Optional[datetime]
+    connected: bool
+
+    class Config:
+        orm_mode = True
+
+
+class BaseAppSocketMessage(BaseModel):
+    action: AppWebSocketActions
+
+
+class HubStateMessage(BaseAppSocketMessage):
+    hubstate: HubStateModel
+
+
+class TestRunUpdateMessage(BaseAppSocketMessage):
+    testrun: TestRunSummary
+
+
+class LogUpdateMessage(BaseAppSocketMessage):
+    testrun_id: int
+    position: int
+    log: str
