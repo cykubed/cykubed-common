@@ -2,9 +2,7 @@ from datetime import datetime
 from typing import Optional, List
 
 from pydantic import BaseModel, validator
-from tortoise.contrib.pydantic import pydantic_model_creator
 
-import models
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions
 
 
@@ -105,7 +103,12 @@ class SpecFile(BaseModel):
         orm_mode = True
 
 
-CommitDetails_Pydantic = pydantic_model_creator(models.CommitDetails, name='CommitDetails', exclude=['id'])
+class CommitDetailsModel(BaseModel):
+    author_email: str
+    author_name: str
+    author_avatar_url: Optional[str]
+    message: str
+    commit_url: str
 
 
 class TestRunCommon(NewTestRun):
@@ -115,7 +118,7 @@ class TestRunCommon(NewTestRun):
     active: bool
     duration: Optional[int]
     progress_percentage: int
-    commit: Optional[CommitDetails_Pydantic]
+    commit: Optional[CommitDetailsModel]
 
     class Config:
         orm_mode = True
