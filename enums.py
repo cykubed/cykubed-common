@@ -29,6 +29,6 @@ class TestResultStatus(str, enum.Enum):
 
 class AppWebSocketActions(str, enum.Enum):
     testrun = 'testrun'
-    buildlob = 'buildlog'
+    buildlog = 'buildlog'
     hub = 'hub'
 

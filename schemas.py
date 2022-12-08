@@ -54,6 +54,7 @@ class Repository(BaseModel):
 
 
 class TestRunSpec(BaseModel):
+    id: int
     file: str
 
     class Config:
@@ -107,11 +108,9 @@ class SpecFile(BaseModel):
 CommitDetails_Pydantic = pydantic_model_creator(models.CommitDetails, name='CommitDetails', exclude=['id'])
 
 
-class TestRunSummary(NewTestRun):
+class TestRunCommon(NewTestRun):
     started: datetime
     finished: Optional[datetime] = None
-    total_files: Optional[int]
-    completed_files: Optional[int]
     status: TestRunStatus
     active: bool
     duration: Optional[int]
@@ -122,7 +121,15 @@ class TestRunSummary(NewTestRun):
         orm_mode = True
 
 
-class TestRunDetail(TestRunSummary):
+class TestRunSummary(TestRunCommon):
+    total_files: Optional[int]
+    completed_files: Optional[int]
+
+    class Config:
+        orm_mode = True
+
+
+class TestRunDetail(TestRunCommon):
     files: list[SpecFile] = []
 
     @validator('files', pre=True)
@@ -189,8 +196,19 @@ class HubStateModel(BaseModel):
         orm_mode = True
 
 
-class AppSocketMessage(BaseModel):
+class BaseAppSocketMessage(BaseModel):
     action: AppWebSocketActions
-    testrun: Optional[TestRunSummary]
-    hubstate: Optional[HubStateModel]
-    log: Optional[str]
+
+
+class HubStateMessage(BaseAppSocketMessage):
+    hubstate: HubStateModel
+
+
+class TestRunUpdateMessage(BaseAppSocketMessage):
+    testrun: TestRunSummary
+
+
+class LogUpdateMessage(BaseAppSocketMessage):
+    testrun_id: int
+    position: int
+    log: str
