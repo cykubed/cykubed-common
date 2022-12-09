@@ -3,7 +3,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel, validator
 
-from .enums import PlatformEnum, TestRunStatus, TestResultStatus
+from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions
 
 
 class OrganisationIn(BaseModel):
@@ -46,7 +46,17 @@ class Repository(BaseModel):
     name: str
     url: str
     owner: str
+    owner_avatar_url: Optional[str]
+    pushed_at: Optional[datetime]
     platform: PlatformEnum
+
+
+class TestRunSpec(BaseModel):
+    id: int
+    file: str
+
+    class Config:
+        orm_mode = True
 
 
 class TestRunSpecs(BaseModel):
@@ -93,29 +103,33 @@ class SpecFile(BaseModel):
         orm_mode = True
 
 
-class TestRunSummary(NewTestRun):
+class CommitDetailsModel(BaseModel):
+    author_email: str
+    author_name: str
+    author_avatar_url: Optional[str]
+    message: str
+    commit_url: str
+
+
+class TestRunCommon(NewTestRun):
     started: datetime
     finished: Optional[datetime] = None
-    total_files: int
-    completed_files: int
     status: TestRunStatus
     active: bool
+    duration: Optional[int]
     progress_percentage: int
+    commit: Optional[CommitDetailsModel]
 
     class Config:
         orm_mode = True
 
 
-class TestRunDetail(TestRunSummary):
-    files: list[SpecFile] = []
-
-    @validator('files', pre=True)
-    def _iter_to_list(cls, v):
-        return list(v)
+class TestRunSummary(TestRunCommon):
+    total_files: Optional[int]
+    completed_files: Optional[int]
 
     class Config:
         orm_mode = True
-
 
 
 #
@@ -142,13 +156,13 @@ class TestResultError(BaseModel):
 
 class TestResult(BaseModel):
     title: str
+    context: str
     status: TestResultStatus
     retry: int = 0
     duration: Optional[int]
     started_at: Optional[datetime]
     finished_at: Optional[datetime]
     error: Optional[TestResultError]
-    manual_screenshots: Optional[List[str]]
 
 
 class SpecResult(BaseModel):
@@ -163,3 +177,46 @@ class Results(BaseModel):
     skipped: int = 0
     passes: int = 0
     failures: int = 0
+
+
+class HubStateModel(BaseModel):
+    first_connected: Optional[datetime]
+    connected: bool
+
+    class Config:
+        orm_mode = True
+
+
+class BaseAppSocketMessage(BaseModel):
+    action: AppWebSocketActions
+
+
+class HubStateMessage(BaseAppSocketMessage):
+    hubstate: HubStateModel
+
+
+class TestRunUpdateMessage(BaseAppSocketMessage):
+    testrun: TestRunSummary
+
+
+class LogUpdateMessage(BaseAppSocketMessage):
+    testrun_id: int
+    position: int
+    log: str
+
+#
+# TestRun detail
+#
+
+
+class TestRunDetail(TestRunCommon):
+    files: list[SpecFile] = []
+    result: Optional[Results]
+
+    @validator('files', pre=True)
+    def _iter_to_list(cls, v):
+        return list(v)
+
+    class Config:
+        orm_mode = True
+
