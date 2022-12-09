@@ -132,18 +132,6 @@ class TestRunSummary(TestRunCommon):
         orm_mode = True
 
 
-class TestRunDetail(TestRunCommon):
-    files: list[SpecFile] = []
-
-    @validator('files', pre=True)
-    def _iter_to_list(cls, v):
-        return list(v)
-
-    class Config:
-        orm_mode = True
-
-
-
 #
 # Test results
 #
@@ -215,3 +203,20 @@ class LogUpdateMessage(BaseAppSocketMessage):
     testrun_id: int
     position: int
     log: str
+
+#
+# TestRun detail
+#
+
+
+class TestRunDetail(TestRunCommon):
+    files: list[SpecFile] = []
+    result: Optional[Results]
+
+    @validator('files', pre=True)
+    def _iter_to_list(cls, v):
+        return list(v)
+
+    class Config:
+        orm_mode = True
+
