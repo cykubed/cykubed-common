@@ -117,7 +117,7 @@ class TestRunCommon(NewTestRun):
     status: TestRunStatus
     active: bool
     duration: Optional[int]
-    progress_percentage: int
+    progress_percentage: Optional[int]
     commit: Optional[CommitDetailsModel]
 
     class Config:
@@ -126,7 +126,8 @@ class TestRunCommon(NewTestRun):
 
 class TestRunSummary(TestRunCommon):
     total_files: Optional[int]
-    completed_files: Optional[int]
+    running_files: Optional[list[str]]
+    completed_files: Optional[list[str]]
 
     class Config:
         orm_mode = True
