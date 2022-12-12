@@ -6,6 +6,57 @@ from pydantic import BaseModel, validator
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions
 
 
+#
+# Test results
+#
+
+
+class CodeFrame(BaseModel):
+    line: int
+    column: int
+    frame: str
+    language: str
+
+
+class TestResultError(BaseModel):
+    title: str
+    type: str
+    message: str
+    stack: str
+    code_frame: CodeFrame
+    screenshot: Optional[str]
+    video: Optional[str]
+
+
+class TestResult(BaseModel):
+    title: str
+    context: str
+    status: TestResultStatus
+    retry: int = 0
+    duration: Optional[int]
+    started_at: Optional[datetime]
+    finished_at: Optional[datetime]
+    error: Optional[TestResultError]
+
+
+class SpecResult(BaseModel):
+    file: str
+    tests: List[TestResult]
+    video: Optional[str]
+
+
+class ResultSummary(BaseModel):
+    total: int = 0
+    skipped: int = 0
+    passes: int = 0
+    failures: int = 0
+
+
+class Results(ResultSummary):
+    testrun_id: int
+    specs: List[SpecResult]
+
+
 class OrganisationIn(BaseModel):
     name: str
 
@@ -98,6 +149,8 @@ class SpecFile(BaseModel):
     file: str
     started: Optional[datetime] = None
     finished: Optional[datetime] = None
+    failures: int = 0
+    result: Optional[SpecResult]
 
     class Config:
         orm_mode = True
@@ -112,75 +165,39 @@ class CommitDetailsModel(BaseModel):
 
 
 class TestRunCommon(NewTestRun):
-    started: datetime
+    started: Optional[datetime]
     finished: Optional[datetime] = None
     status: TestRunStatus
-    active: bool
-    duration: Optional[int]
-    progress_percentage: Optional[int]
     commit: Optional[CommitDetailsModel]
 
     class Config:
         orm_mode = True
 
-#
-# Test results
-#
 
-
-class CodeFrame(BaseModel):
-    line: int
-    column: int
-    frame: str
-    language: str
-
-
-class TestResultError(BaseModel):
-    title: str
-    type: str
-    message: str
-    stack: str
-    code_frame: CodeFrame
-    screenshot: Optional[str]
-    video: Optional[str]
-
-
-class TestResult(BaseModel):
-    title: str
-    context: str
-    status: TestResultStatus
-    retry: int = 0
+class TestRunSummary(TestRunCommon):
+    progress_percentage: Optional[int]
     duration: Optional[int]
-    started_at: Optional[datetime]
-    finished_at: Optional[datetime]
-    error: Optional[TestResultError]
 
-
-class SpecResult(BaseModel):
-    file: str
-    tests: List[TestResult]
-
-
-class Results(BaseModel):
-    testrun_id: int
-    specs: List[SpecResult]
-    total: int = 0
-    skipped: int = 0
-    passes: int = 0
-    failures: int = 0
-
+    class Config:
+        orm_mode = True
 
 #
 # TestRun detail
 #
 
+
 class TestRunDetail(TestRunCommon):
-    files: list[SpecFile] = []
-    result: Optional[Results]
+    files: Optional[list[SpecFile]]
 
     @validator('files', pre=True)
     def _iter_to_list(cls, v):
-        return list(v)
+        """
+        It's not entirely obvious why I need this, as according to the docs this should serialize fine.
+        However, without this Pydantic will complain as v isn't a list
+        :param v:
+        :return:
+        """
+        return list(v or [])
 
     class Config:
         orm_mode = True
