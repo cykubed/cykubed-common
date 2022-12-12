@@ -220,7 +220,13 @@ class HubStateMessage(BaseAppSocketMessage):
 
 
 class TestRunUpdateMessage(BaseAppSocketMessage):
-    testrun: TestRunDetail
+    testrun: TestRunSummary
+
+
+class TestRunSpecUpdateMessage(BaseAppSocketMessage):
+    testrun_id: int
+    status: TestRunStatus
+    file: SpecFile
 
 
 class LogUpdateMessage(BaseAppSocketMessage):
