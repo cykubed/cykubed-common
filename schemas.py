@@ -115,7 +115,6 @@ class TestRunCommon(NewTestRun):
     started: datetime
     finished: Optional[datetime] = None
     status: TestRunStatus
-    active: bool
     duration: Optional[int]
     progress_percentage: Optional[int]
     commit: Optional[CommitDetailsModel]
