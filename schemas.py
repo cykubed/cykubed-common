@@ -117,32 +117,11 @@ class TestRunCommon(NewTestRun):
     status: TestRunStatus
     active: bool
     duration: Optional[int]
-    progress_percentage: int
+    progress_percentage: Optional[int]
     commit: Optional[CommitDetailsModel]
 
     class Config:
         orm_mode = True
-
-
-class TestRunSummary(TestRunCommon):
-    total_files: Optional[int]
-    completed_files: Optional[int]
-
-    class Config:
-        orm_mode = True
-
-
-class TestRunDetail(TestRunCommon):
-    files: list[SpecFile] = []
-
-    @validator('files', pre=True)
-    def _iter_to_list(cls, v):
-        return list(v)
-
-    class Config:
-        orm_mode = True
-
-
 
 #
 # Test results
@@ -191,6 +170,22 @@ class Results(BaseModel):
     failures: int = 0
 
 
+#
+# TestRun detail
+#
+
+class TestRunDetail(TestRunCommon):
+    files: list[SpecFile] = []
+    result: Optional[Results]
+
+    @validator('files', pre=True)
+    def _iter_to_list(cls, v):
+        return list(v)
+
+    class Config:
+        orm_mode = True
+
+
 class HubStateModel(BaseModel):
     first_connected: Optional[datetime]
     connected: bool
@@ -208,10 +203,11 @@ class HubStateMessage(BaseAppSocketMessage):
 
 
 class TestRunUpdateMessage(BaseAppSocketMessage):
-    testrun: TestRunSummary
+    testrun: TestRunDetail
 
 
 class LogUpdateMessage(BaseAppSocketMessage):
     testrun_id: int
     position: int
     log: str
+
