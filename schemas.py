@@ -146,6 +146,7 @@ class TestRunUpdate(BaseModel):
 
 
 class SpecFile(BaseModel):
+    id: int
     file: str
     started: Optional[datetime] = None
     finished: Optional[datetime] = None
@@ -219,14 +220,8 @@ class HubStateMessage(BaseAppSocketMessage):
     hubstate: HubStateModel
 
 
-class TestRunUpdateMessage(BaseAppSocketMessage):
-    testrun: TestRunSummary
-
-
-class TestRunSpecUpdateMessage(BaseAppSocketMessage):
-    testrun_id: int
-    status: TestRunStatus
-    file: SpecFile
+class TestRunDetailUpdateMessage(BaseAppSocketMessage):
+    testrun: TestRunDetail
 
 
 class LogUpdateMessage(BaseAppSocketMessage):
