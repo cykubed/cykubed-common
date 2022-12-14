@@ -158,6 +158,7 @@ class SpecResult(BaseModel):
     file: str
     tests: List[TestResult]
     video: Optional[str]
+    failures: int = 0
 
 
 class Results(BaseModel):
