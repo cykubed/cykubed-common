@@ -229,3 +229,13 @@ class LogUpdateMessage(BaseAppSocketMessage):
     position: int
     log: str
 
+
+class SlackChannel(BaseModel):
+    id: str
+    name: str
+
+
+class SlackChannels(BaseModel):
+    next_cursor: Optional[str]
+    channels: list[SlackChannel]
+
