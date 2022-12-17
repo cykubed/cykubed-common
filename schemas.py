@@ -88,7 +88,7 @@ class NewProject(BaseModel):
     build_cmd = 'ng build --output-path=dist'
     server_cmd = 'ng serve'
     server_port: int = 4200
-    # TODO add reporting
+    checks_integration: bool = True
 
 
 class Project(NewProject):
