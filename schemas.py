@@ -61,15 +61,21 @@ class OrganisationIn(BaseModel):
     name: str
 
 
+class IntegrationSummary(BaseModel):
+    name: PlatformEnum
+    user_id: Optional[int]
+
+
 class UserProfile(BaseModel):
     name: str
     avatar_url: Optional[str]
     token: str
     email: str
-    integrations: list[str]
+    integrations: list[IntegrationSummary]
     hub_token: Optional[str]
     organisation_id:  int
     organisation_name: str
+    integration_user_id: Optional[int]
 
 
 class NewProject(BaseModel):

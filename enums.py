@@ -17,6 +17,12 @@ class TestRunStatus(str, enum.Enum):
     passed = 'passed'
 
 
+class NotificationStates(str, enum.Enum):
+    failed = 'failed'
+    passed = 'passed'
+    timeout = 'timeout'
+
+
 ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.running]
 
 
