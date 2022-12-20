@@ -89,6 +89,8 @@ class NewProject(BaseModel):
     server_cmd = 'ng serve'
     server_port: int = 4200
     checks_integration: bool = True
+    slack_channel_id: Optional[str]
+    notify_on_passed: bool = False
 
 
 class Project(NewProject):
@@ -106,6 +108,16 @@ class Repository(BaseModel):
     owner_avatar_url: Optional[str]
     pushed_at: Optional[datetime]
     platform: PlatformEnum
+    default_branch: Optional[str]
+
+
+class PendingAuthorisation(BaseModel):
+    platform: PlatformEnum
+    redirect_uri: Optional[str]
+
+
+class AppInstallationState(BaseModel):
+    installed: bool
 
 
 class TestRunSpec(BaseModel):
