@@ -100,6 +100,10 @@ class Project(NewProject):
         orm_mode = True
 
 
+class NewlyCreatedProject(Project):
+    initial_run_id: Optional[int]
+
+
 class Repository(BaseModel):
     id: str
     name: str
