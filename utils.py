@@ -6,6 +6,10 @@ from json import JSONEncoder
 from sys import stdout
 from uuid import UUID
 
+from lib.common.enums import TestRunStatus
+
+FAILED_STATES = [TestRunStatus.timeout, TestRunStatus.failed]
+
 
 def runcmd(cmd: str, logfile=None, **kwargs):
     if not logfile:
