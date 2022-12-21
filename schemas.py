@@ -233,6 +233,9 @@ class HubStateModel(BaseModel):
 class BaseAppSocketMessage(BaseModel):
     action: AppWebSocketActions
 
+    def __str__(self):
+        return f'{self.action} msg'
+
 
 class HubStateMessage(BaseAppSocketMessage):
     hubstate: HubStateModel
