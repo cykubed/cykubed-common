@@ -91,10 +91,14 @@ class NewProject(BaseModel):
     checks_integration: bool = True
     slack_channel_id: Optional[str]
     notify_on_passed: bool = False
+
     build_cpu: str
     build_memory: str
-    runner_image: str
     agent_image: str
+
+    runner_image: str
+    runner_cpu: str
+    runner_memory: str
 
 
 class Project(NewProject):
