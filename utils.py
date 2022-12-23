@@ -6,7 +6,7 @@ from json import JSONEncoder
 from sys import stdout
 from uuid import UUID
 
-from lib.common.enums import TestRunStatus
+from .enums import TestRunStatus
 
 FAILED_STATES = [TestRunStatus.timeout, TestRunStatus.failed]
 ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.running]
