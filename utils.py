@@ -9,6 +9,7 @@ from uuid import UUID
 from lib.common.enums import TestRunStatus
 
 FAILED_STATES = [TestRunStatus.timeout, TestRunStatus.failed]
+ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.running]
 
 
 def runcmd(cmd: str, logfile=None, **kwargs):
