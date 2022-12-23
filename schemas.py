@@ -94,6 +94,7 @@ class NewProject(BaseModel):
     build_cpu: str
     build_memory: str
     runner_image: str
+    agent_image: str
 
 
 class Project(NewProject):
