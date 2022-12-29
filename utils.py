@@ -1,3 +1,4 @@
+import base64
 import datetime
 import os
 import subprocess
@@ -6,6 +7,7 @@ from json import JSONEncoder
 from sys import stdout
 from uuid import UUID
 
+from . import schemas
 from .enums import TestRunStatus
 
 FAILED_STATES = [TestRunStatus.timeout, TestRunStatus.failed]
@@ -45,3 +47,11 @@ class MaxBodySizeValidator:
         self.body_len += len(chunk)
         if self.body_len > self.max_size:
             raise MaxBodySizeException(body_len=self.body_len)
+
+
+def encode_testrun(tr: schemas.NewTestRun) -> str:
+    return base64.b64encode(tr.json().encode()).decode()
+
+
+def decode_testrun(payload: str) -> schemas.NewTestRun:
+    return schemas.NewTestRun.parse_raw(base64.b64decode(payload).decode())
