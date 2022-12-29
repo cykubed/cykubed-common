@@ -1,10 +1,8 @@
 import base64
 import datetime
 import os
-import subprocess
 from decimal import Decimal
 from json import JSONEncoder
-from sys import stdout
 from uuid import UUID
 
 from . import schemas
@@ -12,15 +10,6 @@ from .enums import TestRunStatus
 
 FAILED_STATES = [TestRunStatus.timeout, TestRunStatus.failed]
 ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.running]
-
-
-def runcmd(cmd: str, logfile=None, **kwargs):
-    if not logfile:
-        logfile = stdout
-    logfile.write(cmd+'\n')
-    env = os.environ.copy()
-    env['PATH'] = './node_modules/.bin:' + env['PATH']
-    subprocess.check_call(cmd, shell=True, stderr=logfile, stdout=logfile, env=env, **kwargs)
 
 
 # subclass JSONEncoder
@@ -55,3 +44,9 @@ def encode_testrun(tr: schemas.NewTestRun) -> str:
 
 def decode_testrun(payload: str) -> schemas.NewTestRun:
     return schemas.NewTestRun.parse_raw(base64.b64decode(payload).decode())
+
+
+def get_headers():
+    token = os.environ.get('API_TOKEN')
+    return {'Authorization': f'Bearer {token}',
+            'Accept': 'application/json'}

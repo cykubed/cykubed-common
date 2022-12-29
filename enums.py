@@ -10,6 +10,7 @@ class PlatformEnum(str, enum.Enum):
 
 class TestRunStatus(str, enum.Enum):
     started = 'started'
+    building = 'building'
     cancelled = 'cancelled'
     running = 'running'
     timeout = 'timeout'
