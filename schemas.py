@@ -84,7 +84,7 @@ class NewProject(BaseModel):
     workspace: Optional[str]
     platform: PlatformEnum
     url: str
-    parallelism: int
+    parallelism: int = 10
     build_cmd = 'ng build --output-path=dist'
     server_cmd = 'ng serve'
     server_port: int = 4200
@@ -92,13 +92,13 @@ class NewProject(BaseModel):
     slack_channel_id: Optional[str]
     notify_on_passed: bool = False
 
-    build_cpu: str
-    build_memory: str
-    agent_image: str
+    build_cpu: str = '2'
+    build_memory: str = '2G'
+    agent_image: str = 'cykube/agent:latest'
 
-    runner_image: str
-    runner_cpu: str
-    runner_memory: str
+    runner_image: str = 'cykube/runner:latest'
+    runner_cpu: str = '1'
+    runner_memory: str = '2G'
 
 
 class Project(NewProject):
@@ -163,6 +163,7 @@ class NewTestRun(BaseModel):
     project: Project
     branch: str
     sha: Optional[str]
+    status: str = 'started'
 
     class Config:
         orm_mode = True
