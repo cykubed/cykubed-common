@@ -1,6 +1,4 @@
-import tempfile
 import threading
-import time
 import traceback
 
 import httpx
@@ -29,28 +27,3 @@ def upload_logs(trid: int, data):
     if r.status_code != 200:
         logger.error(f"Failed to push logs")
 
-
-def log_watcher(trid: int, fname: str):
-    global running
-    with open(fname, 'rb') as logfile:
-        while running:
-            logs = logfile.read()
-            if logs:
-                upload_logs(trid, logs)
-            time.sleep(settings.LOG_UPDATE_PERIOD)
-
-
-def start_log_thread(testrun_id: int):
-    global logfile
-    global logthread
-    logfile = tempfile.NamedTemporaryFile(suffix='.log', mode='w')
-    logthread = threading.Thread(target=log_watcher, args=(testrun_id, logfile.name))
-    logthread.start()
-    return logfile
-
-
-def stop_log_thread():
-    global running
-    global logthread
-    running = False
-    logthread.join()
