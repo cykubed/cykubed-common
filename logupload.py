@@ -15,7 +15,12 @@ running = True
 
 
 def upload_exception_trace(trid: id):
-    upload_logs(trid, traceback.format_exc())
+    upload_logs(trid, traceback.format_exc().encode('utf8'))
+
+
+def upload_log_line(trid: id, line: str):
+    logger.info(line)
+    upload_logs(trid, (line+"\n").encode('utf8'))
 
 
 def upload_logs(trid: int, data):
@@ -27,11 +32,11 @@ def upload_logs(trid: int, data):
 
 def log_watcher(trid: int, fname: str):
     global running
-    with open(fname, 'r') as logfile:
+    with open(fname, 'rb') as logfile:
         while running:
             logs = logfile.read()
             if logs:
-                upload_logs(trid, logs.encode('utf8'))
+                upload_logs(trid, logs)
             time.sleep(settings.LOG_UPDATE_PERIOD)
 
 
