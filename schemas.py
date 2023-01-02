@@ -94,7 +94,6 @@ class NewProject(BaseModel):
 
     build_cpu: str = '2'
     build_memory: str = '2G'
-    agent_image: str = 'cykube/agent:latest'
 
     runner_image: str = 'cykube/runner:latest'
     runner_cpu: str = '1'
