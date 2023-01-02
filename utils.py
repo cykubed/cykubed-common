@@ -1,5 +1,6 @@
 import base64
 import datetime
+import logging
 import os
 from decimal import Decimal
 from json import JSONEncoder
@@ -50,3 +51,13 @@ def get_headers():
     token = os.environ.get('API_TOKEN')
     return {'Authorization': f'Bearer {token}',
             'Accept': 'application/json'}
+
+
+def disable_hc_logging():
+    class HCFilter(logging.Filter):
+        def filter(self, record: logging.LogRecord) -> bool:
+            return record.getMessage().find("GET /hc") == -1
+
+    # disable logging for health check
+    logging.getLogger("uvicorn.access").addFilter(HCFilter())
+
