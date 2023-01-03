@@ -86,8 +86,6 @@ class NewProject(BaseModel):
     url: str
     parallelism: int = 10
     build_cmd = 'ng build --output-path=dist'
-    server_cmd = 'ng serve'
-    server_port: int = 4200
     checks_integration: bool = True
     slack_channel_id: Optional[str]
     notify_on_passed: bool = False
