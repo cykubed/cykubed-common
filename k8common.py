@@ -20,7 +20,10 @@ def get_batch_api() -> client.BatchV1Api:
 
 
 def get_job_env():
-    return [client.V1EnvVar(name='API_TOKEN', value=os.environ.get('API_TOKEN')),
-            client.V1EnvVar(name='AGENT_URL', value='http://cykube:5000'),
-            client.V1EnvVar(name='CACHE_URL', value='http://cache')
-            ]
+    envs = []
+    for key in ['API_TOKEN', 'MAIN_API_URL']:
+        envs.append(client.V1EnvVar(name=key, value=os.environ.get(key)))
+    envs += [client.V1EnvVar(name='AGENT_URL', value='http://cykube:5000'),
+             client.V1EnvVar(name='CACHE_URL', value='http://cache')
+             ]
+    return envs
