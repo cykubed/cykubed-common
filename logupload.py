@@ -1,4 +1,3 @@
-import threading
 import traceback
 
 import httpx
@@ -8,7 +7,6 @@ from common.utils import get_headers
 from settings import settings
 
 logfile = None
-logthread: threading.Thread = None
 running = True
 
 
