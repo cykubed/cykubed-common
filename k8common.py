@@ -41,7 +41,8 @@ def create_jobs(templates_files, testrun: NewTestRun):
         'memory': testrun.project.build_memory,
         'testrun_id': testrun.id,
         'token': os.environ['API_TOKEN'],
-        'branch': testrun.branch
+        'branch': testrun.branch,
+        'main_api_url': os.environ.get('MAIN_API_URL', 'https://app.cykube.net/api')
     }
     yaml_objects = [yaml.safe_load(pystache.render(f, context)) for f in templates_files]
     for x in yaml_objects:
