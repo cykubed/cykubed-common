@@ -44,7 +44,10 @@ def create_jobs(templates_files, testrun: NewTestRun):
         'branch': testrun.branch
     }
     yaml_objects = [yaml.safe_load(pystache.render(f, context)) for f in templates_files]
+    for x in yaml_objects:
+        logger.info(yaml.safe_dump(x))
     try:
         utils.create_from_yaml(client.ApiClient(), yaml_objects=yaml_objects)
-    except FailToCreateError:
+    except FailToCreateError as ex:
+        logger.error(f"Job creation failed: {ex}")
         logger.exception('Failed to create Job', trid=testrun.id)
