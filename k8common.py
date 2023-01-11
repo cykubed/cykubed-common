@@ -25,6 +25,11 @@ def get_events_api() -> client.EventsV1Api:
     return client.EventsV1Api()
 
 
+@cache
+def get_core_api() -> client.CoreV1Api:
+    return client.CoreV1Api()
+
+
 def get_job_env():
     envs = []
     for key in ['API_TOKEN', 'MAIN_API_URL', 'AGENT_URL', 'CACHE_URL']:
