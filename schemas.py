@@ -272,5 +272,6 @@ class SlackChannels(BaseModel):
     channels: list[SlackChannel]
 
 
-class CompletedBuild(TestRunDetail):
+class CompletedBuild(BaseModel):
+    testrun: TestRunDetail
     cache_hash: str
