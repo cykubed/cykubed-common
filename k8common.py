@@ -1,8 +1,8 @@
 import os
+from functools import cached_property
 
 from kubernetes import client, config
 
-batchapi = None
 NAMESPACE = 'cykube'
 
 
@@ -15,6 +15,7 @@ def init():
         config.load_kube_config()
 
 
+@cached_property
 def get_batch_api() -> client.BatchV1Api:
     return client.BatchV1Api()
 

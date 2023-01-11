@@ -271,3 +271,6 @@ class SlackChannels(BaseModel):
     next_cursor: Optional[str]
     channels: list[SlackChannel]
 
+
+class CompletedBuild(TestRunDetail):
+    cache_hash: str

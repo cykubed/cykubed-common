@@ -25,3 +25,9 @@ def upload_logs(trid: int, data):
     if r.status_code != 200:
         logger.error(f"Failed to push logs")
 
+
+def post_status(testrun_id: int, status: str):
+    resp = httpx.put(f'{settings.MAIN_API_URL}/agent/testrun/{testrun_id}/status/{status}', headers=get_headers())
+    if resp.status_code != 200:
+        raise Exception(f"Failed to update status for run {testrun_id}")
+
