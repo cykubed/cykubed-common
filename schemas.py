@@ -98,6 +98,7 @@ class NewProject(BaseModel):
     runner_image: Optional[str]
     runner_cpu: str = '1'
     runner_memory: str = '2G'
+    runner_deadline: int = 3600
 
 
 class Project(NewProject):
