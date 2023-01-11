@@ -93,6 +93,7 @@ class NewProject(BaseModel):
 
     build_cpu: str = '2'
     build_memory: str = '2G'
+    build_deadline: int = 10*60
 
     runner_image: str = 'cykube/runner:latest'
     runner_cpu: str = '1'
