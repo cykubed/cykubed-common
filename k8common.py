@@ -20,11 +20,13 @@ def get_batch_api() -> client.BatchV1Api:
     return client.BatchV1Api()
 
 
+@cache
+def get_events_api() -> client.EventsV1Api:
+    return client.EventsV1Api()
+
+
 def get_job_env():
     envs = []
-    for key in ['API_TOKEN', 'MAIN_API_URL']:
+    for key in ['API_TOKEN', 'MAIN_API_URL', 'AGENT_URL', 'CACHE_URL']:
         envs.append(client.V1EnvVar(name=key, value=os.environ.get(key)))
-    envs += [client.V1EnvVar(name='AGENT_URL', value='http://cykube:5000'),
-             client.V1EnvVar(name='CACHE_URL', value='http://cache')
-             ]
     return envs
