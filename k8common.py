@@ -1,5 +1,5 @@
 import os
-from functools import cached_property
+from functools import cache
 
 from kubernetes import client, config
 
@@ -15,7 +15,7 @@ def init():
         config.load_kube_config()
 
 
-@cached_property
+@cache
 def get_batch_api() -> client.BatchV1Api:
     return client.BatchV1Api()
 
