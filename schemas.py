@@ -95,7 +95,7 @@ class NewProject(BaseModel):
     build_memory: str = '2G'
     build_deadline: int = 10*60
 
-    runner_image: str = 'cykube/runner:latest'
+    runner_image: Optional[str]
     runner_cpu: str = '1'
     runner_memory: str = '2G'
 
@@ -272,3 +272,7 @@ class SlackChannels(BaseModel):
     next_cursor: Optional[str]
     channels: list[SlackChannel]
 
+
+class CompletedBuild(BaseModel):
+    testrun: TestRunDetail
+    cache_hash: str
