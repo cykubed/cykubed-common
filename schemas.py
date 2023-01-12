@@ -108,10 +108,6 @@ class Project(NewProject):
         orm_mode = True
 
 
-class NewlyCreatedProject(Project):
-    initial_run_id: Optional[int]
-
-
 class Repository(BaseModel):
     id: str
     name: str
@@ -260,7 +256,8 @@ class TestRunDetailUpdateMessage(BaseAppSocketMessage):
 
 
 class LogUpdateMessage(BaseAppSocketMessage):
-    testrun_id: int
+    project_id: int
+    testrun_local_id: int
     position: int
     log: str
 
