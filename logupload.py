@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 import httpx
 from loguru import logger
 
@@ -17,6 +19,7 @@ def post_testrun_status(tr: schemas.NewTestRun, status: str):
     post_status(tr.project.id, tr.local_id, status)
 
 
+@lru_cache(maxsize=10000)
 def post_status(project_id: int, local_id: int, status: str):
     resp = httpx.put(f'{settings.MAIN_API_URL}/agent/testrun/{project_id}/{local_id}/status/{status}',
                      headers=get_headers())
