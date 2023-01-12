@@ -14,8 +14,11 @@ def upload_logs(project_id: int, local_id: int, data):
 
 
 def post_testrun_status(tr: schemas.NewTestRun, status: str):
-    resp = httpx.put(f'{settings.MAIN_API_URL}/agent/testrun/{tr.project.id}/{tr.local_id}/status/{status}',
+    post_status(tr.project.id, tr.local_id, status)
+
+
+def post_status(project_id: int, local_id: int, status: str):
+    resp = httpx.put(f'{settings.MAIN_API_URL}/agent/testrun/{project_id}/{local_id}/status/{status}',
                      headers=get_headers())
     if resp.status_code != 200:
-        raise Exception(f"Failed to update status for run {tr.local_id} on project {tr.project.id}")
-
+        raise Exception(f"Failed to update status for run {local_id} on project {project_id}")
