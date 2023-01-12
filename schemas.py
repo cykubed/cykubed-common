@@ -275,3 +275,9 @@ class SlackChannels(BaseModel):
 class CompletedBuild(BaseModel):
     testrun: TestRunDetail
     cache_hash: str
+
+
+class TestRunJobStatus(BaseModel):
+    name: str
+    status: str
+    message: Optional[str]
