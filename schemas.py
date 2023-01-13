@@ -305,8 +305,3 @@ class AgentLogMessage(BaseAgentSocketMessage):
     ts: datetime
     level: LogLevel
     msg: str
-
-
-class AgentStatusMessage(BaseAgentSocketMessage):
-    action = AgentWebsocketActions.status
-    status: TestRunStatus
