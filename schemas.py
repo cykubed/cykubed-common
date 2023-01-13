@@ -257,12 +257,11 @@ class TestRunDetailUpdateMessage(BaseAppSocketMessage):
     testrun: TestRunDetail
 
 
-class LogUpdateMessage(BaseAppSocketMessage):
-    action = AppWebSocketActions.buildlog
-    project_id: int
-    testrun_local_id: int
-    position: int
-    log: str
+class AppLogMessage(BaseModel):
+    source: str
+    ts: datetime
+    level: LogLevel
+    msg: str
 
 
 class SlackChannel(BaseModel):
@@ -290,10 +289,12 @@ class TestRunJobStatus(BaseModel):
 #
 
 
-class AgentLogMessage(BaseModel):
+class AgentLogMessage(AppLogMessage):
     project_id: int
     local_id: int
-    source: str
-    ts: datetime
-    level: LogLevel
-    msg: str
+
+
+class LogUpdateMessage(BaseAppSocketMessage):
+    action = AppWebSocketActions.buildlog
+    msg: AgentLogMessage
+    line_num: int
