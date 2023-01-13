@@ -24,7 +24,7 @@ class NotificationStates(str, enum.Enum):
     timeout = 'timeout'
 
 
-ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.running]
+ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.building, TestRunStatus.running]
 
 
 class TestResultStatus(str, enum.Enum):
@@ -38,4 +38,12 @@ class AppWebSocketActions(str, enum.Enum):
     specfile = 'specfile'
     buildlog = 'buildlog'
     hub = 'hub'
+
+
+class LogLevel(str, enum.Enum):
+    debug = 'debug'
+    info = 'info'
+    warning = 'warning'
+    error = 'error'
+    critical = 'critical'
 

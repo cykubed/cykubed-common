@@ -3,7 +3,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel, validator
 
-from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions
+from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel
 
 
 #
@@ -281,3 +281,12 @@ class TestRunJobStatus(BaseModel):
     name: str
     status: str
     message: Optional[str]
+
+
+class LogMessage(BaseModel):
+    ts: datetime
+    project_id: int
+    local_id: int
+    source: str
+    level: LogLevel
+    msg: str
