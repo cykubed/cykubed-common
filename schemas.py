@@ -3,7 +3,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel, validator
 
-from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel
+from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentWebsocketActions
 
 
 #
@@ -248,14 +248,17 @@ class BaseAppSocketMessage(BaseModel):
 
 
 class HubStateMessage(BaseAppSocketMessage):
+    action = AppWebSocketActions.hub
     hubstate: HubStateModel
 
 
 class TestRunDetailUpdateMessage(BaseAppSocketMessage):
+    action = AppWebSocketActions.testrun
     testrun: TestRunDetail
 
 
 class LogUpdateMessage(BaseAppSocketMessage):
+    action = AppWebSocketActions.buildlog
     project_id: int
     testrun_local_id: int
     position: int
@@ -282,11 +285,28 @@ class TestRunJobStatus(BaseModel):
     status: str
     message: Optional[str]
 
+#
+# Agent websocket
+#
 
-class LogMessage(BaseModel):
-    ts: datetime
+
+class BaseAgentSocketMessage(BaseModel):
+    action: AgentWebsocketActions
     project_id: int
     local_id: int
+
+    def __str__(self):
+        return f'{self.action} msg'
+
+
+class AgentLogMessage(BaseAgentSocketMessage):
+    action = AgentWebsocketActions.log
     source: str
+    ts: datetime
     level: LogLevel
     msg: str
+
+
+class AgentStatusMessage(BaseAgentSocketMessage):
+    action = AgentWebsocketActions.status
+    status: TestRunStatus

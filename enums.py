@@ -40,6 +40,11 @@ class AppWebSocketActions(str, enum.Enum):
     hub = 'hub'
 
 
+class AgentWebsocketActions(str, enum.Enum):
+    log = 'log'
+    status = 'status'
+
+
 class LogLevel(str, enum.Enum):
     debug = 'debug'
     info = 'info'
