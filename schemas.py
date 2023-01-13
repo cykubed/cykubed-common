@@ -3,7 +3,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel, validator
 
-from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentWebsocketActions
+from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel
 
 
 #
@@ -290,17 +290,9 @@ class TestRunJobStatus(BaseModel):
 #
 
 
-class BaseAgentSocketMessage(BaseModel):
-    action: AgentWebsocketActions
+class AgentLogMessage(BaseModel):
     project_id: int
     local_id: int
-
-    def __str__(self):
-        return f'{self.action} msg'
-
-
-class AgentLogMessage(BaseAgentSocketMessage):
-    action = AgentWebsocketActions.log
     source: str
     ts: datetime
     level: LogLevel
