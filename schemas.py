@@ -262,6 +262,7 @@ class AppLogMessage(BaseModel):
     ts: datetime
     level: LogLevel
     msg: str
+    step: Optional[int]
 
 
 class SlackChannel(BaseModel):

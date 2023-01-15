@@ -48,7 +48,8 @@ class AgentWebsocketActions(str, enum.Enum):
 class LogLevel(str, enum.Enum):
     debug = 'debug'
     info = 'info'
+    cmd = 'cmd'
+    cmdout = 'cmdout'
     warning = 'warning'
     error = 'error'
-    critical = 'critical'
 
