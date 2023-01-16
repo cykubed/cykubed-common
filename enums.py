@@ -53,3 +53,10 @@ class LogLevel(str, enum.Enum):
     warning = 'warning'
     error = 'error'
 
+
+loglevelToInt = {LogLevel.debug: 0,
+                 LogLevel.info: 1,
+                 LogLevel.cmd: 1,
+                 LogLevel.cmdout: 1,
+                 LogLevel.warning: 2,
+                 LogLevel.error: 3}
