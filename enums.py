@@ -24,7 +24,7 @@ class NotificationStates(str, enum.Enum):
     timeout = 'timeout'
 
 
-ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.running]
+ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.building, TestRunStatus.running]
 
 
 class TestResultStatus(str, enum.Enum):
@@ -39,3 +39,24 @@ class AppWebSocketActions(str, enum.Enum):
     buildlog = 'buildlog'
     hub = 'hub'
 
+
+class AgentWebsocketActions(str, enum.Enum):
+    log = 'log'
+    status = 'status'
+
+
+class LogLevel(str, enum.Enum):
+    debug = 'debug'
+    info = 'info'
+    cmd = 'cmd'
+    cmdout = 'cmdout'
+    warning = 'warning'
+    error = 'error'
+
+
+loglevelToInt = {LogLevel.debug: 0,
+                 LogLevel.info: 1,
+                 LogLevel.cmd: 1,
+                 LogLevel.cmdout: 1,
+                 LogLevel.warning: 2,
+                 LogLevel.error: 3}
