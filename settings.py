@@ -11,7 +11,7 @@ class AppSettings(BaseSettings):
     TEST_RUN_TIMEOUT: int = 30 * 60
     SPEC_FILE_TIMEOUT: int = 5 * 60
 
-    JOB_TTL = 3600*24
+    JOB_TTL = 3600
     DEFAULT_BUILD_JOB_DEADLINE = 2 * 60
     JOB_STATUS_POLL_PERIOD = 10
 
