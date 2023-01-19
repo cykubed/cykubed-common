@@ -24,7 +24,6 @@ class TestResultError(BaseModel):
     message: str
     stack: str
     code_frame: CodeFrame
-    screenshot: Optional[str]
     video: Optional[str]
 
 
@@ -34,6 +33,7 @@ class TestResult(BaseModel):
     status: TestResultStatus
     retry: int = 0
     duration: Optional[int]
+    failure_screenshots: Optional[list[str]]
     started_at: Optional[datetime]
     finished_at: Optional[datetime]
     error: Optional[TestResultError]
