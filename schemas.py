@@ -75,6 +75,7 @@ class UserProfile(BaseModel):
     hub_token: Optional[str]
     organisation_id:  int
     organisation_name: str
+    is_admin: bool
     integration_user_id: Optional[int]
 
 
@@ -106,6 +107,18 @@ class Project(NewProject):
 
     class Config:
         orm_mode = True
+
+
+class NewRunnerImage(BaseModel):
+    node_version: str
+    tag: str
+
+    class Config:
+        orm_mode = True
+
+
+class RunnerImage(NewRunnerImage):
+    id: int
 
 
 class Repository(BaseModel):
@@ -299,3 +312,5 @@ class LogUpdateMessage(BaseAppSocketMessage):
     action = AppWebSocketActions.buildlog
     msg: AgentLogMessage
     line_num: int
+
+
