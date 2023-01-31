@@ -198,12 +198,22 @@ class SpecFile(BaseModel):
         orm_mode = True
 
 
+class AuthorModel(BaseModel):
+    name: str
+    email: str
+    avatar_url: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
 class CommitDetailsModel(BaseModel):
-    author_email: str
-    author_name: str
-    author_avatar_url: Optional[str]
+    author: AuthorModel
     message: str
     commit_url: str
+
+    class Config:
+        orm_mode = True
 
 
 class TestRunCommon(NewTestRun):
