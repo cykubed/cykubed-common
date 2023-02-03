@@ -40,21 +40,10 @@ class TestResult(BaseModel):
 
 
 class SpecResult(BaseModel):
-    file: str
-    tests: List[TestResult]
-    video: Optional[str]
-
-
-class ResultSummary(BaseModel):
-    total: int = 0
+    passed: List[TestResult]
+    failed: List[TestResult]
     skipped: int = 0
-    passes: int = 0
-    failures: int = 0
-
-
-class Results(ResultSummary):
-    testrun_id: int
-    specs: List[SpecResult]
+    video: Optional[str]
 
 
 class OrganisationIn(BaseModel):
@@ -191,7 +180,6 @@ class SpecFile(BaseModel):
     file: str
     started: Optional[datetime] = None
     finished: Optional[datetime] = None
-    failures: int = 0
     result: Optional[SpecResult]
 
     class Config:
