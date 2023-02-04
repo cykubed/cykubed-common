@@ -90,7 +90,7 @@ class NewProject(BaseModel):
     build_cmd = 'ng build --output-path=dist'
     checks_integration: bool = True
     slack_channel_id: Optional[str]
-    notify_on_passed: bool = False
+    notify_on_passed: Optional[bool] = False
 
     build_cpu: str = '2'
     build_memory: str = '2G'
