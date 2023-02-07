@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, Union
 
 from pydantic import BaseModel, validator
 
@@ -90,7 +90,7 @@ class NewProject(BaseModel):
     build_cmd = 'ng build --output-path=dist'
     checks_integration: bool = True
     slack_channel_id: Optional[str]
-    notify_on_passed: Optional[bool] = False
+    notify_on_passed: Optional[Union[bool, None]] = False
 
     build_cpu: str = '2'
     build_memory: str = '2G'
@@ -112,6 +112,7 @@ class Project(NewProject):
 class NewRunnerImage(BaseModel):
     node_version: str
     tag: str
+    description: str
 
     class Config:
         orm_mode = True
@@ -132,6 +133,7 @@ class Repository(BaseModel):
     url: str
     owner: str
     owner_avatar_url: Optional[str]
+    workspace_slug: Optional[str]
     pushed_at: Optional[datetime]
     platform: PlatformEnum
     default_branch: Optional[str]
