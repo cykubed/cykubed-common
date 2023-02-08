@@ -81,9 +81,7 @@ class UserProfile(BaseModel):
 
 class NewProject(BaseModel):
     name: str
-    slug: Optional[str]
     owner: Optional[str]
-    workspace: Optional[str]
     platform: PlatformEnum
     url: str
     parallelism: int = 10
