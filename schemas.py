@@ -111,6 +111,9 @@ class NewRunnerImage(BaseModel):
     node_version: str
     tag: str
     description: str
+    chrome: bool
+    firefox: bool
+    edge: bool
 
     class Config:
         orm_mode = True
