@@ -121,6 +121,11 @@ class RunnerImage(NewRunnerImage):
     id: int
 
 
+class Workspace(BaseModel):
+    slug: str
+    name: str
+
+
 class Repository(BaseModel):
     id: str
     name: str
