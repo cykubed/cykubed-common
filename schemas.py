@@ -178,6 +178,7 @@ class NewTestRun(BaseModel):
     """
     id: int
     local_id: int
+    url: str
     project: Project
     branch: str
     sha: Optional[str]
