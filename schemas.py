@@ -61,6 +61,11 @@ class OrganisationIn(BaseModel):
     name: str
 
 
+class OrganisationSummary(BaseModel):
+    id: int
+    name: str
+
+
 class IntegrationSummary(BaseModel):
     name: PlatformEnum
     user_id: Optional[int]
@@ -82,6 +87,7 @@ class UserProfile(BaseModel):
 class NewProject(BaseModel):
     name: str
     owner: Optional[str]
+    default_branch: str
     platform: PlatformEnum
     url: str
     parallelism: int = 10
@@ -102,6 +108,7 @@ class NewProject(BaseModel):
 
 class Project(NewProject):
     id: int
+    organisation: OrganisationSummary
 
     class Config:
         orm_mode = True
