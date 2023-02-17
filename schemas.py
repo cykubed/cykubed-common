@@ -181,7 +181,7 @@ class TestRunStatusUpdate(BaseModel):
 
 class NewTestRun(BaseModel):
     """
-    Sent to the hub to kick off a run
+    Sent to the agent to kick off a run
     """
     id: int
     local_id: int
@@ -232,7 +232,14 @@ class CommitDetailsModel(BaseModel):
         orm_mode = True
 
 
-class TestRunCommon(NewTestRun):
+class TestRunCommon(BaseModel):
+    id: int
+    local_id: int
+    project: Project
+    branch: str
+    sha: Optional[str]
+    status: str = 'started'
+
     started: Optional[datetime]
     finished: Optional[datetime] = None
     status: TestRunStatus
@@ -302,6 +309,9 @@ class AppLogMessage(BaseModel):
     level: LogLevel
     msg: str
     step: Optional[int]
+
+    def __str__(self):
+        return self.msg
 
 
 class SlackChannel(BaseModel):
