@@ -24,6 +24,15 @@ class NotificationStates(str, enum.Enum):
     timeout = 'timeout'
 
 
+class AgentEventType(str, enum.Enum):
+    log = 'log'
+    build_completed = 'build_completed'
+    spec_completed = 'spec_completed'
+
+    status = 'status'
+    completed = 'completed'
+
+
 ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.building, TestRunStatus.running]
 
 

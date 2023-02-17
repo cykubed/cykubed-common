@@ -3,7 +3,7 @@ from typing import Optional, List, Union
 
 from pydantic import BaseModel, validator
 
-from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel
+from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType
 
 
 #
@@ -164,32 +164,24 @@ class TestRunSpec(BaseModel):
         orm_mode = True
 
 
-class TestRunSpecs(BaseModel):
-    """
-    Sent by the hub to update the list of specs and the SHA
-    """
-    sha: str
-    specs: list[str]
-
-    class Config:
-        orm_mode = True
-
-
 class TestRunStatusUpdate(BaseModel):
     status: TestRunStatus
 
 
-class NewTestRun(BaseModel):
-    """
-    Sent to the agent to kick off a run
-    """
+class BaseTestRun(BaseModel):
     id: int
     local_id: int
-    url: str
     project: Project
     branch: str
     sha: Optional[str]
     status: str = 'started'
+
+
+class NewTestRun(BaseTestRun):
+    """
+    Sent to the agent to kick off a run
+    """
+    url: str
     cache_key: Optional[str]
 
     class Config:
@@ -204,7 +196,6 @@ class TestRunUpdate(BaseModel):
 
 
 class SpecFile(BaseModel):
-    id: int
     file: str
     started: Optional[datetime] = None
     finished: Optional[datetime] = None
@@ -233,14 +224,7 @@ class CommitDetailsModel(BaseModel):
         orm_mode = True
 
 
-class TestRunCommon(BaseModel):
-    id: int
-    local_id: int
-    project: Project
-    branch: str
-    sha: Optional[str]
-    status: str = 'started'
-
+class TestRunCommon(BaseTestRun):
     started: Optional[datetime]
     finished: Optional[datetime] = None
     status: TestRunStatus
@@ -326,7 +310,11 @@ class SlackChannels(BaseModel):
 
 
 class CompletedBuild(BaseModel):
-    testrun: TestRunDetail
+    """
+    Completed build details
+    """
+    sha: str
+    specs: list[str]
     cache_hash: str
 
 
@@ -340,9 +328,24 @@ class TestRunJobStatus(BaseModel):
 #
 
 
-class AgentLogMessage(AppLogMessage):
-    project_id: int
-    local_id: int
+class AgentEvent(BaseModel):
+    type: AgentEventType
+    testrun_id: int
+
+
+class AgentCompletedBuildMessage(AgentEvent):
+    type = AgentEventType.build_completed
+    build: CompletedBuild
+
+
+class AgentSpecCompleted(AgentEvent):
+    type = AgentEventType.spec_completed
+    result: SpecResult
+
+
+class AgentLogMessage(AgentEvent):
+    type = AgentEventType.log
+    msg: AppLogMessage
 
 
 class LogUpdateMessage(BaseAppSocketMessage):
