@@ -190,6 +190,7 @@ class NewTestRun(BaseModel):
     branch: str
     sha: Optional[str]
     status: str = 'started'
+    cache_key: Optional[str]
 
     class Config:
         orm_mode = True
