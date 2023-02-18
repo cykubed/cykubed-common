@@ -334,17 +334,28 @@ class AgentEvent(BaseModel):
 
 
 class AgentCompletedBuildMessage(AgentEvent):
-    type = AgentEventType.build_completed
+    def __init__(self, **kwargs):
+        super().__init__(type=AgentEventType.build_completed, **kwargs)
+
     build: CompletedBuild
 
 
 class AgentSpecCompleted(AgentEvent):
-    type = AgentEventType.spec_completed
+    def __init__(self, **kwargs):
+        super().__init__(type=AgentEventType.spec_completed, **kwargs)
     result: SpecResult
 
 
+class AgentStatusChanged(AgentEvent):
+    def __init__(self, **kwargs):
+        super().__init__(type=AgentEventType.status, **kwargs)
+    status: TestRunStatus
+
+
 class AgentLogMessage(AgentEvent):
-    type = AgentEventType.log
+    def __init__(self, **kwargs):
+        super().__init__(type=AgentEventType.log, **kwargs)
+
     msg: AppLogMessage
 
 
