@@ -36,8 +36,6 @@ class Logger:
                                             source=self.source)
             httpx.post(f'{settings.AGENT_URL}/log', data=event.json())
 
-        print(msg)
-
     def cmd(self, msg: str):
         self.step += 1
         self.log(msg, LogLevel.cmd)

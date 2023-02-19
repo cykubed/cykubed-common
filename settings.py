@@ -25,6 +25,11 @@ class AppSettings(BaseSettings):
 
     BUILD_TIMEOUT: int = 900
 
+    TEST = False
+
+    MONGO_URL = 'mongodb://localhost:27017'
+    MONGO_DATABASE = 'cykube'
+
     AGENT_URL: str = 'http://127.0.0.1:5000'
     CACHE_URL: str = 'http://127.0.0.1:5001'
     MAIN_API_URL: str = 'https://app.cykube.net/api'
