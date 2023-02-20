@@ -351,7 +351,8 @@ class AgentLogMessage(AgentEvent):
 
 class LogUpdateMessage(BaseAppSocketMessage):
     action = AppWebSocketActions.buildlog
-    msg: AgentLogMessage
+    testrun_id: int
     line_num: int
+    msg: AppLogMessage
 
 
