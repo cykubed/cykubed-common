@@ -288,6 +288,12 @@ class TestRunDetailUpdateMessage(BaseAppSocketMessage):
     testrun: TestRunDetail
 
 
+class TestRunStatusUpdateMessage(BaseAppSocketMessage):
+    action = AppWebSocketActions.status
+    testrun_id: int
+    status: TestRunStatus
+
+
 class AppLogMessage(BaseModel):
     source: str
     ts: datetime
