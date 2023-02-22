@@ -84,6 +84,11 @@ class UserProfile(BaseModel):
     integration_user_id: Optional[int]
 
 
+class JobTemplates(BaseModel):
+    builder: str
+    runner: str
+
+
 class NewProject(BaseModel):
     name: str
     owner: Optional[str]
