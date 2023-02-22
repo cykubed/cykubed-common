@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from typing import Optional, List, Union
 
 from pydantic import BaseModel, validator
@@ -66,6 +66,35 @@ class OrganisationSummary(BaseModel):
     name: str
 
 
+class SubscriptionType(BaseModel):
+    name: str
+    tests_limit: int
+    users_limit: int
+
+    class Config:
+        orm_mode = True
+
+
+class Subscription(BaseModel):
+    started: date
+    subtype: SubscriptionType
+    finished: Optional[date]
+
+    class Config:
+        orm_mode = True
+
+
+class Organisation(BaseModel):
+    id: int
+    name: str
+    tests_used: int
+    tests_remaining: int
+    subscription: Subscription
+
+    class Config:
+        orm_mode = True
+
+
 class IntegrationSummary(BaseModel):
     name: PlatformEnum
     user_id: Optional[int]
@@ -109,6 +138,12 @@ class NewProject(BaseModel):
     runner_cpu: str = '1'
     runner_memory: str = '2G'
     runner_deadline: int = 3600
+
+    build_template: Optional[str]
+    run_template: Optional[str]
+
+    class Config:
+        orm_mode = True
 
 
 class Project(NewProject):
