@@ -139,8 +139,7 @@ class NewProject(BaseModel):
     runner_memory: str = '2G'
     runner_deadline: int = 3600
 
-    build_template: Optional[str]
-    run_template: Optional[str]
+    templates: Optional[JobTemplates]
 
     class Config:
         orm_mode = True
