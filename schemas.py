@@ -84,6 +84,11 @@ class UserProfile(BaseModel):
     integration_user_id: Optional[int]
 
 
+class JobTemplates(BaseModel):
+    builder: str
+    runner: str
+
+
 class NewProject(BaseModel):
     name: str
     owner: Optional[str]
@@ -91,11 +96,11 @@ class NewProject(BaseModel):
     platform: PlatformEnum
     url: str
     parallelism: int = 10
-    build_cmd = 'ng build --output-path=dist'
     checks_integration: bool = True
     slack_channel_id: Optional[str]
     notify_on_passed: Optional[Union[bool, None]] = False
 
+    build_cmd = 'ng build --output-path=dist'
     build_cpu: str = '2'
     build_memory: str = '2G'
     build_deadline: int = 10*60
@@ -288,6 +293,12 @@ class TestRunDetailUpdateMessage(BaseAppSocketMessage):
     testrun: TestRunDetail
 
 
+class TestRunStatusUpdateMessage(BaseAppSocketMessage):
+    action = AppWebSocketActions.status
+    testrun_id: int
+    status: TestRunStatus
+
+
 class AppLogMessage(BaseModel):
     source: str
     ts: datetime
@@ -351,7 +362,8 @@ class AgentLogMessage(AgentEvent):
 
 class LogUpdateMessage(BaseAppSocketMessage):
     action = AppWebSocketActions.buildlog
-    msg: AgentLogMessage
+    testrun_id: int
     line_num: int
+    msg: AppLogMessage
 
 
