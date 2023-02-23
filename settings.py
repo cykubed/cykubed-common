@@ -38,7 +38,5 @@ class AppSettings(BaseSettings):
 
     DIST_CACHE_TTL_HOURS: int = 365*24
 
-    CACHE_DIR: str = '/var/lib/cykubecache'
-
 
 settings = AppSettings()
