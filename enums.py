@@ -34,6 +34,7 @@ class AgentEventType(str, enum.Enum):
 
 
 ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.building, TestRunStatus.running]
+INACTIVE_STATES = [TestRunStatus.cancelled, TestRunStatus.failed, TestRunStatus.passed, TestRunStatus.timeout]
 
 
 class TestResultStatus(str, enum.Enum):
