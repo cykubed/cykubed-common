@@ -3,7 +3,7 @@ from functools import cache
 
 from kubernetes import client, config
 
-NAMESPACE = 'cykube'
+NAMESPACE = os.environ.get('NAMESPACE', 'cykube')
 
 
 def init():
