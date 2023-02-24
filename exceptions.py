@@ -4,3 +4,7 @@ class AuthException(Exception):
 
 class BuildFailedException(Exception):
     pass
+
+
+class NoBranchesException(Exception):
+    pass
