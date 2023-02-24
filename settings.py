@@ -36,7 +36,7 @@ class AppSettings(BaseSettings):
     BUILD_DIR = '/tmp/cykube/build'
     RESULTS_FOLDER = '/tmp/cykube/results'
 
-    DIST_CACHE_TTL_HOURS: int = 365*24
+    DIST_CACHE_STATENESS_WINDOW_DAYS: int = 7
 
     CYKUBE_CACHE_DIR: str = '/var/lib/cykubecache'
 
