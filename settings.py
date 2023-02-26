@@ -35,6 +35,7 @@ class AppSettings(BaseSettings):
     MAIN_API_URL: str = 'https://app.cykube.net/api'
     BUILD_DIR = '/tmp/cykube/build'
     RESULTS_FOLDER = '/tmp/cykube/results'
+    BUILD_NGINX_PORT: int = 80
 
     DIST_CACHE_TTL_HOURS: int = 365*24
 
