@@ -134,6 +134,7 @@ class NewProject(BaseModel):
     build_memory: str = '2G'
     build_deadline: int = 10*60
 
+    start_runners_first: bool
     runner_image: Optional[str]
     runner_cpu: str = '1'
     runner_memory: str = '2G'
