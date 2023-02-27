@@ -289,6 +289,7 @@ class TestRunSummary(TestRunCommon):
 
 class TestRunDetail(TestRunCommon):
     files: Optional[list[SpecFile]]
+    duration: Optional[int]
 
     @validator('files', pre=True)
     def _iter_to_list(cls, v):
