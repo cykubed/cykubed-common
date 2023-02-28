@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime, date
 from typing import Optional, List, Union
 
@@ -106,7 +107,6 @@ class UserProfile(BaseModel):
     token: str
     email: str
     integrations: list[IntegrationSummary]
-    hub_token: Optional[str]
     organisation_id:  int
     organisation_name: str
     is_admin: bool
@@ -128,6 +128,8 @@ class NewProject(BaseModel):
     checks_integration: bool = True
     slack_channel_id: Optional[str]
     notify_on_passed: Optional[Union[bool, None]] = False
+
+    agent_id: uuid.UUID
 
     build_cmd = 'ng build --output-path=dist'
     build_cpu: str = '2'
@@ -305,7 +307,9 @@ class TestRunDetail(TestRunCommon):
         orm_mode = True
 
 
-class HubStateModel(BaseModel):
+class AgentModel(BaseModel):
+    token: uuid.UUID
+    name: str
     first_connected: Optional[datetime]
     connected: bool
 
@@ -320,9 +324,9 @@ class BaseAppSocketMessage(BaseModel):
         return f'{self.action} msg'
 
 
-class HubStateMessage(BaseAppSocketMessage):
-    action = AppWebSocketActions.hub
-    hubstate: HubStateModel
+class AgentStateMessage(BaseAppSocketMessage):
+    action = AppWebSocketActions.agent
+    agent: AgentModel
 
 
 class TestRunDetailUpdateMessage(BaseAppSocketMessage):
