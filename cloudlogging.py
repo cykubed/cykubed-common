@@ -4,14 +4,7 @@ import traceback
 
 import google.cloud.logging
 import httpx
-import loguru
 from loguru import logger
-
-from messages import queue
-
-
-def without_keys(d, keys):
-    return {x: d[x] for x in d if x not in keys}
 
 
 class StackDriverSink:
@@ -49,24 +42,11 @@ class StackDriverSink:
                                                 'line': record["line"]})
 
 
-def rest_logsink(msg: loguru.Message):
-    record = msg.record
-    tr = record['extra'].get('tr')
-    if tr:
-        id = tr.id
-    else:
-        id = record['extra'].get('id')
-    if id:
-        queue.send_log('agent', id, msg)
-
-
-def configure_logging():
-    logger.add(rest_logsink,
-               format="{message}", level="INFO")
+def configure_stackdriver_logging(name: str):
     # if we're running in GCP, use structured logging
     try:
         resp = httpx.get('http://metadata.google.internal')
         if resp.status_code == 200 and resp.headers['metadata-flavor'] == 'Google':
-            logger.add(StackDriverSink())
+            logger.add(StackDriverSink(name))
     except:
         pass
