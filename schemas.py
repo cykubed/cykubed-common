@@ -129,7 +129,7 @@ class NewProject(BaseModel):
     slack_channel_id: Optional[str]
     notify_on_passed: Optional[Union[bool, None]] = False
 
-    agent_id: uuid.UUID
+    agent_id: int
 
     build_cmd = 'ng build --output-path=dist'
     build_cpu: str = '2'
@@ -308,6 +308,7 @@ class TestRunDetail(TestRunCommon):
 
 
 class AgentModel(BaseModel):
+    id: int
     token: uuid.UUID
     name: str
     first_connected: Optional[datetime]
