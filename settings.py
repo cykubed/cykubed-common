@@ -3,6 +3,7 @@ from pydantic import BaseSettings
 
 class AppSettings(BaseSettings):
     API_TOKEN: str = 'cykubeauth'
+    AGENT_NAME: str = 'default'
 
     K8: bool = True
 
