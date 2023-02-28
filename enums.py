@@ -48,7 +48,7 @@ class AppWebSocketActions(str, enum.Enum):
     status = 'status'
     specfile = 'specfile'
     buildlog = 'buildlog'
-    hub = 'hub'
+    agent = 'agent'
 
 
 class AgentWebsocketActions(str, enum.Enum):
