@@ -21,7 +21,7 @@ class CodeFrame(BaseModel):
 
 class TestResultError(BaseModel):
     title: str
-    type: str
+    type: Optional[str]
     message: str
     stack: str
     code_frame: CodeFrame
