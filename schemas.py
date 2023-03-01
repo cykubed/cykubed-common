@@ -409,8 +409,7 @@ class AgentSpecStarted(AgentEvent):
 
 
 class AgentSpecCompleted(AgentEvent):
-    spec: SpecFile
-    result: SpecResult
+    spec: CompletedSpecFile
 
 
 class AgentStatusChanged(AgentEvent):
