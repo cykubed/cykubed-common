@@ -41,7 +41,6 @@ class TestResult(BaseModel):
 
 
 class SpecResult(BaseModel):
-    file: str
     tests: List[TestResult]
     video: Optional[str]
 
@@ -51,11 +50,6 @@ class ResultSummary(BaseModel):
     skipped: int = 0
     passes: int = 0
     failures: int = 0
-
-
-class Results(ResultSummary):
-    testrun_id: int
-    specs: List[SpecResult]
 
 
 class OrganisationIn(BaseModel):
@@ -240,8 +234,10 @@ class TestRunUpdate(BaseModel):
 
 class SpecFile(BaseModel):
     file: str
+    pod_name: Optional[str]
     started: Optional[datetime] = None
     finished: Optional[datetime] = None
+    duration: Optional[int]
     failures: int = 0
     result: Optional[SpecResult]
 
@@ -335,6 +331,16 @@ class TestRunDetailUpdateMessage(BaseAppSocketMessage):
     testrun: TestRunDetail
 
 
+class SpecFileStartedMessage(BaseAppSocketMessage):
+    action = AppWebSocketActions.spec_started
+    spec: SpecFile
+
+
+class SpecFileCompletedMessage(BaseAppSocketMessage):
+    action = AppWebSocketActions.spec_completed
+    spec: SpecFile
+
+
 class TestRunStatusUpdateMessage(BaseAppSocketMessage):
     action = AppWebSocketActions.status
     testrun_id: int
@@ -390,7 +396,12 @@ class AgentCompletedBuildMessage(AgentEvent):
     build: CompletedBuild
 
 
+class AgentSpecStarted(AgentEvent):
+    spec: SpecFile
+
+
 class AgentSpecCompleted(AgentEvent):
+    spec: SpecFile
     result: SpecResult
 
 
