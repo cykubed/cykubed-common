@@ -246,7 +246,8 @@ class SpecFile(BaseModel):
 
 
 class CompletedSpecFile(BaseModel):
-    spec: SpecFile
+    file: str
+    finished: datetime
     result: SpecResult
 
 
