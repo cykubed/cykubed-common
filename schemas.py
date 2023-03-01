@@ -245,6 +245,11 @@ class SpecFile(BaseModel):
         orm_mode = True
 
 
+class CompletedSpecFile(BaseModel):
+    spec: SpecFile
+    result: SpecResult
+
+
 class AuthorModel(BaseModel):
     name: str
     email: str
@@ -397,7 +402,9 @@ class AgentCompletedBuildMessage(AgentEvent):
 
 
 class AgentSpecStarted(AgentEvent):
-    spec: SpecFile
+    file: str
+    pod_name: Optional[str]
+    started: datetime
 
 
 class AgentSpecCompleted(AgentEvent):
