@@ -61,3 +61,6 @@ def disable_hc_logging():
     # disable logging for health check
     logging.getLogger("uvicorn.access").addFilter(HCFilter())
 
+
+def utcnow():
+    return datetime.datetime.utcnow()
