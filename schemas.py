@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime, date
 from typing import Optional, List, Union
 
@@ -310,6 +311,7 @@ class TestRunDetail(TestRunCommon):
 
 class AgentModel(BaseModel):
     id: int
+    token: uuid.UUID
     name: str
     first_connected: Optional[datetime]
     connected: bool
