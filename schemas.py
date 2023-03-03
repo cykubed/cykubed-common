@@ -4,7 +4,8 @@ from typing import Optional, List, Union
 
 from pydantic import BaseModel, validator
 
-from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType
+from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
+    SpecFileStatus
 
 
 #
@@ -234,9 +235,11 @@ class TestRunUpdate(BaseModel):
 
 class SpecFile(BaseModel):
     file: str
+    status: Optional[SpecFileStatus]
     pod_name: Optional[str]
     started: Optional[datetime] = None
     finished: Optional[datetime] = None
+    termination_count: Optional[int] = 0
     duration: Optional[int]
     failures: int = 0
     result: Optional[SpecResult]
@@ -337,13 +340,9 @@ class TestRunDetailUpdateMessage(BaseAppSocketMessage):
     testrun: TestRunDetail
 
 
-class SpecFileStartedMessage(BaseAppSocketMessage):
-    action = AppWebSocketActions.spec_started
-    spec: SpecFile
-
-
-class SpecFileCompletedMessage(BaseAppSocketMessage):
-    action = AppWebSocketActions.spec_completed
+class SpecFileMessage(BaseAppSocketMessage):
+    action = AppWebSocketActions.specfile
+    testrun_id: int
     spec: SpecFile
 
 
@@ -406,6 +405,14 @@ class AgentSpecStarted(AgentEvent):
     file: str
     pod_name: Optional[str]
     started: datetime
+
+
+class AgentSpecTerminated(AgentEvent):
+    """
+    Graceful shutdown due to spot pod termination
+    """
+    file: str
+    pod_name: Optional[str]
 
 
 class AgentSpecCompleted(AgentEvent):
