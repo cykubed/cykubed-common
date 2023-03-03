@@ -407,11 +407,18 @@ class AgentSpecStarted(AgentEvent):
     started: datetime
 
 
-class AgentSpecTerminated(AgentEvent):
+class SpecTerminated(BaseModel):
+    """
+    Sent when a pod is terminated by Kuberenetes
+    """
+    file: str
+
+
+class AgentSpecTerminated(SpecTerminated, AgentEvent):
     """
     Graceful shutdown due to spot pod termination
     """
-    file: str
+    pass
 
 
 class AgentSpecCompleted(AgentEvent):
