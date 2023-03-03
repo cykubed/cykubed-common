@@ -412,7 +412,6 @@ class AgentSpecTerminated(AgentEvent):
     Graceful shutdown due to spot pod termination
     """
     file: str
-    pod_name: Optional[str]
 
 
 class AgentSpecCompleted(AgentEvent):
