@@ -18,6 +18,12 @@ class TestRunStatus(str, enum.Enum):
     passed = 'passed'
 
 
+class SpecFileStatus(str, enum.Enum):
+    started = 'started'
+    passed = 'passed'
+    failed = 'failed'
+
+
 class NotificationStates(str, enum.Enum):
     failed = 'failed'
     passed = 'passed'
@@ -27,7 +33,9 @@ class NotificationStates(str, enum.Enum):
 class AgentEventType(str, enum.Enum):
     log = 'log'
     build_completed = 'build_completed'
+    spec_started = 'spec_started'
     spec_completed = 'spec_completed'
+    spec_terminated = 'spec_terminated'
 
     status = 'status'
     completed = 'completed'

@@ -4,7 +4,8 @@ from typing import Optional, List, Union
 
 from pydantic import BaseModel, validator
 
-from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType
+from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
+    SpecFileStatus
 
 
 #
@@ -41,7 +42,6 @@ class TestResult(BaseModel):
 
 
 class SpecResult(BaseModel):
-    file: str
     tests: List[TestResult]
     video: Optional[str]
 
@@ -51,11 +51,6 @@ class ResultSummary(BaseModel):
     skipped: int = 0
     passes: int = 0
     failures: int = 0
-
-
-class Results(ResultSummary):
-    testrun_id: int
-    specs: List[SpecResult]
 
 
 class OrganisationIn(BaseModel):
@@ -240,13 +235,23 @@ class TestRunUpdate(BaseModel):
 
 class SpecFile(BaseModel):
     file: str
+    status: Optional[SpecFileStatus]
+    pod_name: Optional[str]
     started: Optional[datetime] = None
     finished: Optional[datetime] = None
+    termination_count: Optional[int] = 0
+    duration: Optional[int]
     failures: int = 0
     result: Optional[SpecResult]
 
     class Config:
         orm_mode = True
+
+
+class CompletedSpecFile(BaseModel):
+    file: str
+    finished: datetime
+    result: SpecResult
 
 
 class AuthorModel(BaseModel):
@@ -335,6 +340,12 @@ class TestRunDetailUpdateMessage(BaseAppSocketMessage):
     testrun: TestRunDetail
 
 
+class SpecFileMessage(BaseAppSocketMessage):
+    action = AppWebSocketActions.specfile
+    testrun_id: int
+    spec: SpecFile
+
+
 class TestRunStatusUpdateMessage(BaseAppSocketMessage):
     action = AppWebSocketActions.status
     testrun_id: int
@@ -390,8 +401,28 @@ class AgentCompletedBuildMessage(AgentEvent):
     build: CompletedBuild
 
 
+class AgentSpecStarted(AgentEvent):
+    file: str
+    pod_name: Optional[str]
+    started: datetime
+
+
+class SpecTerminated(BaseModel):
+    """
+    Sent when a pod is terminated by Kuberenetes
+    """
+    file: str
+
+
+class AgentSpecTerminated(SpecTerminated, AgentEvent):
+    """
+    Graceful shutdown due to spot pod termination
+    """
+    pass
+
+
 class AgentSpecCompleted(AgentEvent):
-    result: SpecResult
+    spec: CompletedSpecFile
 
 
 class AgentStatusChanged(AgentEvent):
