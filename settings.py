@@ -26,6 +26,7 @@ class AppSettings(BaseSettings):
     ENCODING = 'utf8'
 
     BUILD_TIMEOUT: int = 900
+    NODE_PATH: str = None
 
     TEST = False
 
