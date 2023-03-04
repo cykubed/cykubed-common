@@ -41,6 +41,7 @@ class AppSettings(BaseSettings):
 
     SENTRY_DSN: str = None
 
+    ARCHIVE = False
     DIST_CACHE_STATENESS_WINDOW_DAYS: int = 7
 
     CYKUBE_CACHE_DIR: str = '/var/lib/cykubecache'
