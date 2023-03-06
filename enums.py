@@ -22,6 +22,7 @@ class SpecFileStatus(str, enum.Enum):
     started = 'started'
     passed = 'passed'
     failed = 'failed'
+    cancelled = 'cancelled'
 
 
 class NotificationStates(str, enum.Enum):
