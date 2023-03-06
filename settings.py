@@ -12,16 +12,11 @@ class AppSettings(BaseSettings):
     TEST_RUN_TIMEOUT: int = 30 * 60
     SPEC_FILE_TIMEOUT: int = 5 * 60
 
-    JOB_TTL = 3600
-    DEFAULT_BUILD_JOB_DEADLINE = 2 * 60
-    JOB_STATUS_POLL_PERIOD = 10
-
-    DEFAULT_RUNNER_JOB_DEADLINE = 3600
-
-    DIST_BUILD_TIMEOUT: int = 10 * 60
     SERVER_START_TIMEOUT: int = 10 * 60
-    SERVER_PORT: int = 8000
     CYPRESS_RUN_TIMEOUT: int = 10*60
+
+    # keep app distributions for 1 hr in case of reruns
+    APP_DISTRIBUTION_CACHE_TTL: int = 3600
 
     ENCODING = 'utf8'
 
