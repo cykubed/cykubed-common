@@ -27,7 +27,7 @@ class AppSettings(BaseSettings):
 
     MAX_HTTP_RETRIES = 10
 
-    MONGO_URL = 'mongodb://localhost:27017'
+    MONGO_ROOT_PASSWORD = ''
     MONGO_DATABASE = 'cykube'
 
     AGENT_URL: str = 'http://127.0.0.1:5000'
