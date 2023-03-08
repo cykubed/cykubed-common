@@ -1,6 +1,6 @@
-import asyncio
 from datetime import datetime, timedelta
 from functools import cache
+from time import sleep
 
 import aiofiles
 import pymongo
@@ -16,7 +16,7 @@ from common.utils import utcnow
 
 
 @cache
-def client():
+def async_client():
     if settings.TEST:
         from mongomock_motor import AsyncMongoMockClient
         return AsyncMongoMockClient()
@@ -29,30 +29,40 @@ def client():
 
 
 @cache
-def db():
-    return client()[settings.MONGO_DATABASE]
+def sync_client():
+    if settings.TEST:
+        from mongomock import MongoClient as MockClient
+        return MockClient()
+    if settings.MONGO_ROOT_PASSWORD:
+        return MongoClient(host=settings.MONGO_HOST,
+                           username=settings.MONGO_USER,
+                           password=settings.MONGO_ROOT_PASSWORD)
+    return MongoClient()
+
+
+@cache
+def async_db():
+    return async_client()[settings.MONGO_DATABASE]
 
 
 @cache
 def runs_coll():
-    return db().runs
+    return async_db().runs
 
 
 @cache
 def specs_coll():
-    return db().spec
+    return async_db().spec
 
 
-async def connect():
+def connect():
     if settings.MONGO_ROOT_PASSWORD:
         # we're running in a cluster: wait till we can see 3 nodes
-        cl = MongoClient(host=settings.MONGO_HOST,
-                         username=settings.MONGO_USER,
-                         password=settings.MONGO_ROOT_PASSWORD)
+        cl = sync_client()
         num_nodes = len(cl.nodes)
         while num_nodes < 3:
             logger.info(f"Only {num_nodes} available: waiting...")
-            await asyncio.sleep(10)
+            sleep(10)
             num_nodes = len(cl.nodes)
 
         logger.info(f"Connected to MongoDB replicaset")
