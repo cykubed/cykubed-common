@@ -398,7 +398,9 @@ class AgentEvent(BaseModel):
 
 
 class AgentCompletedBuildMessage(AgentEvent):
-    build: CompletedBuild
+    sha: str
+    specs: list[str]
+    cache_hash: str
 
 
 class AgentSpecStarted(AgentEvent):
@@ -407,22 +409,10 @@ class AgentSpecStarted(AgentEvent):
     started: datetime
 
 
-class SpecTerminated(BaseModel):
-    """
-    Sent when a pod is terminated by Kuberenetes
-    """
-    file: str
-
-
-class AgentSpecTerminated(SpecTerminated, AgentEvent):
-    """
-    Graceful shutdown due to spot pod termination
-    """
-    pass
-
-
 class AgentSpecCompleted(AgentEvent):
-    spec: CompletedSpecFile
+    file: str
+    finished: datetime
+    result: SpecResult
 
 
 class AgentStatusChanged(AgentEvent):
