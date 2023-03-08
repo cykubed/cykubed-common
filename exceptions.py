@@ -8,3 +8,7 @@ class BuildFailedException(Exception):
 
 class NoBranchesException(Exception):
     pass
+
+
+class MongoConnectionException(Exception):
+    pass

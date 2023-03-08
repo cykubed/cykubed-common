@@ -25,6 +25,8 @@ class AppSettings(BaseSettings):
 
     TEST = False
 
+    MONGO_CONNECT_TIMEOUT = 60
+
     MAX_HTTP_RETRIES = 10
 
     MONGO_ROOT_PASSWORD = ''
