@@ -28,6 +28,7 @@ class AppSettings(BaseSettings):
     MONGO_CONNECT_TIMEOUT = 60
 
     MAX_HTTP_RETRIES = 10
+    MESSAGE_POLL_PERIOD = 1
 
     MONGO_ROOT_PASSWORD = ''
     MONGO_HOST = 'cykube-mongodb-0.cykube-mongodb-headless'
