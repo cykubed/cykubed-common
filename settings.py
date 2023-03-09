@@ -31,9 +31,9 @@ class AppSettings(BaseSettings):
     MESSAGE_POLL_PERIOD = 1
 
     MONGO_ROOT_PASSWORD = ''
-    MONGO_HOST = 'cykube-mongodb-0.cykube-mongodb-headless'
+    MONGO_HOST = 'localhost'
     MONGO_USER = 'root'
-    MONGO_DATABASE = 'cykube'
+    MONGO_DATABASE = 'cykubeagent'
 
     AGENT_URL: str = 'http://127.0.0.1:5000'
     CACHE_URL: str = 'http://127.0.0.1:5001'
