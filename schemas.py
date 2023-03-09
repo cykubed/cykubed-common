@@ -373,15 +373,6 @@ class SlackChannels(BaseModel):
     channels: list[SlackChannel]
 
 
-class CompletedBuild(BaseModel):
-    """
-    Completed build details
-    """
-    sha: str
-    specs: list[str]
-    cache_hash: str
-
-
 class TestRunJobStatus(BaseModel):
     name: str
     status: str
