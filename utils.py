@@ -79,7 +79,7 @@ def ensure_mongo_connection():
     if settings.MONGO_ROOT_PASSWORD:
         start = time.time()
         num_nodes = len(cl.nodes)
-        while num_nodes < 3:
+        while num_nodes < 2:
             logger.info(f"Only {num_nodes} available: waiting...")
             t = time.time() - start
             if t > settings.MONGO_CONNECT_TIMEOUT:
@@ -87,13 +87,14 @@ def ensure_mongo_connection():
             sleep(10)
             num_nodes = len(cl.nodes)
 
-            logger.info(f"Connected to MongoDB replicaset")
+            logger.info(f"Connected to MongoDB replicaset ({num_nodes} nodes)")
 
 
 @cache
 def mongo_sync_client():
     if settings.MONGO_ROOT_PASSWORD:
-        return MongoClient(host=settings.MONGO_HOST,
+
+        return MongoClient(host=settings.MONGO_HOST.split(','),
                            username=settings.MONGO_USER,
                            password=settings.MONGO_ROOT_PASSWORD)
     return MongoClient()
