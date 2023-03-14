@@ -64,7 +64,7 @@ class AsyncFSClient(object):
             except ClientError:
                 return False
 
-        tasks = [fetch(h) for h in self.servers]
+        tasks = [asyncio.create_task(fetch(h)) for h in self.servers]
         done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
         if not done:
             raise FilestoreReadError("Failed to download from any replica")
@@ -85,6 +85,7 @@ async def download(file: str, target: str = None):
     client = AsyncFSClient()
     try:
         await client.download(file, target)
+        logger.info(f"Downloaded {file}")
     finally:
         await client.close()
 
