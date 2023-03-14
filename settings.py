@@ -9,10 +9,7 @@ class AppSettings(BaseSettings):
 
     NAMESPACE = 'cykube'
 
-    TEST_RUN_TIMEOUT: int = 30 * 60
-    SPEC_FILE_TIMEOUT: int = 5 * 60
-
-    SERVER_START_TIMEOUT: int = 10 * 60
+    SERVER_START_TIMEOUT: int = 60
     CYPRESS_RUN_TIMEOUT: int = 10*60
 
     # keep app distributions for 1 hr in case of reruns
@@ -27,28 +24,30 @@ class AppSettings(BaseSettings):
 
     TEST = False
 
-    MONGO_CONNECT_TIMEOUT = 60
-
     MAX_HTTP_RETRIES = 10
     MESSAGE_POLL_PERIOD = 1
-
-    MONGO_ROOT_PASSWORD = ''
-    MONGO_HOST = 'localhost'
-    MONGO_USER = 'root'
-    MONGO_DATABASE = 'cykubeagent'
 
     AGENT_URL: str = 'http://127.0.0.1:5000'
     CACHE_URL: str = 'http://127.0.0.1:5001'
     MAIN_API_URL: str = 'https://app.cykube.net/api'
+
     BUILD_DIR = '/tmp/cykube/build'
     RESULTS_FOLDER = '/tmp/cykube/results'
+    CACHE_DIR: str = '/tmp/cykube/cache'
 
     SENTRY_DSN: str = None
 
-    ARCHIVE = False
-    DIST_CACHE_STATENESS_WINDOW_DAYS: int = 7
-
-    CYKUBE_CACHE_DIR: str = '/var/lib/cykubecache'
+    HOSTNAME: str = None  # for testin
+    FILESTORE_SERVERS: str  # comma-delimeted list
+    FILESTORE_TOTAL_TIMEOUT = 5*60
+    FILESTORE_CONNECT_TIMEOUT = 2.0
+    FILESTORE_READ_TIMEOUT = 30.0
+    FILESTORE_DISK_SIZE_GB = 10.0
+    FILESTORE_MIN_WRITE: int = 2
+    FILESTORE_SYNC_PERIOD: int = 60
+    CHUNK_SIZE: int = 8192
 
 
 settings = AppSettings()
+
+

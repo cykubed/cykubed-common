@@ -12,3 +12,11 @@ class NoBranchesException(Exception):
 
 class MongoConnectionException(Exception):
     pass
+
+
+class FilestoreWriteError(Exception):
+    pass
+
+
+class FilestoreReadError(Exception):
+    pass
