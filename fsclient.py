@@ -4,6 +4,7 @@ import asyncio
 import aiofiles
 import aiofiles.os
 import aiohttp
+import aioshutil
 from aiohttp import ClientError
 from loguru import logger
 
@@ -25,6 +26,7 @@ class AsyncFSClient(object):
         async def upload_file(host):
             try:
                 file = {'file': open(path, 'rb')}
+                # st = await aiofiles.os.stat(path)
                 resp = await self.session.post(f'http://{host}', data=file)
                 return resp.status == 200
             except ClientError as ex:
@@ -59,7 +61,7 @@ class AsyncFSClient(object):
                     async with self.session.get(f'http://{host}/{fname}') as resp:
                         async for chunk in resp.content.iter_chunked(settings.CHUNK_SIZE):
                             await f.write(chunk)
-                    await aiofiles.os.rename(f.name, target)
+                    await aioshutil.move(f.name, target)
                     return True
             except ClientError:
                 return False

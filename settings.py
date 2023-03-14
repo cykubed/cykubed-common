@@ -39,12 +39,13 @@ class AppSettings(BaseSettings):
 
     HOSTNAME: str = None  # for testin
     FILESTORE_SERVERS: str  # comma-delimeted list
+    FILESTORE_CACHE_SIZE: int = 10*1024*1024*1024  # 10GB cache suze
     FILESTORE_TOTAL_TIMEOUT = 5*60
     FILESTORE_CONNECT_TIMEOUT = 2.0
     FILESTORE_READ_TIMEOUT = 30.0
     FILESTORE_DISK_SIZE_GB = 10.0
-    FILESTORE_MIN_WRITE: int = 2
-    FILESTORE_SYNC_PERIOD: int = 60
+    FILESTORE_MIN_WRITE: int = 1
+    FILESTORE_SYNC_PERIOD: int = 60*10
     CHUNK_SIZE: int = 8192
 
 
