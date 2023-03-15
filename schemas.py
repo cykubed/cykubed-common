@@ -8,6 +8,10 @@ from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketAc
     SpecFileStatus
 
 
+class AgentName(BaseModel):
+    name: str
+
+
 #
 # Test results
 #
@@ -317,7 +321,7 @@ class AgentModel(BaseModel):
     token: uuid.UUID
     name: str
     first_connected: Optional[datetime]
-    connected: bool
+    connected: int
 
     class Config:
         orm_mode = True
