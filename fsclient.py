@@ -25,6 +25,8 @@ class AsyncFSClient(object):
         """
 
         self.servers = settings.FILESTORE_SERVERS.split(',')
+
+    async def connect(self):
         timeout = aiohttp.ClientTimeout(total=settings.FILESTORE_TOTAL_TIMEOUT,
                                         connect=settings.FILESTORE_CONNECT_TIMEOUT,
                                         sock_connect=settings.FILESTORE_CONNECT_TIMEOUT,

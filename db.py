@@ -4,10 +4,12 @@ from time import sleep
 
 import dns
 from loguru import logger
-from redis import Redis
-from redis.asyncio import Redis
-from redis.asyncio.retry import Retry
-from redis.asyncio.sentinel import Sentinel
+from redis import Redis as SyncRedis
+from redis.retry import Retry as SyncRetry
+from redis.sentinel import Sentinel as SyncSentinel
+from redis.asyncio import Redis as AsyncRedis
+from redis.asyncio.retry import Retry as AsyncRetry
+from redis.asyncio.sentinel import Sentinel as AsyncSentinel
 from redis.backoff import ConstantBackoff
 from redis.exceptions import (
     BusyLoadingError,
@@ -23,11 +25,16 @@ from common.utils import utcnow
 
 
 @cache
-def redis() -> Redis:
-    return get_redis(Sentinel, Retry)
+def sync_redis() -> SyncRedis:
+    return get_redis(SyncSentinel, SyncRedis, SyncRetry)
 
 
-def get_redis(sentinel_class, retry_class):
+@cache
+def async_redis() -> AsyncRedis:
+    return get_redis(AsyncSentinel, AsyncRedis, AsyncRetry)
+
+
+def get_redis(sentinel_class, redis_class, retry_class):
     if os.path.exists('/var/run/secrets/kubernetes.io/serviceaccount/namespace'):
         # we're running inside K8
         hosts = get_redis_sentinel_hosts()
@@ -43,28 +50,32 @@ def get_redis(sentinel_class, retry_class):
                                    decode_responses=True,
                                     retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError])
     else:
-        return Redis(os.environ.get('REDIS_HOST', 'localhost'))
+        return redis_class(host=os.environ.get('REDIS_HOST', 'localhost'), decode_responses=True)
 
 
 async def send_status_message(testrun_id: int, status: TestRunStatus):
-    await redis().publish('messages', AgentStatusChanged(testrun_id=testrun_id,
-                                                         type=AgentEventType.status,
-                                                         status=status).json())
+    await async_redis().publish('messages', AgentStatusChanged(testrun_id=testrun_id,
+                                                               type=AgentEventType.status,
+                                                               status=status).json())
 
 
 async def new_testrun(tr: NewTestRun):
-    await redis().set(f'testrun:{tr.id}', tr.json())
+    await async_redis().set(f'testrun:{tr.id}', tr.json())
 
 
 async def get_testrun(id: int) -> NewTestRun | None:
-    d = await redis().get(f'testrun:{id}')
+    d = await async_redis().get(f'testrun:{id}')
     if d:
-        return NewTestRun.parse_raw(d['data'])
+        return NewTestRun.parse_raw(d)
     return None
 
 
 async def send_message(msg):
-    await redis().publish('messages', msg.json())
+    await async_redis().publish('messages', msg.json())
+
+
+def send_message_sync(msg):
+    sync_redis().publish('messages', msg.json())
 
 
 async def cancel_testrun(trid: int):
@@ -72,20 +83,20 @@ async def cancel_testrun(trid: int):
     Just remove the keys
     :param trid: test run ID
     """
-    r = redis()
+    r = async_redis()
     await r.delete(f'testrun:{trid}:specs')
     await r.delete(f'testrun:{trid}')
 
 
-async def spec_terminated(trid: int, spec: str):
+def spec_terminated(trid: int, spec: str):
     """
     Return the spec to the pool
     """
-    await redis().sadd(f'testrun:{trid}:specs', spec)
+    sync_redis().sadd(f'testrun:{trid}:specs', spec)
 
 
 async def next_spec(trid: int, hostname: str) -> str | None:
-    spec = await redis().spop(f'testrun:{trid}:specs')
+    spec = await async_redis().spop(f'testrun:{trid}:specs')
     if spec:
         await send_message(AgentSpecStarted(type=AgentEventType.spec_started,
                                             testrun_id=trid,
@@ -102,7 +113,7 @@ async def send_spec_completed_message(tr: NewTestRun, spec: str, result: SpecRes
 
 
 async def set_build_details(testrun: NewTestRun, specs: list[str]) -> NewTestRun | None:
-    r = redis()
+    r = async_redis()
     await r.sadd(f'testrun:{testrun.id}:specs', *specs)
     testrun.status = TestRunStatus.running
     await r.set(f'testrun:{testrun.id}', testrun.json())
