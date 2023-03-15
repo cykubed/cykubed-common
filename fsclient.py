@@ -45,24 +45,23 @@ class AsyncFSClient(object):
     async def close(self):
         await self.session.close()
 
-    async def download(self, fname, target=None):
+    async def download(self, fname, target=None) -> str:
         """
         Fetch from all servers, but return when any succeeds
         :param fname: file name
-        :param target: target (local) file path
-        :return:
+        :param target: target (local) file path. If None then return tempfile
+        :return: local path of downloaded file.
         """
-        if not target:
-            target = fname
-
         async def fetch(host):
             try:
                 async with aiofiles.tempfile.NamedTemporaryFile('wb', delete=False) as f:
                     async with self.session.get(f'http://{host}/{fname}') as resp:
                         async for chunk in resp.content.iter_chunked(settings.CHUNK_SIZE):
                             await f.write(chunk)
-                    await aioshutil.move(f.name, target)
-                    return True
+                    if target:
+                        await aioshutil.move(f.name, target)
+                        return target
+                    return f.name
             except ClientError:
                 return False
 
@@ -96,10 +95,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('cmd', choices=['set', 'get'])
     parser.add_argument('file', type=str)
-    parser.add_argument('-o', '--output', type=str)
     args = parser.parse_args()
     if args.cmd == 'set':
         asyncio.run(upload(args.file))
     else:
-        asyncio.run(download(args.file, args.output))
+        print(asyncio.run(download(args.file)))
 
