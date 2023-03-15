@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import subprocess
 import time
 
 import aiofiles
@@ -11,7 +12,6 @@ from loguru import logger
 
 from common.exceptions import FilestoreWriteError, FilestoreReadError
 from common.settings import settings
-from utils import runcmd
 
 
 class AsyncFSClient(object):
@@ -40,7 +40,11 @@ class AsyncFSClient(object):
         raise FilestoreReadError()
 
     async def upload(self, path):
-
+        """
+        Upload a file. Since this is a flat filestore only the final path segment is used as a key
+        :param path: source path
+        :return: True if fail successfully stored
+        """
         async def upload_file(host):
             try:
                 file = {'file': open(path, 'rb')}
@@ -82,10 +86,25 @@ class AsyncFSClient(object):
             task.cancel()
         return True
 
+    async def delete(self, fname) -> bool:
+        """
+        Delete the file from all accessible nodes
+        """
+        async def do_delete(host):
+            try:
+                async with self.session.delete(f'http://{host}/{fname}') as resp:
+                    return resp.status == 200
+            except ClientError:
+                return False
+
+        tasks = [asyncio.create_task(do_delete(h)) for h in self.servers]
+        done, pending = await asyncio.wait(tasks)
+        return bool(done)
+
     async def download_and_untar(self, fname, target_dir):
 
         def untar(path):
-            runcmd(f'/bin/tar xf {path} -I lz4', cwd=target_dir)
+            subprocess.run(f'/bin/tar xf {path} -I lz4', cwd=target_dir)
 
         tarfile = await self.download(fname)
         loop = asyncio.get_running_loop()
@@ -120,6 +139,7 @@ class AsyncFSClient(object):
         for task in pending:
             task.cancel()
         return list(done)[0].result()
+
 
 async def upload(file: str):
     client = AsyncFSClient()

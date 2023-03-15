@@ -67,6 +67,16 @@ async def send_message(msg):
     await redis().publish('messages', msg.json())
 
 
+async def cancel_testrun(trid: int):
+    """
+    Just remove the keys
+    :param trid: test run ID
+    """
+    r = redis()
+    await r.delete(f'testrun:{trid}:specs')
+    await r.delete(f'testrun:{trid}')
+
+
 async def spec_terminated(trid: int, spec: str):
     """
     Return the spec to the pool

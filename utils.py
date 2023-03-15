@@ -2,20 +2,12 @@ import base64
 import datetime
 import logging
 import os
-import time
 from decimal import Decimal
-from functools import cache
 from json import JSONEncoder
-from time import sleep
 from uuid import UUID
-
-from loguru import logger
-from pymongo import MongoClient
 
 from . import schemas
 from .enums import TestRunStatus
-from .exceptions import MongoConnectionException
-from .settings import settings
 
 FAILED_STATES = [TestRunStatus.timeout, TestRunStatus.failed]
 ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.running]
@@ -73,28 +65,3 @@ def disable_hc_logging():
 def utcnow():
     return datetime.datetime.utcnow()
 
-
-def ensure_mongo_connection():
-    cl = mongo_sync_client()
-    if settings.MONGO_ROOT_PASSWORD:
-        start = time.time()
-        num_nodes = len(cl.nodes)
-        while num_nodes < 2:
-            logger.info(f"Only {num_nodes} available: waiting...")
-            t = time.time() - start
-            if t > settings.MONGO_CONNECT_TIMEOUT:
-                raise MongoConnectionException()
-            sleep(10)
-            num_nodes = len(cl.nodes)
-
-            logger.info(f"Connected to MongoDB replicaset ({num_nodes} nodes)")
-
-
-@cache
-def mongo_sync_client():
-    if settings.MONGO_ROOT_PASSWORD:
-
-        return MongoClient(host=settings.MONGO_HOST.split(','),
-                           username=settings.MONGO_USER,
-                           password=settings.MONGO_ROOT_PASSWORD)
-    return MongoClient()
