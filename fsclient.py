@@ -15,7 +15,15 @@ from common.settings import settings
 
 
 class AsyncFSClient(object):
+    """
+    Simple client for the distributed flat file store
+    """
+
     def __init__(self):
+        """
+        Note that this will block until it can read all file store nodes
+        """
+
         self.servers = settings.FILESTORE_SERVERS.split(',')
         timeout = aiohttp.ClientTimeout(total=settings.FILESTORE_TOTAL_TIMEOUT,
                                         connect=settings.FILESTORE_CONNECT_TIMEOUT,
@@ -64,6 +72,9 @@ class AsyncFSClient(object):
                 raise FilestoreWriteError(f"Only wrote to a single replica")
 
     async def close(self):
+        """
+        Gracefully close the session
+        """
         await self.session.close()
 
     async def exists(self, fname) -> bool:
@@ -102,7 +113,11 @@ class AsyncFSClient(object):
         return bool(done)
 
     async def download_and_untar(self, fname, target_dir):
-
+        """
+        Download the file and unpack into the target directory
+        :param fname: file name
+        :param target_dir: target directory
+        """
         def untar(path):
             subprocess.run(f'/bin/tar xf {path} -I lz4', cwd=target_dir)
 
