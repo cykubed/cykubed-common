@@ -39,7 +39,7 @@ class AppSettings(BaseSettings):
 
     HOSTNAME: str = None  # for testin
 
-    FILESTORE_SERVERS: str  # comma-delimeted list
+    FILESTORE_SERVERS: str = 'localhost:8100'  # comma-delimeted list
     FILESTORE_CACHE_SIZE: int = 10*1024*1024*1024  # 10GB cache suze
     FILESTORE_TOTAL_TIMEOUT = 5*60
     FILESTORE_CONNECT_TIMEOUT = 2.0
