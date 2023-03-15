@@ -91,13 +91,8 @@ class AsyncFSClient(object):
                 return False
 
         tasks = [asyncio.create_task(do_head(h)) for h in self.servers]
-        done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
-        if not done:
-            raise False
-        # cancel the others
-        for task in pending:
-            task.cancel()
-        return True
+        done, pending = await asyncio.wait(tasks)
+        return len([True for t in done if t.result()]) > 0
 
     async def delete(self, fname) -> bool:
         """
@@ -120,12 +115,16 @@ class AsyncFSClient(object):
         :param fname: file name
         :param target_dir: target directory
         """
-        def untar(path):
-            subprocess.run(f'/bin/tar xf {path} -I lz4', cwd=target_dir)
 
         tarfile = await self.download(fname)
+
+        def untar():
+            logger.info(f'Unpacking {tarfile}')
+            subprocess.run(f'/bin/tar xf {tarfile} -I lz4', cwd=target_dir, shell=True, check=True,
+                           encoding=settings.ENCODING)
+
         loop = asyncio.get_running_loop()
-        await loop.run_until_complete(asyncio.create_task(untar(tarfile)))
+        await loop.run_in_executor(None, untar)
         await aiofiles.os.remove(tarfile)
 
     async def download(self, fname, target=None) -> str:
@@ -137,10 +136,14 @@ class AsyncFSClient(object):
         """
         async def fetch(host):
             try:
-                async with aiofiles.tempfile.NamedTemporaryFile('wb', delete=False) as f:
+                suffix = fname[fname.find('.'):]
+                async with aiofiles.tempfile.NamedTemporaryFile('wb', delete=False, suffix=suffix) as f:
                     async with self.session.get(f'http://{host}/{fname}') as resp:
+                        if resp.status != 200:
+                            return None
                         async for chunk in resp.content.iter_chunked(settings.CHUNK_SIZE):
                             await f.write(chunk)
+                    await f.flush()
                     if target:
                         await aioshutil.move(f.name, target)
                         return target
