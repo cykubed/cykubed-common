@@ -44,7 +44,6 @@ class AsyncFSClient(object):
         async def upload_file(host):
             try:
                 file = {'file': open(path, 'rb')}
-                # st = await aiofiles.os.stat(path)
                 resp = await self.session.post(f'http://{host}', data=file)
                 return resp.status == 200
             except ClientError as ex:
