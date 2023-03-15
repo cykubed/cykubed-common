@@ -10,10 +10,6 @@ class NoBranchesException(Exception):
     pass
 
 
-class MongoConnectionException(Exception):
-    pass
-
-
 class FilestoreWriteError(Exception):
     pass
 

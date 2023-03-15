@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import time
 
 import aiofiles
 import aiofiles.os
@@ -20,6 +21,22 @@ class AsyncFSClient(object):
                                         sock_connect=settings.FILESTORE_CONNECT_TIMEOUT,
                                         sock_read=settings.FILESTORE_READ_TIMEOUT)
         self.session = aiohttp.ClientSession(timeout=timeout)
+        # block until we can connect to all servers
+        start = time.time()
+
+        async def ping(h):
+            resp = await self.session.get(f'http://{h}/hc')
+            return resp.status == 200
+
+        while time.time() - start < 300:
+            tasks = [asyncio.create_task(ping(host)) for host in self.servers]
+            results = await asyncio.gather(*tasks)
+            fails = len(self.servers) - len(list(filter(lambda x: x, results)))
+            if not fails:
+                return
+            logger.info(f"Cannot connect to {fails} file servers: waiting...")
+            await asyncio.sleep(5)
+        raise FilestoreReadError()
 
     async def upload(self, path):
 
@@ -44,6 +61,26 @@ class AsyncFSClient(object):
 
     async def close(self):
         await self.session.close()
+
+    async def exists(self, fname) -> bool:
+        """
+        Check that a file exists on at least one node
+        """
+        async def do_head(host):
+            try:
+                async with self.session.head(f'http://{host}/{fname}') as resp:
+                    return resp.status == 200
+            except ClientError:
+                return False
+
+        tasks = [asyncio.create_task(do_head(h)) for h in self.servers]
+        done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+        if not done:
+            raise False
+        # cancel the others
+        for task in pending:
+            task.cancel()
+        return True
 
     async def download(self, fname, target=None) -> str:
         """

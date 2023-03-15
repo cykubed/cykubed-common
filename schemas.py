@@ -391,7 +391,6 @@ class AgentEvent(BaseModel):
 class AgentCompletedBuildMessage(AgentEvent):
     sha: str
     specs: list[str]
-    cache_hash: str
 
 
 class AgentSpecStarted(AgentEvent):

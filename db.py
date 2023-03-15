@@ -16,8 +16,8 @@ from redis.exceptions import (
 from redis.retry import Retry as SyncRetry
 from redis.sentinel import Sentinel as SyncSentinel
 
-from common.enums import TestRunStatus
-from common.schemas import AgentCompletedBuildMessage, NewTestRun
+from common.enums import TestRunStatus, AgentEventType
+from common.schemas import AgentCompletedBuildMessage, NewTestRun, AgentStatusChanged
 from common.settings import settings
 
 
@@ -50,33 +50,29 @@ def get_redis(sentinel_class, retry_class):
         return Redis(os.environ.get('REDIS_HOST', 'localhost'))
 
 
+def send_status_message(testrun_id: int, status: TestRunStatus):
+    sync_redis().publish('messages', AgentStatusChanged(testrun_id=testrun_id,
+                                                        type=AgentEventType.status,
+                                                        status=status).json())
+
+
 async def new_testrun(tr: NewTestRun):
     await async_redis().set(f'testrun:{tr.id}', tr.json())
 
 
-async def get_testrun_async(id: int) -> NewTestRun | None:
+async def get_testrun(id: int) -> NewTestRun | None:
     d = await async_redis().get(f'testrun:{id}')
     if d:
         return NewTestRun.parse_raw(d['data'])
     return None
 
 
-def get_testrun_sync(id: int) -> NewTestRun | None:
-    d = sync_redis().get(f'testrun:{id}')
-    if d:
-        return NewTestRun.parse_raw(d['data'])
-    return None
-
-
-async def build_completed(msg: AgentCompletedBuildMessage) -> NewTestRun | None:
+async def set_build_details(testrun: NewTestRun, specs: list[str]) -> NewTestRun | None:
     r = async_redis()
-    tr = await get_testrun_async(msg.testrun_id)
-    if not tr or tr.status != TestRunStatus.building:
-        return None
-    await r.sadd(f'testrun:{msg.testrun_id}:specs', *msg.specs)
-    tr.status = TestRunStatus.running
-    await r.set(f'testrun:{tr.id}', tr.json())
-    return tr
+    await r.sadd(f'testrun:{testrun.id}:specs', *specs)
+    testrun.status = TestRunStatus.running
+    await r.set(f'testrun:{testrun.id}', testrun.json())
+    await async_redis().publish('messages', AgentCompletedBuildMessage(sha=testrun.sha, specs=specs))
 
 
 def get_redis_sentinel_hosts():
