@@ -11,6 +11,7 @@ from loguru import logger
 
 from common.exceptions import FilestoreWriteError, FilestoreReadError
 from common.settings import settings
+from utils import runcmd
 
 
 class AsyncFSClient(object):
@@ -82,6 +83,16 @@ class AsyncFSClient(object):
             task.cancel()
         return True
 
+    async def download_and_untar(self, fname, target_dir):
+
+        def untar(path):
+            runcmd(f'/bin/tar xf {path} -I lz4', cwd=target_dir)
+
+        tarfile = await self.download(fname)
+        loop = asyncio.get_running_loop()
+        await loop.run_until_complete(asyncio.create_task(untar(tarfile)))
+        await aiofiles.os.remove(tarfile)
+
     async def download(self, fname, target=None) -> str:
         """
         Fetch from all servers, but return when any succeeds
@@ -100,7 +111,7 @@ class AsyncFSClient(object):
                         return target
                     return f.name
             except ClientError:
-                return False
+                return None
 
         tasks = [asyncio.create_task(fetch(h)) for h in self.servers]
         done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
@@ -109,7 +120,7 @@ class AsyncFSClient(object):
         # cancel the others
         for task in pending:
             task.cancel()
-
+        return list(done)[0].result()
 
 async def upload(file: str):
     client = AsyncFSClient()

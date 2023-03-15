@@ -5,30 +5,26 @@ from time import sleep
 import dns
 from loguru import logger
 from redis import Redis
-from redis.asyncio.retry import Retry as AsyncRetry
-from redis.asyncio.sentinel import Sentinel as AsyncSentinel
+from redis.asyncio import Redis
+from redis.asyncio.retry import Retry
+from redis.asyncio.sentinel import Sentinel
 from redis.backoff import ConstantBackoff
 from redis.exceptions import (
     BusyLoadingError,
     ConnectionError,
     TimeoutError
 )
-from redis.retry import Retry as SyncRetry
-from redis.sentinel import Sentinel as SyncSentinel
 
 from common.enums import TestRunStatus, AgentEventType
-from common.schemas import AgentCompletedBuildMessage, NewTestRun, AgentStatusChanged
+from common.schemas import AgentCompletedBuildMessage, NewTestRun, AgentStatusChanged, AgentSpecStarted, \
+    AgentSpecCompleted, SpecResult
 from common.settings import settings
+from common.utils import utcnow
 
 
 @cache
-def async_redis():
-    return get_redis(AsyncSentinel, AsyncRetry)
-
-
-@cache
-def sync_redis():
-    return get_redis(SyncSentinel, SyncRetry)
+def redis() -> Redis:
+    return get_redis(Sentinel, Retry)
 
 
 def get_redis(sentinel_class, retry_class):
@@ -50,29 +46,59 @@ def get_redis(sentinel_class, retry_class):
         return Redis(os.environ.get('REDIS_HOST', 'localhost'))
 
 
-def send_status_message(testrun_id: int, status: TestRunStatus):
-    sync_redis().publish('messages', AgentStatusChanged(testrun_id=testrun_id,
-                                                        type=AgentEventType.status,
-                                                        status=status).json())
+async def send_status_message(testrun_id: int, status: TestRunStatus):
+    await redis().publish('messages', AgentStatusChanged(testrun_id=testrun_id,
+                                                         type=AgentEventType.status,
+                                                         status=status).json())
 
 
 async def new_testrun(tr: NewTestRun):
-    await async_redis().set(f'testrun:{tr.id}', tr.json())
+    await redis().set(f'testrun:{tr.id}', tr.json())
 
 
 async def get_testrun(id: int) -> NewTestRun | None:
-    d = await async_redis().get(f'testrun:{id}')
+    d = await redis().get(f'testrun:{id}')
     if d:
         return NewTestRun.parse_raw(d['data'])
     return None
 
 
+async def send_message(msg):
+    await redis().publish('messages', msg.json())
+
+
+async def spec_terminated(trid: int, spec: str):
+    """
+    Return the spec to the pool
+    """
+    await redis().sadd(f'testrun:{trid}:specs', spec)
+
+
+async def next_spec(trid: int, hostname: str) -> str | None:
+    spec = await redis().spop(f'testrun:{trid}:specs')
+    if spec:
+        await send_message(AgentSpecStarted(type=AgentEventType.spec_started,
+                                            testrun_id=trid,
+                                            spec=spec, started=utcnow(), pod_name=hostname))
+    return spec
+
+
+async def send_spec_completed_message(tr: NewTestRun, spec: str, result: SpecResult):
+    await send_message(AgentSpecCompleted(type=AgentEventType.spec_completed,
+                                          result=result,
+                                          testrun_id=tr.id,
+                                          file=spec,
+                                          finished=utcnow()))
+
+
 async def set_build_details(testrun: NewTestRun, specs: list[str]) -> NewTestRun | None:
-    r = async_redis()
+    r = redis()
     await r.sadd(f'testrun:{testrun.id}:specs', *specs)
     testrun.status = TestRunStatus.running
     await r.set(f'testrun:{testrun.id}', testrun.json())
-    await async_redis().publish('messages', AgentCompletedBuildMessage(sha=testrun.sha, specs=specs))
+    await send_message(AgentCompletedBuildMessage(type=AgentEventType.build_completed,
+                                                  testrun_id=testrun.id,
+                                                  sha=testrun.sha, specs=specs))
 
 
 def get_redis_sentinel_hosts():
