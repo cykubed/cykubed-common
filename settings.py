@@ -38,6 +38,7 @@ class AppSettings(BaseSettings):
     SENTRY_DSN: str = None
 
     HOSTNAME: str = None  # for testin
+
     FILESTORE_SERVERS: str  # comma-delimeted list
     FILESTORE_CACHE_SIZE: int = 10*1024*1024*1024  # 10GB cache suze
     FILESTORE_TOTAL_TIMEOUT = 5*60
