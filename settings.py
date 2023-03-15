@@ -47,7 +47,7 @@ class AppSettings(BaseSettings):
     FILESTORE_DISK_SIZE_GB = 10.0
     FILESTORE_MIN_WRITE: int = 1
     FILESTORE_SYNC_PERIOD: int = 60*10
-    CHUNK_SIZE: int = 8192
+    CHUNK_SIZE: int = 8192*4
 
 
 settings = AppSettings()

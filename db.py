@@ -100,7 +100,9 @@ async def next_spec(trid: int, hostname: str) -> str | None:
     if spec:
         await send_message(AgentSpecStarted(type=AgentEventType.spec_started,
                                             testrun_id=trid,
-                                            spec=spec, started=utcnow(), pod_name=hostname))
+                                            file=spec,
+                                            started=utcnow(),
+                                            pod_name=hostname))
     return spec
 
 
@@ -120,6 +122,9 @@ async def set_build_details(testrun: NewTestRun, specs: list[str]) -> NewTestRun
     await send_message(AgentCompletedBuildMessage(type=AgentEventType.build_completed,
                                                   testrun_id=testrun.id,
                                                   sha=testrun.sha, specs=specs))
+    await send_message(AgentStatusChanged(testrun_id=testrun.id,
+                       type=AgentEventType.status,
+                       status=TestRunStatus.running))
 
 
 def get_redis_sentinel_hosts():
