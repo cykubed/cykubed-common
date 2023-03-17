@@ -39,6 +39,9 @@ class AppSettings(BaseSettings):
 
     HOSTNAME: str = None  # for testin
 
+    REDIS_HOST = 'localhost'
+    REDIS_PASSWORD = ''
+
     FILESTORE_SERVERS: str = 'localhost:8100'  # comma-delimeted list
     FILESTORE_CACHE_SIZE: int = 10*1024*1024*1024  # 10GB cache suze
     FILESTORE_TOTAL_TIMEOUT = 5*60

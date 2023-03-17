@@ -5,8 +5,6 @@ from time import sleep
 import dns
 from loguru import logger
 from redis import Redis as SyncRedis
-from redis.retry import Retry as SyncRetry
-from redis.sentinel import Sentinel as SyncSentinel
 from redis.asyncio import Redis as AsyncRedis
 from redis.asyncio.retry import Retry as AsyncRetry
 from redis.asyncio.sentinel import Sentinel as AsyncSentinel
@@ -16,6 +14,8 @@ from redis.exceptions import (
     ConnectionError,
     TimeoutError
 )
+from redis.retry import Retry as SyncRetry
+from redis.sentinel import Sentinel as SyncSentinel
 
 from common.enums import TestRunStatus, AgentEventType
 from common.schemas import AgentCompletedBuildMessage, NewTestRun, AgentStatusChanged, AgentSpecStarted, \
@@ -43,14 +43,14 @@ def get_redis(sentinel_class, redis_class, retry_class):
             sleep(5)
             hosts = get_redis_sentinel_hosts()
 
-        sentinel = sentinel_class(hosts, sentinel_kwargs=dict(password=os.environ['REDIS_PASSWORD'],
-                                                        decode_responses=True))
+        sentinel = sentinel_class(hosts, sentinel_kwargs=dict(password=settings.REDIS_PASSWORD,
+                                                              decode_responses=True))
         retry = retry_class(ConstantBackoff(2), 5)
-        return sentinel.master_for("mymaster", password=os.environ['REDIS_PASSWORD'], retry=retry,
+        return sentinel.master_for("mymaster", password=settings.REDIS_PASSWORD, retry=retry,
                                    decode_responses=True,
                                     retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError])
     else:
-        return redis_class(host=os.environ.get('REDIS_HOST', 'localhost'), decode_responses=True)
+        return redis_class(host=settings.REDIS_HOST, decode_responses=True)
 
 
 async def send_status_message(testrun_id: int, status: TestRunStatus):
