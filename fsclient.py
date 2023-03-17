@@ -58,7 +58,7 @@ class AsyncFSClient(object):
         async def upload_file(host):
             try:
                 file = {'file': open(path, 'rb')}
-                resp = await self.session.post(f'http://{host}', data=file)
+                resp = await self.session.post(f'http://{host}/api/upload', data=file)
                 return resp.status == 200
             except ClientError as ex:
                 logger.warning(f'Failed to upload to {host} ({ex}): assume down')
