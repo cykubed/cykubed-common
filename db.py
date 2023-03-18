@@ -2,7 +2,7 @@ import os
 from functools import cache
 from time import sleep
 
-import dns
+import dns.resolver
 from loguru import logger
 from redis import Redis as SyncRedis
 from redis.asyncio import Redis as AsyncRedis
@@ -129,4 +129,4 @@ async def set_build_details(testrun: NewTestRun, specs: list[str]) -> NewTestRun
 
 def get_redis_sentinel_hosts():
     return list(set([(x.target.to_text(), 26379) for x in
-              dns.resolver.resolve(f'redis-headless.{settings.NAMESPACE}.svc.cluster.local', 'SRV')]))
+              dns.resolver.resolve(f'cykube-redis-headless.{settings.NAMESPACE}.svc.cluster.local', 'SRV')]))
