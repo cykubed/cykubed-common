@@ -71,11 +71,11 @@ async def get_testrun(id: int) -> NewTestRun | None:
 
 
 async def send_message(msg):
-    await async_redis().publish('messages', msg.json())
+    await async_redis().rpush('messages', msg.json())
 
 
 def send_message_sync(msg):
-    sync_redis().publish('messages', msg.json())
+    sync_redis().rpush('messages', msg.json())
 
 
 async def cancel_testrun(trid: int):
