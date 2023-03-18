@@ -36,7 +36,7 @@ class AsyncFSClient(object):
         start = time.time()
 
         async def ping(h):
-            resp = await self.session.get(f'http://{h}/hc')
+            resp = await self.session.get(f'http://{h}/api/hc')
             return resp.status == 200
 
         while time.time() - start < 300:
