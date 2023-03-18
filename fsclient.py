@@ -7,7 +7,7 @@ import aiofiles
 import aiofiles.os
 import aiohttp
 import aioshutil
-from aiohttp import ClientError
+from aiohttp import ClientError, ClientConnectionError
 from loguru import logger
 
 from common.exceptions import FilestoreWriteError, FilestoreReadError
@@ -36,8 +36,11 @@ class AsyncFSClient(object):
         start = time.time()
 
         async def ping(h):
-            resp = await self.session.get(f'http://{h}/api/hc')
-            return resp.status == 200
+            try:
+                resp = await self.session.get(f'http://{h}/api/hc')
+                return resp.status == 200
+            except ClientConnectionError:
+                return False
 
         while time.time() - start < 300:
             tasks = [asyncio.create_task(ping(host)) for host in self.servers]
