@@ -103,14 +103,16 @@ class AsyncFSClient(object):
         """
         async def do_delete(host):
             try:
-                async with self.session.delete(f'http://{host}/api/rm/{fname}') as resp:
+                async with self.session.post(f'http://{host}/api/rm/{fname}') as resp:
+                    if resp.status != 200:
+                        logger.warning(f"Failed to delete file {fname} on host {host}: {resp.status}")
                     return resp.status == 200
-            except ClientError:
+            except ClientError as ex:
+                logger.warning(f"Failed to delete file {fname} on host {host}: {ex}")
                 return False
 
-        tasks = [asyncio.create_task(do_delete(h)) for h in self.servers]
-        done, pending = await asyncio.wait(tasks)
-        return bool(done)
+        tasks = [do_delete(h) for h in self.servers]
+        await asyncio.gather(*tasks)
 
     async def download_and_untar(self, fname, target_dir):
         """
