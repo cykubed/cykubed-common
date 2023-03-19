@@ -103,7 +103,7 @@ class AsyncFSClient(object):
         """
         async def do_delete(host):
             try:
-                async with self.session.delete(f'http://{host}/api/{fname}') as resp:
+                async with self.session.delete(f'http://{host}/api/rm/{fname}') as resp:
                     return resp.status == 200
             except ClientError:
                 return False
