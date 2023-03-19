@@ -156,6 +156,7 @@ class AsyncFSClient(object):
             except ClientError:
                 return None
 
+        logger.info(f'Fetching {fname} from filestore')
         tasks = [asyncio.create_task(fetch(h)) for h in self.servers]
         done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
         if not done:
