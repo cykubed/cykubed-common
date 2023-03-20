@@ -50,7 +50,7 @@ class AppSettings(BaseSettings):
     FILESTORE_CONNECT_TIMEOUT: int = 10
     FILESTORE_READ_TIMEOUT: int = 300
     FILESTORE_DISK_SIZE_GB: float = 10.0
-    FILESTORE_MIN_WRITE: int = 2
+    FILESTORE_MIN_WRITE: int = 1
     FILESTORE_SYNC_PERIOD: int = 60*10
     CHUNK_SIZE: int = 8192*8
 
