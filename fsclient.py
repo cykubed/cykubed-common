@@ -37,7 +37,7 @@ class AsyncFSClient(object):
 
         async def ping(h):
             try:
-                resp = await self.session.get(f'http://{h}/api/hc')
+                resp = await self.session.get(f'http://{h}/fs/hc')
                 return resp.status == 200
             except ClientConnectionError:
                 return False
@@ -61,7 +61,7 @@ class AsyncFSClient(object):
         async def upload_file(host):
             try:
                 file = {'file': open(path, 'rb')}
-                resp = await self.session.post(f'http://{host}/api/upload', data=file)
+                resp = await self.session.post(f'http://{host}/fs', data=file)
                 return resp.status == 200
             except ClientError as ex:
                 logger.warning(f'Failed to upload to {host} ({ex}): assume down')
@@ -88,7 +88,7 @@ class AsyncFSClient(object):
         """
         async def do_head(host):
             try:
-                async with self.session.head(f'http://{host}/{fname}') as resp:
+                async with self.session.head(f'http://{host}/fs/{fname}') as resp:
                     return resp.status == 200
             except ClientError:
                 return False
@@ -103,7 +103,7 @@ class AsyncFSClient(object):
         """
         async def do_delete(host):
             try:
-                async with self.session.post(f'http://{host}/api/rm/{fname}') as resp:
+                async with self.session.delete(f'http://{host}/fs/{fname}') as resp:
                     if resp.status != 200:
                         logger.warning(f"Failed to delete file {fname} on host {host}: {resp.status}")
                     return resp.status == 200
@@ -143,7 +143,7 @@ class AsyncFSClient(object):
             try:
                 suffix = fname[fname.find('.'):]
                 async with aiofiles.tempfile.NamedTemporaryFile('wb', delete=False, suffix=suffix) as f:
-                    async with self.session.get(f'http://{host}/{fname}') as resp:
+                    async with self.session.get(f'http://{host}/fs/{fname}') as resp:
                         if resp.status != 200:
                             return None
                         async for chunk in resp.content.iter_chunked(settings.CHUNK_SIZE):

@@ -64,4 +64,3 @@ def disable_hc_logging():
 
 def utcnow():
     return datetime.datetime.utcnow()
-

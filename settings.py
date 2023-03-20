@@ -25,6 +25,8 @@ class AppSettings(BaseSettings):
     TEST = False
 
     MAX_HTTP_RETRIES = 10
+    MAX_HTTP_BACKOFF = 60
+
     MESSAGE_POLL_PERIOD = 1
 
     AGENT_URL: str = 'http://127.0.0.1:5000'
