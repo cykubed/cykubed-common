@@ -1,6 +1,12 @@
 import enum
 
 
+class Region(str, enum.Enum):
+    europe = 'europe'
+    us = 'us'
+    uk = 'uk'
+
+
 class PlatformEnum(str, enum.Enum):
     BITBUCKET = 'bitbucket'
     JIRA = 'jira'

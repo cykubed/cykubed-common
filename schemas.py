@@ -8,6 +8,32 @@ from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketAc
     SpecFileStatus
 
 
+#
+# Auth
+#
+
+class IntegrationSummary(BaseModel):
+    name: PlatformEnum
+    user_id: Optional[int]
+
+
+class UserProfile(BaseModel):
+    name: str
+    avatar_url: Optional[str]
+    token: str
+    email: str
+    integrations: list[IntegrationSummary]
+    organisation_id:  int
+    organisation_name: str
+    is_admin: bool
+    integration_user_id: Optional[int]
+
+
+class OAuthPostInstall(BaseModel):
+    profile: UserProfile
+    app_installed: bool  # For Github
+
+
 class AgentName(BaseModel):
     name: str
 
@@ -93,23 +119,6 @@ class Organisation(BaseModel):
 
     class Config:
         orm_mode = True
-
-
-class IntegrationSummary(BaseModel):
-    name: PlatformEnum
-    user_id: Optional[int]
-
-
-class UserProfile(BaseModel):
-    name: str
-    avatar_url: Optional[str]
-    token: str
-    email: str
-    integrations: list[IntegrationSummary]
-    organisation_id:  int
-    organisation_name: str
-    is_admin: bool
-    integration_user_id: Optional[int]
 
 
 class JobTemplates(BaseModel):
