@@ -29,9 +29,13 @@ class UserProfile(BaseModel):
     integration_user_id: Optional[int]
 
 
+class OAuthCodeRespose(BaseModel):
+    code: str
+
+
 class OAuthPostInstall(BaseModel):
     profile: UserProfile
-    app_installed: bool  # For Github
+    app_installed: Optional[bool]  # For Github
 
 
 class AgentName(BaseModel):
