@@ -14,6 +14,10 @@ class PlatformEnum(str, enum.Enum):
     GITHUB = 'github'
 
 
+GIT_PLATFORMS = [PlatformEnum.GITHUB,
+                 PlatformEnum.BITBUCKET]
+
+
 class TestRunStatus(str, enum.Enum):
     started = 'started'
     building = 'building'

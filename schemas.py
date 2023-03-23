@@ -35,6 +35,7 @@ class OAuthCodeRespose(BaseModel):
 
 class OAuthPostInstall(BaseModel):
     profile: UserProfile
+    token: Optional[str]
     app_installed: Optional[bool]  # For Github
 
 
