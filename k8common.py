@@ -32,6 +32,6 @@ def get_core_api() -> client.CoreV1Api:
 
 def get_job_env():
     envs = []
-    for key in ['API_TOKEN', 'MAIN_API_URL', 'AGENT_URL', 'CACHE_URL']:
+    for key in ['API_TOKEN', 'MAIN_API_URL', 'CACHE_URL']:
         envs.append(client.V1EnvVar(name=key, value=os.environ.get(key)))
     return envs
