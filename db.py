@@ -37,11 +37,16 @@ def async_redis() -> AsyncRedis:
 def get_redis(sentinel_class, redis_class, retry_class):
     if os.path.exists('/var/run/secrets/kubernetes.io/serviceaccount/namespace'):
         # we're running inside K8
-        hosts = get_redis_sentinel_hosts()
+        hosts = []
         while len(hosts) < 3:
-            logger.info(f'Can only see {len(hosts)} Redis hosts - waiting...')
-            sleep(5)
-            hosts = get_redis_sentinel_hosts()
+            try:
+                hosts = get_redis_sentinel_hosts()
+                logger.info(f'Can only see {len(hosts)} Redis hosts - waiting...')
+                sleep(5)
+            except:
+                logger.info(f'No Redis hosts visible - waiting...')
+                sleep(5)
+                hosts = []
 
         sentinel = sentinel_class(hosts, sentinel_kwargs=dict(password=settings.REDIS_PASSWORD,
                                                               decode_responses=True))
