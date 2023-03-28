@@ -29,6 +29,15 @@ class UserProfile(BaseModel):
     integration_user_id: Optional[int]
 
 
+class APIToken(BaseModel):
+    id: int
+    token: uuid.UUID
+    created: datetime
+
+    class Config:
+        orm_mode = True
+
+
 class OAuthCodeRespose(BaseModel):
     code: str
 
@@ -173,15 +182,20 @@ class Project(NewProject):
 
 
 class NewRunnerImage(BaseModel):
-    node_version: str
     tag: str
-    description: str
-    chrome: bool
-    firefox: bool
-    edge: bool
+    node_version: str
+    description: Optional[str]
+    chrome: Optional[bool]
+    firefox: Optional[bool]
+    edge: Optional[bool]
 
     class Config:
         orm_mode = True
+
+
+class RunnerImageList(BaseModel):
+    images: list[NewRunnerImage]
+    replace: bool
 
 
 class RunnerImage(NewRunnerImage):
