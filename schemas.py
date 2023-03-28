@@ -50,6 +50,7 @@ class AgentConnectionRequest(BaseModel):
 
 
 class CodeFrame(BaseModel):
+    file: str
     line: int
     column: int
     frame: str
