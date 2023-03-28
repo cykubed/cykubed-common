@@ -39,8 +39,9 @@ class OAuthPostInstall(BaseModel):
     app_installed: Optional[bool]  # For Github
 
 
-class AgentName(BaseModel):
-    name: str
+class AgentConnectionRequest(BaseModel):
+    host_name: str
+    agent_name: str
 
 
 #
