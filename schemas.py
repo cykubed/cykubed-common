@@ -3,6 +3,7 @@ from datetime import datetime, date
 from typing import Optional, List, Union
 
 from pydantic import BaseModel, validator
+from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
     SpecFileStatus
@@ -182,20 +183,20 @@ class Project(NewProject):
 
 
 class NewRunnerImage(BaseModel):
-    tag: str
-    node_version: str
-    description: Optional[str]
-    chrome: Optional[bool]
-    firefox: Optional[bool]
-    edge: Optional[bool]
+    tag: str = Field(description="Docker image tag")
+    node_version: str = Field(description="Node version")
+    description: Optional[str] = Field(description="Description")
+    chrome: Optional[bool] = Field(description="True if this image contains Chrome")
+    firefox: Optional[bool] = Field(description="True if this image contains Firefox")
+    edge: Optional[bool] = Field(description="True if this image contains Edge")
 
     class Config:
         orm_mode = True
 
 
 class RunnerImageList(BaseModel):
-    images: list[NewRunnerImage]
-    replace: bool
+    images: list[NewRunnerImage] = Field(description="List of Docker images")
+    replace: bool = Field(description="If true then replace all existing images with this list", default=False)
 
 
 class RunnerImage(NewRunnerImage):
