@@ -202,6 +202,9 @@ class NewRunnerImages(BaseModel):
 class RunnerImage(NewRunnerImage):
     id: int
 
+    class Config:
+        orm_mode = True
+
 
 class Workspace(BaseModel):
     slug: str
