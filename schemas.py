@@ -60,7 +60,7 @@ class AgentConnectionRequest(BaseModel):
 
 
 class CodeFrame(BaseModel):
-    file: str
+    file: Optional[str]  # TODO make this required
     line: int
     column: int
     frame: str
