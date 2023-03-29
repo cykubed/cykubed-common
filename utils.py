@@ -63,4 +63,4 @@ def disable_hc_logging():
 
 
 def utcnow():
-    return datetime.datetime.utcnow()
+    return datetime.datetime.now(tz=datetime.timezone.utc)
