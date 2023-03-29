@@ -186,15 +186,15 @@ class NewRunnerImage(BaseModel):
     tag: str = Field(description="Docker image tag")
     node_version: str = Field(description="Node version")
     description: Optional[str] = Field(description="Description")
-    chrome: Optional[bool] = Field(description="True if this image contains Chrome")
-    firefox: Optional[bool] = Field(description="True if this image contains Firefox")
-    edge: Optional[bool] = Field(description="True if this image contains Edge")
+    chrome: Optional[bool] = Field(description="True if this image contains Chrome", default=True)
+    firefox: Optional[bool] = Field(description="True if this image contains Firefox", default=False)
+    edge: Optional[bool] = Field(description="True if this image contains Edge", default=False)
 
     class Config:
         orm_mode = True
 
 
-class RunnerImageList(BaseModel):
+class NewRunnerImages(BaseModel):
     images: list[NewRunnerImage] = Field(description="List of Docker images")
     replace: bool = Field(description="If true then replace all existing images with this list", default=False)
 
