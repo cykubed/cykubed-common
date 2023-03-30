@@ -41,6 +41,8 @@ def get_redis(sentinel_class, redis_class, retry_class):
         while len(hosts) < 3:
             try:
                 hosts = get_redis_sentinel_hosts()
+                if len(hosts) == 3:
+                    break
                 logger.info(f'Can only see {len(hosts)} Redis hosts - waiting...')
                 sleep(5)
             except:
