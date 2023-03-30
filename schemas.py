@@ -167,6 +167,9 @@ class NewProject(BaseModel):
     runner_memory: str = '2G'
     runner_deadline: int = 3600
 
+    timezone: str = 'UTC'
+    retries: int = 2
+
     builder_template: Optional[str]
     runner_template: Optional[str]
 
