@@ -19,7 +19,7 @@ from redis.sentinel import Sentinel as SyncSentinel
 
 from common.enums import TestRunStatus, AgentEventType
 from common.schemas import AgentCompletedBuildMessage, NewTestRun, AgentStatusChanged, AgentSpecStarted, \
-    AgentSpecCompleted, SpecResult
+    AgentSpecCompleted, SpecResult, AgentRunnerStopped, AgentBuildStarted
 from common.settings import settings
 from common.utils import utcnow
 
@@ -58,6 +58,13 @@ def get_redis(sentinel_class, redis_class, retry_class):
                                     retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError])
     else:
         return redis_class(host=settings.REDIS_HOST, decode_responses=True)
+
+
+async def send_runner_stopped_message(testrun_id: int, duration, terminated=False):
+    await async_redis().publish('messages', AgentRunnerStopped(testrun_id=testrun_id,
+                                                               type=AgentEventType.runner_stopped,
+                                                               duration=duration,
+                                                               terminated=terminated).json())
 
 
 async def send_status_message(testrun_id: int, status: TestRunStatus):
@@ -121,6 +128,12 @@ async def send_spec_completed_message(tr: NewTestRun, spec: str, result: SpecRes
                                           finished=utcnow()))
 
 
+async def send_build_started_message(trid: int):
+    await send_message(AgentBuildStarted(type=AgentEventType.build_started,
+                                         testrun_id=trid,
+                                         started=utcnow()))
+
+
 async def set_build_details(testrun: NewTestRun, specs: list[str]) -> NewTestRun | None:
     r = async_redis()
     await r.sadd(f'testrun:{testrun.id}:specs', *specs)
@@ -128,6 +141,7 @@ async def set_build_details(testrun: NewTestRun, specs: list[str]) -> NewTestRun
     await r.set(f'testrun:{testrun.id}', testrun.json())
     await send_message(AgentCompletedBuildMessage(type=AgentEventType.build_completed,
                                                   testrun_id=testrun.id,
+                                                  finished=utcnow(),
                                                   sha=testrun.sha, specs=specs))
     await send_message(AgentStatusChanged(testrun_id=testrun.id,
                        type=AgentEventType.status,
