@@ -156,19 +156,24 @@ class NewProject(BaseModel):
 
     agent_id: int
 
+    spot_enabled: bool = False
+    spot_percentage: int = 80
+
     build_cmd = 'ng build --output-path=dist'
-    build_cpu: str = '2'
-    build_memory: str = '2G'
+    build_cpu: float = 2
+    build_memory: float = 4
     build_deadline: int = 10*60
+    build_ephemeral_storage: float = 10
 
     start_runners_first: bool
     runner_image: Optional[str]
-    runner_cpu: str = '1'
-    runner_memory: str = '2G'
+    runner_cpu: float = 2
+    runner_memory: float = 4
     runner_deadline: int = 3600
+    runner_ephemeral_storage: float = 4
 
     timezone: str = 'UTC'
-    retries: int = 2
+    cypress_retries: int = 2
 
     builder_template: Optional[str]
     runner_template: Optional[str]
@@ -180,6 +185,7 @@ class NewProject(BaseModel):
 class Project(NewProject):
     id: int
     organisation: OrganisationSummary
+    is_angular: bool = False
 
     class Config:
         orm_mode = True
@@ -330,6 +336,13 @@ class TestRunSummary(TestRunCommon):
     class Config:
         orm_mode = True
 
+
+class CreatedProject(BaseModel):
+    project: Project
+    first_run: Optional[TestRunSummary]
+    errors: Optional[str]
+
+
 #
 # TestRun detail
 #
@@ -429,8 +442,13 @@ class AgentEvent(BaseModel):
     testrun_id: int
 
 
+class AgentBuildStarted(AgentEvent):
+    started: datetime
+
+
 class AgentCompletedBuildMessage(AgentEvent):
     sha: str
+    finished: datetime
     specs: list[str]
 
 

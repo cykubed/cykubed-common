@@ -43,6 +43,7 @@ class NotificationStates(str, enum.Enum):
 
 class AgentEventType(str, enum.Enum):
     log = 'log'
+    build_started = 'build_started'
     build_completed = 'build_completed'
     spec_started = 'spec_started'
     spec_completed = 'spec_completed'
@@ -54,6 +55,11 @@ class AgentEventType(str, enum.Enum):
 
 ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.building, TestRunStatus.running]
 INACTIVE_STATES = [TestRunStatus.cancelled, TestRunStatus.failed, TestRunStatus.passed, TestRunStatus.timeout]
+
+
+class KubernetesPlatform(str, enum.Enum):
+    gke = 'Google Kubernetes Engine'
+    eks = 'Amazon'
 
 
 class TestResultStatus(str, enum.Enum):
