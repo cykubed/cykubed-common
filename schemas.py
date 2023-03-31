@@ -464,6 +464,12 @@ class AgentSpecCompleted(AgentEvent):
     result: SpecResult
 
 
+class AgentRunnerStopped(AgentEvent):
+    # duration in seconds
+    duration: int
+    terminated: bool = False
+
+
 class AgentStatusChanged(AgentEvent):
     status: TestRunStatus
 
