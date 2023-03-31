@@ -47,7 +47,7 @@ class AgentEventType(str, enum.Enum):
     build_completed = 'build_completed'
     spec_started = 'spec_started'
     spec_completed = 'spec_completed'
-    spec_terminated = 'spec_terminated'
+    runner_stopped = 'runner_stopped'
 
     status = 'status'
     completed = 'completed'
