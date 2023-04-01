@@ -56,7 +56,7 @@ def get_headers():
 def disable_hc_logging():
     class HCFilter(logging.Filter):
         def filter(self, record: logging.LogRecord) -> bool:
-            return record.getMessage().find("GET /hc") == -1
+            return record.getMessage().find("GET / ") == -1
 
     # disable logging for health check
     logging.getLogger("uvicorn.access").addFilter(HCFilter())
