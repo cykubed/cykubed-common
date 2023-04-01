@@ -351,6 +351,13 @@ class CreatedProject(BaseModel):
 class TestRunDetail(TestRunCommon):
     files: Optional[list[SpecFile]]
     duration: Optional[int]
+    terminations: int = 0
+    build_started: Optional[datetime]
+    build_seconds: Optional[int] = 0
+    runner_seconds: Optional[int] = 0
+    cpu_seconds_used: Optional[int] = 0
+    memory_gb_seconds_used: Optional[int] = 0
+    ephemeral_gb_seconds_used: Optional[int] = 0
 
     @validator('files', pre=True)
     def _iter_to_list(cls, v):
