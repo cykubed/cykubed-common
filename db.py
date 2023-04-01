@@ -61,16 +61,16 @@ def get_redis(sentinel_class, redis_class, retry_class):
 
 
 async def send_runner_stopped_message(testrun_id: int, duration, terminated=False):
-    await async_redis().publish('messages', AgentRunnerStopped(testrun_id=testrun_id,
-                                                               type=AgentEventType.runner_stopped,
-                                                               duration=duration,
-                                                               terminated=terminated).json())
+    await send_message(AgentRunnerStopped(testrun_id=testrun_id,
+                                          type=AgentEventType.runner_stopped,
+                                          duration=duration,
+                                          terminated=terminated))
 
 
 async def send_status_message(testrun_id: int, status: TestRunStatus):
-    await async_redis().publish('messages', AgentStatusChanged(testrun_id=testrun_id,
-                                                               type=AgentEventType.status,
-                                                               status=status).json())
+    await send_message(AgentStatusChanged(testrun_id=testrun_id,
+                                          type=AgentEventType.status,
+                                          status=status))
 
 
 async def new_testrun(tr: NewTestRun):
