@@ -41,6 +41,8 @@ def configure_stackdriver_logging(name: str):
     try:
         resp = httpx.get('http://metadata.google.internal')
         if resp.status_code == 200 and resp.headers['metadata-flavor'] == 'Google':
+            # TODO also check
+            # curl -H "Metadata-Flavor: Google" http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/email
             logger.add(StackDriverSink(name))
     except:
         pass
