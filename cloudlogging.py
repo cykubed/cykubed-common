@@ -18,10 +18,6 @@ class StackDriverSink:
         '''
         record = message.record
         log_info = {
-            "elapsed": {
-                "microseconds": record["elapsed"] // record["elapsed"].resolution,
-                "seconds": record["elapsed"].total_seconds(),
-            },
             "exception": (None if record["exception"] is None
                           else ''.join(traceback.format_exception(None,
                                                                   record["exception"].value,
@@ -29,8 +25,6 @@ class StackDriverSink:
             "message": record["message"],
             "module": record["module"],
             "name": record["name"],
-            "process": {"id": record["process"].id, "name": record["process"].name},
-            "thread": {"id": record["thread"].id, "name": record["thread"].name},
             "extra": {k: str(v)
                       for k, v in record["extra"].items()
                       if 'record' not in record["extra"]}
