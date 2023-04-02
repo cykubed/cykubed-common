@@ -19,6 +19,7 @@ GIT_PLATFORMS = [PlatformEnum.GITHUB,
 
 
 class TestRunStatus(str, enum.Enum):
+    pending = 'pending'
     started = 'started'
     building = 'building'
     cancelled = 'cancelled'
@@ -53,7 +54,7 @@ class AgentEventType(str, enum.Enum):
     completed = 'completed'
 
 
-ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.building, TestRunStatus.running]
+ACTIVE_STATES = [TestRunStatus.pending, TestRunStatus.started, TestRunStatus.building, TestRunStatus.running]
 INACTIVE_STATES = [TestRunStatus.cancelled, TestRunStatus.failed, TestRunStatus.passed, TestRunStatus.timeout]
 
 
@@ -74,6 +75,7 @@ class AppWebSocketActions(str, enum.Enum):
     specfile = 'specfile'
     buildlog = 'buildlog'
     agent = 'agent'
+    error = 'error'
 
 
 class AgentWebsocketActions(str, enum.Enum):
