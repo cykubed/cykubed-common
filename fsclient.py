@@ -127,7 +127,7 @@ class AsyncFSClient(object):
         tarfile = await self.download(fname)
 
         def untar():
-            logger.info(f'Unpacking {tarfile}')
+            logger.debug(f'Unpacking {tarfile}')
             subprocess.run(f'/bin/tar xf {tarfile} -I lz4', cwd=target_dir, shell=True, check=True,
                            encoding=settings.ENCODING)
 
@@ -159,7 +159,7 @@ class AsyncFSClient(object):
             except ClientError:
                 return None
 
-        logger.info(f'Fetching {fname} from filestore')
+        logger.debug(f'Fetching {fname} from filestore')
         tasks = [asyncio.create_task(fetch(h)) for h in self.servers]
         done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
         if not done:
@@ -182,7 +182,7 @@ async def download(file: str, target: str = None):
     client = AsyncFSClient()
     try:
         await client.download(file, target)
-        logger.info(f"Downloaded {file}")
+        logger.debug(f"Downloaded {file}")
     finally:
         await client.close()
 

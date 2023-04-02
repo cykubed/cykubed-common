@@ -64,3 +64,8 @@ def disable_hc_logging():
 
 def utcnow():
     return datetime.datetime.now(tz=datetime.timezone.utc)
+
+
+def get_hostname():
+    with open('/etc/hostname') as f:
+        return f.read().strip()

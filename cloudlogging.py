@@ -6,16 +6,20 @@ import google.cloud.logging
 import httpx
 from loguru import logger
 
+from common.utils import get_hostname
+
 
 class StackDriverSink:
     def __init__(self, logger_name='cykube'):
         self.logging_client = google.cloud.logging.Client()
         self.logger = self.logging_client.logger(logger_name)
+        self.hostname = get_hostname()
 
     def write(self, message):
-        '''
+        """
+        Loguru stackdriver logging
         source: https://github.com/Delgan/loguru/blob/master/loguru/_handler.py
-        '''
+        """
         record = message.record
         log_info = {
             "exception": (None if record["exception"] is None
@@ -25,10 +29,12 @@ class StackDriverSink:
             "message": record["message"],
             "module": record["module"],
             "name": record["name"],
-            "extra": {k: str(v)
-                      for k, v in record["extra"].items()
-                      if 'record' not in record["extra"]}
+            "pod": self.hostname
         }
+        if 'extra' in record:
+            for k, v in record["extra"].items():
+                log_info[k] = v
+
         self.logger.log_struct(log_info,
                                severity=record['level'].name,
                                source_location={'file': record['file'].name,
@@ -41,8 +47,9 @@ def configure_stackdriver_logging(name: str):
     try:
         resp = httpx.get('http://metadata.google.internal')
         if resp.status_code == 200 and resp.headers['metadata-flavor'] == 'Google':
-            # TODO also check
-            # curl -H "Metadata-Flavor: Google" http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/email
-            logger.add(StackDriverSink(name))
+            resp = httpx.get('http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/email',
+                             headers={'Metadata-Flavor': 'Google'})
+            if resp.status_code == 200 and resp.text.endswith('iam.gserviceaccount.com'):
+                logger.add(StackDriverSink(name))
     except:
         pass
