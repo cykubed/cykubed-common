@@ -337,12 +337,6 @@ class TestRunSummary(TestRunCommon):
         orm_mode = True
 
 
-class CreatedProject(BaseModel):
-    project: Project
-    first_run: Optional[TestRunSummary]
-    errors: Optional[str]
-
-
 #
 # TestRun detail
 #
@@ -384,6 +378,26 @@ class AgentModel(BaseModel):
         orm_mode = True
 
 
+class SlackChannel(BaseModel):
+    id: str
+    name: str
+
+
+class SlackChannels(BaseModel):
+    next_cursor: Optional[str]
+    channels: list[SlackChannel]
+
+
+class TestRunJobStatus(BaseModel):
+    name: str
+    status: str
+    message: Optional[str]
+
+
+#
+# App messages
+#
+
 class BaseAppSocketMessage(BaseModel):
     action: AppWebSocketActions
 
@@ -394,6 +408,11 @@ class BaseAppSocketMessage(BaseModel):
 class AgentStateMessage(BaseAppSocketMessage):
     action = AppWebSocketActions.agent
     agent: AgentModel
+
+
+class TestRunErrorMessage(BaseAppSocketMessage):
+    action = AppWebSocketActions.error
+    message: str
 
 
 class TestRunDetailUpdateMessage(BaseAppSocketMessage):
@@ -424,20 +443,11 @@ class AppLogMessage(BaseModel):
         return self.msg
 
 
-class SlackChannel(BaseModel):
-    id: str
-    name: str
-
-
-class SlackChannels(BaseModel):
-    next_cursor: Optional[str]
-    channels: list[SlackChannel]
-
-
-class TestRunJobStatus(BaseModel):
-    name: str
-    status: str
-    message: Optional[str]
+class LogUpdateMessage(BaseAppSocketMessage):
+    action = AppWebSocketActions.buildlog
+    testrun_id: int
+    line_num: int
+    msg: AppLogMessage
 
 #
 # Agent websocket
@@ -484,11 +494,5 @@ class AgentStatusChanged(AgentEvent):
 class AgentLogMessage(AgentEvent):
     msg: AppLogMessage
 
-
-class LogUpdateMessage(BaseAppSocketMessage):
-    action = AppWebSocketActions.buildlog
-    testrun_id: int
-    line_num: int
-    msg: AppLogMessage
 
 
