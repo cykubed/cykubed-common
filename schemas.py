@@ -154,7 +154,7 @@ class NewProject(BaseModel):
     slack_channel_id: Optional[str]
     notify_on_passed: Optional[Union[bool, None]] = False
 
-    agent_id: int
+    agent_id: Optional[int] = None
 
     spot_enabled: bool = False
     spot_percentage: int = 80
@@ -320,6 +320,7 @@ class CommitDetailsModel(BaseModel):
 
 
 class TestRunCommon(BaseTestRun):
+    error: Optional[str]
     started: Optional[datetime]
     finished: Optional[datetime] = None
     status: TestRunStatus
