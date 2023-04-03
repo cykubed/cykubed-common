@@ -6,14 +6,13 @@ import google.cloud.logging
 import httpx
 from loguru import logger
 
-from common.utils import get_hostname
-
 
 class StackDriverSink:
     def __init__(self, logger_name='cykube'):
         self.logging_client = google.cloud.logging.Client()
         self.logger = self.logging_client.logger(logger_name)
-        self.hostname = get_hostname()
+        with open('/etc/hostname') as f:
+            self.hostname = f.read().strip()
 
     def write(self, message):
         """
