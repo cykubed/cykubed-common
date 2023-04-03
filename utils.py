@@ -6,6 +6,8 @@ from decimal import Decimal
 from json import JSONEncoder
 from uuid import UUID
 
+from tortoise.timezone import now
+
 from . import schemas
 from .enums import TestRunStatus
 
@@ -63,4 +65,4 @@ def disable_hc_logging():
 
 
 def utcnow():
-    return datetime.datetime.now(tz=datetime.timezone.utc)
+    return now()
