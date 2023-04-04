@@ -23,19 +23,21 @@ class AsyncFSClient(object):
         """
         Note that this will block until it can read all file store nodes
         """
+        timeout = aiohttp.ClientTimeout(total=settings.FILESTORE_TOTAL_TIMEOUT,
+                                        connect=settings.FILESTORE_CONNECT_TIMEOUT,
+                                        sock_connect=settings.FILESTORE_CONNECT_TIMEOUT,
+                                        sock_read=settings.FILESTORE_READ_TIMEOUT)
+        self.session = aiohttp.ClientSession(timeout=timeout,
+                                             headers={'Authorization': f'Bearer {settings.API_TOKEN}'})
 
         self.servers = settings.FILESTORE_SERVERS.split(',')
         if not self.servers[0].startswith('http'):
             self.servers = [f'http://{h}' for h in self.servers]
 
     async def connect(self):
-        timeout = aiohttp.ClientTimeout(total=settings.FILESTORE_TOTAL_TIMEOUT,
-                                        connect=settings.FILESTORE_CONNECT_TIMEOUT,
-                                        sock_connect=settings.FILESTORE_CONNECT_TIMEOUT,
-                                        sock_read=settings.FILESTORE_READ_TIMEOUT)
-        self.session = aiohttp.ClientSession(timeout=timeout,
-                             headers={'Authorization': f'Bearer {settings.API_TOKEN}'})
-        # block until we can connect to all servers
+        """
+        Block until we can connect to all servers
+        """
         start = time.time()
 
         async def ping(h):
@@ -57,7 +59,11 @@ class AsyncFSClient(object):
 
     async def upload(self, path):
         """
-        Upload a file. Since this is a flat filestore only the final path segment is used as a key
+        Upload a file to all nodes, although only FILESTORE_MIN_WRITE are required to succeed
+        (the cluster may have decided to move the Agent StatefulSet around: this happens more often
+        then you'd think, particular when running in an Autopilot cluster).
+
+        Since this is a flat filestore only the final path segment is used as a key
         :param path: source path
         :return: True if fail successfully stored
         """
@@ -119,7 +125,8 @@ class AsyncFSClient(object):
 
     async def download_and_untar(self, fname, target_dir):
         """
-        Download the file and unpack into the target directory
+        Download the file and unpack into the target directory. Uses an external tar for efficiency:
+        pure Python tar is quite slow by comparison, and these may be large tarballs.
         :param fname: file name
         :param target_dir: target directory
         """
@@ -128,6 +135,7 @@ class AsyncFSClient(object):
 
         def untar():
             logger.debug(f'Unpacking {tarfile}')
+            # lz4 is much quicker than gzip
             subprocess.run(f'/bin/tar xf {tarfile} -I lz4', cwd=target_dir, shell=True, check=True,
                            encoding=settings.ENCODING)
 

@@ -3,7 +3,6 @@ from pydantic import BaseSettings
 
 class AppSettings(BaseSettings):
     API_TOKEN: str = 'cykubeauth'
-    AGENT_NAME: str = 'default'
 
     K8: bool = True
 
@@ -42,6 +41,9 @@ class AppSettings(BaseSettings):
     HOSTNAME: str = None  # for testin
 
     REDIS_HOST = 'localhost'
+    REDIS_DB: int = 0
+
+    REDIS_NODES: int = 3
     REDIS_PASSWORD = ''
 
     FILESTORE_SERVERS: str = 'localhost:8100'  # comma-delimeted list
