@@ -138,11 +138,6 @@ class Organisation(BaseModel):
         orm_mode = True
 
 
-class JobTemplates(BaseModel):
-    builder: str
-    runner: str
-
-
 class NewProject(BaseModel):
     name: str
     owner: Optional[str]
@@ -174,9 +169,6 @@ class NewProject(BaseModel):
 
     timezone: str = 'UTC'
     cypress_retries: int = 2
-
-    builder_template: Optional[str]
-    runner_template: Optional[str]
 
     class Config:
         orm_mode = True
