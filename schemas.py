@@ -359,7 +359,11 @@ class TestRunDetail(TestRunCommon):
         orm_mode = True
 
 
-class AgentModel(BaseModel):
+class NewAgentModel(BaseModel):
+    name: Optional[str] = 'Agent'
+
+
+class AgentModel(NewAgentModel):
     id: int
     token: uuid.UUID
     name: str
