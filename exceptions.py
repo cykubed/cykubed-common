@@ -16,3 +16,7 @@ class FilestoreWriteError(Exception):
 
 class FilestoreReadError(Exception):
     pass
+
+
+class InvalidTemplateException(Exception):
+    pass
