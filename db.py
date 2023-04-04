@@ -25,23 +25,48 @@ from common.utils import utcnow
 
 
 @cache
-def sync_redis() -> SyncRedis:
+def get_sync_redis():
     return get_redis(SyncSentinel, SyncRedis, SyncRetry)
 
 
 @cache
-def async_redis() -> AsyncRedis:
+def get_async_redis():
     return get_redis(AsyncSentinel, AsyncRedis, AsyncRetry)
 
+#
+# Odd bit of redirection is purely to make mocking easier
+#
 
-def get_redis(sentinel_class, redis_class, retry_class):
+
+def sync_redis() -> SyncRedis:
+    return get_sync_redis()
+
+
+def async_redis() -> AsyncRedis:
+    return get_async_redis()
+
+
+def get_redis(sentinel_class, redis_class, retry_class=None):
+    """
+    We use Redis as the glue as the central "database", and the glue that binds runners to agents via the
+    "messages" queue. On a clean install it's Redis we're waiting for as it takes a while to spin up the
+    nodes, so we don't start until we can contact all of them.
+
+    The choice of a distributed Redis is because the K8 cluster may decide to move nodes around, particularly
+    when scaling up for a large parallel Job. While we _could_ get away with a single Redis standalone deploy,
+    test runs could potentially block for a long time while the node is moved around.
+
+    :param sentinel_class:
+    :param redis_class:
+    :param retry_class:
+    """
     if os.path.exists('/var/run/secrets/kubernetes.io/serviceaccount/namespace'):
         # we're running inside K8
         hosts = []
-        while len(hosts) < 3:
+        while len(hosts) < settings.REDIS_NODES:
             try:
                 hosts = get_redis_sentinel_hosts()
-                if len(hosts) == 3:
+                if len(hosts) == settings.REDIS_NODES:
                     break
                 logger.info(f'Can only see {len(hosts)} Redis hosts - waiting...')
                 sleep(5)
@@ -51,16 +76,24 @@ def get_redis(sentinel_class, redis_class, retry_class):
                 hosts = []
 
         sentinel = sentinel_class(hosts, sentinel_kwargs=dict(password=settings.REDIS_PASSWORD,
+                                                              db=settings.REDIS_DB,
                                                               decode_responses=True))
         retry = retry_class(ConstantBackoff(2), 5)
         return sentinel.master_for("mymaster", password=settings.REDIS_PASSWORD, retry=retry,
-                                   decode_responses=True,
+                                   decode_responses=True, db=settings.REDIS_DB,
                                     retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError])
     else:
-        return redis_class(host=settings.REDIS_HOST, decode_responses=True)
+        return redis_class(host=settings.REDIS_HOST, db=settings.REDIS_DB, decode_responses=True)
 
 
 async def send_runner_stopped_message(testrun_id: int, duration, terminated=False):
+    """
+    Send the runner stopped message
+    :param testrun_id:
+    :param duration:
+    :param terminated:
+    :return:
+    """
     await send_message(AgentRunnerStopped(testrun_id=testrun_id,
                                           type=AgentEventType.runner_stopped,
                                           duration=duration,
@@ -68,6 +101,12 @@ async def send_runner_stopped_message(testrun_id: int, duration, terminated=Fals
 
 
 async def send_status_message(testrun_id: int, status: TestRunStatus):
+    """
+    Send the "status changed" message
+    :param testrun_id:
+    :param status:
+    :return:
+    """
     await send_message(AgentStatusChanged(testrun_id=testrun_id,
                                           type=AgentEventType.status,
                                           status=status))
@@ -110,6 +149,12 @@ def spec_terminated(trid: int, spec: str):
 
 
 async def next_spec(trid: int, hostname: str) -> str | None:
+    """
+    Fetch the next spec
+    :param trid:
+    :param hostname:
+    :return:
+    """
     spec = await async_redis().spop(f'testrun:{trid}:specs')
     if spec:
         await send_message(AgentSpecStarted(type=AgentEventType.spec_started,

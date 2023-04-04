@@ -51,7 +51,6 @@ class OAuthPostInstall(BaseModel):
 
 class AgentConnectionRequest(BaseModel):
     host_name: str
-    agent_name: str
 
 
 #
