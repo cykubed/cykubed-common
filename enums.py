@@ -1,6 +1,17 @@
 import enum
 
 
+class VersionType(str, enum.Enum):
+    major = 'major'
+    minor = 'minor'
+    patch = 'patch'
+
+
+class ImageType(str, enum.Enum):
+    agent = 'agent'
+    runner = 'runner'
+
+
 class Region(str, enum.Enum):
     europe = 'europe'
     us = 'us'
