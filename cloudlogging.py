@@ -50,5 +50,7 @@ def configure_stackdriver_logging(name: str):
                              headers={'Metadata-Flavor': 'Google'})
             if resp.status_code == 200 and resp.text.endswith('iam.gserviceaccount.com'):
                 logger.add(StackDriverSink(name))
+                client = google.cloud.logging.Client()
+                client.setup_logging()
     except:
         pass
