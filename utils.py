@@ -72,10 +72,3 @@ def utcnow():
 def get_hostname():
     with open('/etc/hostname') as f:
         return f.read().strip()
-
-
-def get_agent_testrun_client(trid: int):
-    transport = httpx.AsyncHTTPTransport(retries=settings.MAX_HTTP_RETRIES)
-    return httpx.AsyncClient(transport=transport,
-                             base_url=settings.MAIN_API_URL + f'/agent/testrun/{trid}',
-                               headers={'Authorization': f'Bearer {settings.API_TOKEN}'})
