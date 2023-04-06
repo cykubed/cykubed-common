@@ -445,6 +445,35 @@ class LogUpdateMessage(BaseAppSocketMessage):
     line_num: int
     msg: AppLogMessage
 
+
+class AgentBuildStarted(BaseModel):
+    started: datetime
+
+
+class AgentRunnerStopped(BaseModel):
+    # duration in seconds
+    duration: int
+    terminated: bool = False
+
+
+class AgentSpecCompleted(BaseModel):
+    file: str
+    finished: datetime
+    result: SpecResult
+
+
+class AgentSpecStarted(BaseModel):
+    file: str
+    pod_name: Optional[str]
+    started: datetime
+
+
+class AgentBuildCompleted(BaseModel):
+    sha: str
+    finished: datetime
+    specs: list[str]
+
+
 #
 # Agent websocket
 #
@@ -455,36 +484,8 @@ class AgentEvent(BaseModel):
     testrun_id: int
 
 
-class AgentBuildStarted(AgentEvent):
-    started: datetime
-
-
-class AgentCompletedBuildMessage(AgentEvent):
-    sha: str
-    finished: datetime
-    specs: list[str]
-
-
-class AgentSpecStarted(AgentEvent):
-    file: str
-    pod_name: Optional[str]
-    started: datetime
-
-
-class AgentSpecCompleted(AgentEvent):
-    file: str
-    finished: datetime
-    result: SpecResult
-
-
-class AgentRunnerStopped(AgentEvent):
-    # duration in seconds
-    duration: int
-    terminated: bool = False
-
-
-class AgentStatusChanged(AgentEvent):
-    status: TestRunStatus
+class AgentCompletedBuildMessage(AgentBuildCompleted, AgentEvent):
+    pass
 
 
 class AgentLogMessage(AgentEvent):
