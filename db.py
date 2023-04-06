@@ -3,6 +3,7 @@ from functools import cache
 from time import sleep
 
 import dns.resolver
+from httpx import AsyncClient
 from loguru import logger
 from redis import Redis as SyncRedis
 from redis.asyncio import Redis as AsyncRedis
@@ -60,19 +61,6 @@ def get_redis(sentinel_class, redis_class, retry_class):
         return redis_class(host=settings.REDIS_HOST, decode_responses=True)
 
 
-async def send_runner_stopped_message(testrun_id: int, duration, terminated=False):
-    await send_message(AgentRunnerStopped(testrun_id=testrun_id,
-                                          type=AgentEventType.runner_stopped,
-                                          duration=duration,
-                                          terminated=terminated))
-
-
-async def send_status_message(testrun_id: int, status: TestRunStatus):
-    await send_message(AgentStatusChanged(testrun_id=testrun_id,
-                                          type=AgentEventType.status,
-                                          status=status))
-
-
 async def new_testrun(tr: NewTestRun):
     await async_redis().set(f'testrun:{tr.id}', tr.json())
 
@@ -128,24 +116,16 @@ async def send_spec_completed_message(tr: NewTestRun, spec: str, result: SpecRes
                                           finished=utcnow()))
 
 
-async def send_build_started_message(trid: int):
-    await send_message(AgentBuildStarted(type=AgentEventType.build_started,
-                                         testrun_id=trid,
-                                         started=utcnow()))
-
-
 async def set_build_details(testrun: NewTestRun, specs: list[str]) -> NewTestRun | None:
     r = async_redis()
     await r.sadd(f'testrun:{testrun.id}:specs', *specs)
     testrun.status = TestRunStatus.running
     await r.set(f'testrun:{testrun.id}', testrun.json())
+    # tell the agent so it can inform the main server and then start the runner job
     await send_message(AgentCompletedBuildMessage(type=AgentEventType.build_completed,
                                                   testrun_id=testrun.id,
                                                   finished=utcnow(),
                                                   sha=testrun.sha, specs=specs))
-    await send_message(AgentStatusChanged(testrun_id=testrun.id,
-                       type=AgentEventType.status,
-                       status=TestRunStatus.running))
 
 
 def get_redis_sentinel_hosts():
