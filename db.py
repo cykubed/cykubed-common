@@ -97,15 +97,8 @@ def spec_terminated(trid: int, spec: str):
     sync_redis().sadd(f'testrun:{trid}:specs', spec)
 
 
-async def next_spec(trid: int, hostname: str) -> str | None:
-    spec = await async_redis().spop(f'testrun:{trid}:specs')
-    if spec:
-        await send_message(AgentSpecStarted(type=AgentEventType.spec_started,
-                                            testrun_id=trid,
-                                            file=spec,
-                                            started=utcnow(),
-                                            pod_name=hostname))
-    return spec
+async def next_spec(trid: int) -> str | None:
+    return await async_redis().spop(f'testrun:{trid}:specs')
 
 
 async def send_spec_completed_message(tr: NewTestRun, spec: str, result: SpecResult):
