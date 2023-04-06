@@ -3,7 +3,6 @@ from functools import cache
 from time import sleep
 
 import dns.resolver
-from httpx import AsyncClient
 from loguru import logger
 from redis import Redis as SyncRedis
 from redis.asyncio import Redis as AsyncRedis
@@ -19,8 +18,7 @@ from redis.retry import Retry as SyncRetry
 from redis.sentinel import Sentinel as SyncSentinel
 
 from common.enums import TestRunStatus, AgentEventType
-from common.schemas import AgentCompletedBuildMessage, NewTestRun, AgentStatusChanged, AgentSpecStarted, \
-    AgentSpecCompleted, SpecResult, AgentRunnerStopped, AgentBuildStarted
+from common.schemas import AgentCompletedBuildMessage, NewTestRun
 from common.settings import settings
 from common.utils import utcnow
 
@@ -88,37 +86,6 @@ async def cancel_testrun(trid: int):
     r = async_redis()
     await r.delete(f'testrun:{trid}:specs')
     await r.delete(f'testrun:{trid}')
-
-
-def spec_terminated(trid: int, spec: str):
-    """
-    Return the spec to the pool
-    """
-    sync_redis().sadd(f'testrun:{trid}:specs', spec)
-
-
-async def next_spec(trid: int) -> str | None:
-    return await async_redis().spop(f'testrun:{trid}:specs')
-
-
-async def send_spec_completed_message(tr: NewTestRun, spec: str, result: SpecResult):
-    await send_message(AgentSpecCompleted(type=AgentEventType.spec_completed,
-                                          result=result,
-                                          testrun_id=tr.id,
-                                          file=spec,
-                                          finished=utcnow()))
-
-
-async def set_build_details(testrun: NewTestRun, specs: list[str]) -> NewTestRun | None:
-    r = async_redis()
-    await r.sadd(f'testrun:{testrun.id}:specs', *specs)
-    testrun.status = TestRunStatus.running
-    await r.set(f'testrun:{testrun.id}', testrun.json())
-    # tell the agent so it can inform the main server and then start the runner job
-    await send_message(AgentCompletedBuildMessage(type=AgentEventType.build_completed,
-                                                  testrun_id=testrun.id,
-                                                  finished=utcnow(),
-                                                  sha=testrun.sha, specs=specs))
 
 
 def get_redis_sentinel_hosts():
