@@ -368,7 +368,7 @@ class AgentModel(NewAgentModel):
     token: uuid.UUID
     name: str
     first_connected: Optional[datetime]
-    connected: int
+    connected: int = 0
 
     class Config:
         orm_mode = True
