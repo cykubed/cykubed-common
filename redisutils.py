@@ -4,23 +4,13 @@ from time import sleep
 
 import dns.resolver
 from loguru import logger
-from redis import Redis as SyncRedis
-from redis.asyncio import Redis as AsyncRedis
+from redis import Sentinel as SyncSentinel, Redis as SyncRedis, BusyLoadingError, ConnectionError, TimeoutError
+from redis.asyncio import Sentinel as AsyncSentinel, Redis as AsyncRedis
 from redis.asyncio.retry import Retry as AsyncRetry
-from redis.asyncio.sentinel import Sentinel as AsyncSentinel
 from redis.backoff import ConstantBackoff
-from redis.exceptions import (
-    BusyLoadingError,
-    ConnectionError,
-    TimeoutError
-)
 from redis.retry import Retry as SyncRetry
-from redis.sentinel import Sentinel as SyncSentinel
 
-from common.enums import TestRunStatus, AgentEventType
-from common.schemas import AgentCompletedBuildMessage, NewTestRun
 from common.settings import settings
-from common.utils import utcnow
 
 
 @cache
@@ -31,10 +21,6 @@ def get_sync_redis():
 @cache
 def get_async_redis():
     return get_redis(AsyncSentinel, AsyncRedis, AsyncRetry)
-
-#
-# Odd bit of redirection is purely to make mocking easier
-#
 
 
 def sync_redis() -> SyncRedis:
@@ -83,35 +69,6 @@ def get_redis(sentinel_class, redis_class, retry_class=None):
                                     retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError])
     else:
         return redis_class(host=settings.REDIS_HOST, db=settings.REDIS_DB, decode_responses=True)
-
-
-async def new_testrun(tr: NewTestRun):
-    await async_redis().set(f'testrun:{tr.id}', tr.json())
-
-
-async def get_testrun(id: int) -> NewTestRun | None:
-    d = await async_redis().get(f'testrun:{id}')
-    if d:
-        return NewTestRun.parse_raw(d)
-    return None
-
-
-async def send_message(msg):
-    await async_redis().rpush('messages', msg.json())
-
-
-def send_message_sync(msg):
-    sync_redis().rpush('messages', msg.json())
-
-
-async def cancel_testrun(trid: int):
-    """
-    Just remove the keys
-    :param trid: test run ID
-    """
-    r = async_redis()
-    await r.delete(f'testrun:{trid}:specs')
-    await r.delete(f'testrun:{trid}')
 
 
 def get_redis_sentinel_hosts():
