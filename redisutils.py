@@ -47,10 +47,10 @@ def get_redis(sentinel_class, redis_class, retry_class=None):
                 if len(hosts) == settings.REDIS_NODES:
                     break
                 logger.info(f'Can only see {len(hosts)} Redis hosts - waiting...')
-                sleep(5)
+                sleep(30)
             except:
                 logger.info(f'No Redis hosts visible - waiting...')
-                sleep(5)
+                sleep(30)
                 hosts = []
 
         sentinel = sentinel_class(hosts, sentinel_kwargs=dict(password=settings.REDIS_PASSWORD,
