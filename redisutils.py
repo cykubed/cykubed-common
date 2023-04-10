@@ -15,21 +15,13 @@ from .settings import settings
 
 
 @cache
-def get_sync_redis():
+def sync_redis():
     return get_redis(SyncSentinel, SyncRedis, SyncRetry)
 
 
 @cache
-def get_async_redis():
+def async_redis():
     return get_redis(AsyncSentinel, AsyncRedis, AsyncRetry)
-
-
-def sync_redis() -> SyncRedis:
-    return get_sync_redis()
-
-
-def async_redis() -> AsyncRedis:
-    return get_async_redis()
 
 
 def get_redis(sentinel_class, redis_class, retry_class=None):
