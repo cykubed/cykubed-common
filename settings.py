@@ -46,6 +46,7 @@ class AppSettings(BaseSettings):
 
     REDIS_NODES: int = 3
     REDIS_PASSWORD = ''
+    REDIS_SENTINEL_PREFIX: str = ''
 
     FILESTORE_SERVERS: str = 'localhost:8100'  # comma-delimeted list
     FILESTORE_CACHE_SIZE: int = 10*1024*1024*1024  # 10GB cache suze
