@@ -10,8 +10,8 @@ from redis.asyncio.retry import Retry as AsyncRetry
 from redis.backoff import ConstantBackoff
 from redis.retry import Retry as SyncRetry
 
-from common.schemas import NewTestRun
-from common.settings import settings
+from .schemas import NewTestRun
+from .settings import settings
 
 
 @cache
