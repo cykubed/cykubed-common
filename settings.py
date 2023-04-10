@@ -42,6 +42,7 @@ class AppSettings(BaseSettings):
 
     REDIS_HOST = 'localhost'
     REDIS_DB: int = 0
+    REDIS_SENTINEL_PREFIX: str
 
     REDIS_NODES: int = 3
     REDIS_PASSWORD = ''

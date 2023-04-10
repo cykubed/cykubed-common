@@ -66,7 +66,7 @@ def get_redis(sentinel_class, redis_class, retry_class=None):
 
 def get_redis_sentinel_hosts():
     return list(set([(x.target.to_text(), 26379) for x in
-              dns.resolver.resolve(f'cykube-redis-headless.{settings.NAMESPACE}.svc.cluster.local', 'SRV')]))
+              dns.resolver.resolve(f'{settings.REDIS_SENTINEL_PREFIX}.{settings.NAMESPACE}.svc.cluster.local', 'SRV')]))
 
 
 async def get_testrun(id: int) -> NewTestRun | None:
