@@ -4,23 +4,14 @@ from time import sleep
 
 import dns.resolver
 from loguru import logger
-from redis import Redis as SyncRedis
-from redis.asyncio import Redis as AsyncRedis
+from redis import Sentinel as SyncSentinel, Redis as SyncRedis, BusyLoadingError, ConnectionError, TimeoutError
+from redis.asyncio import Sentinel as AsyncSentinel, Redis as AsyncRedis
 from redis.asyncio.retry import Retry as AsyncRetry
-from redis.asyncio.sentinel import Sentinel as AsyncSentinel
 from redis.backoff import ConstantBackoff
-from redis.exceptions import (
-    BusyLoadingError,
-    ConnectionError,
-    TimeoutError
-)
 from redis.retry import Retry as SyncRetry
-from redis.sentinel import Sentinel as SyncSentinel
 
-from .enums import TestRunStatus, AgentEventType
-from .schemas import AgentCompletedBuildMessage, NewTestRun
-from .settings import settings
-from .utils import utcnow
+from common.schemas import NewTestRun
+from common.settings import settings
 
 
 @cache
@@ -31,10 +22,6 @@ def get_sync_redis():
 @cache
 def get_async_redis():
     return get_redis(AsyncSentinel, AsyncRedis, AsyncRetry)
-
-#
-# Odd bit of redirection is purely to make mocking easier
-#
 
 
 def sync_redis() -> SyncRedis:
@@ -85,35 +72,18 @@ def get_redis(sentinel_class, redis_class, retry_class=None):
         return redis_class(host=settings.REDIS_HOST, db=settings.REDIS_DB, decode_responses=True)
 
 
-async def new_testrun(tr: NewTestRun):
-    await async_redis().set(f'testrun:{tr.id}', tr.json())
+def get_redis_sentinel_hosts():
+    return list(set([(x.target.to_text(), 26379) for x in
+              dns.resolver.resolve(f'cykube-redis-headless.{settings.NAMESPACE}.svc.cluster.local', 'SRV')]))
 
 
 async def get_testrun(id: int) -> NewTestRun | None:
+    """
+    Used by agents and runners to return a deserialised NewTestRun
+    :param id:
+    :return:
+    """
     d = await async_redis().get(f'testrun:{id}')
     if d:
         return NewTestRun.parse_raw(d)
     return None
-
-
-async def send_message(msg):
-    await async_redis().rpush('messages', msg.json())
-
-
-def send_message_sync(msg):
-    sync_redis().rpush('messages', msg.json())
-
-
-async def cancel_testrun(trid: int):
-    """
-    Just remove the keys
-    :param trid: test run ID
-    """
-    r = async_redis()
-    await r.delete(f'testrun:{trid}:specs')
-    await r.delete(f'testrun:{trid}')
-
-
-def get_redis_sentinel_hosts():
-    return list(set([(x.target.to_text(), 26379) for x in
-              dns.resolver.resolve(f'cykube-redis-headless.{settings.NAMESPACE}.svc.cluster.local', 'SRV')]))
