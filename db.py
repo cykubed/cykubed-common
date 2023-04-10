@@ -17,10 +17,10 @@ from redis.exceptions import (
 from redis.retry import Retry as SyncRetry
 from redis.sentinel import Sentinel as SyncSentinel
 
-from common.enums import TestRunStatus, AgentEventType
-from common.schemas import AgentCompletedBuildMessage, NewTestRun
-from common.settings import settings
-from common.utils import utcnow
+from .enums import TestRunStatus, AgentEventType
+from .schemas import AgentCompletedBuildMessage, NewTestRun
+from .settings import settings
+from .utils import utcnow
 
 
 @cache
