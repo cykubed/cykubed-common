@@ -10,6 +10,7 @@ from redis.asyncio.retry import Retry as AsyncRetry
 from redis.backoff import ConstantBackoff
 from redis.retry import Retry as SyncRetry
 
+from common.schemas import NewTestRun
 from common.settings import settings
 
 
@@ -74,3 +75,15 @@ def get_redis(sentinel_class, redis_class, retry_class=None):
 def get_redis_sentinel_hosts():
     return list(set([(x.target.to_text(), 26379) for x in
               dns.resolver.resolve(f'cykube-redis-headless.{settings.NAMESPACE}.svc.cluster.local', 'SRV')]))
+
+
+async def get_testrun(id: int) -> NewTestRun | None:
+    """
+    Used by agents and runners to return a deserialised NewTestRun
+    :param id:
+    :return:
+    """
+    d = await async_redis().get(f'testrun:{id}')
+    if d:
+        return NewTestRun.parse_raw(d)
+    return None
