@@ -66,6 +66,9 @@ class AppSettings(BaseSettings):
     def get_results_dir(self):
         return os.path.join(self.SCRATCH_DIR, 'results')
 
+    def get_temp_dir(self):
+        return os.path.join(self.SCRATCH_DIR, 'tmp')
+
 
 settings = AppSettings()
 

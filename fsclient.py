@@ -153,7 +153,8 @@ class AsyncFSClient(object):
         async def fetch(host):
             try:
                 suffix = fname[fname.find('.'):]
-                async with aiofiles.tempfile.NamedTemporaryFile('wb', delete=False, suffix=suffix) as f:
+                async with aiofiles.tempfile.NamedTemporaryFile('wb', delete=False, suffix=suffix,
+                                                                dir=settings.get_temp_dir()) as f:
                     async with self.session.get(f'{host}/fs/{fname}') as resp:
                         if resp.status != 200:
                             return None
