@@ -1,3 +1,5 @@
+import os
+
 from pydantic import BaseSettings
 
 
@@ -32,8 +34,8 @@ class AppSettings(BaseSettings):
     CACHE_URL: str = 'http://127.0.0.1:5001'
     MAIN_API_URL: str = 'https://app.cykube.net/api'
 
-    BUILD_DIR = '/tmp/cykube/build'
-    RESULTS_FOLDER = '/tmp/cykube/results'
+    SCRATCH_DIR = '/tmp/cykube'
+
     CACHE_DIR: str = '/tmp/cykube/cache'
 
     SENTRY_DSN: str = None
@@ -57,6 +59,14 @@ class AppSettings(BaseSettings):
     FILESTORE_MIN_WRITE: int = 1
     FILESTORE_SYNC_PERIOD: int = 60*10
     CHUNK_SIZE: int = 8192*8
+
+    @property
+    def build_dir(self):
+        return os.path.join(self.SCRATCH_DIR, 'build')
+
+    @property
+    def results_dir(self):
+        return os.path.join(self.SCRATCH_DIR, 'results')
 
 
 settings = AppSettings()
