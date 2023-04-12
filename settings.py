@@ -60,12 +60,10 @@ class AppSettings(BaseSettings):
     FILESTORE_SYNC_PERIOD: int = 60*10
     CHUNK_SIZE: int = 8192*8
 
-    @property
-    def build_dir(self):
+    def get_build_dir(self):
         return os.path.join(self.SCRATCH_DIR, 'build')
 
-    @property
-    def results_dir(self):
+    def get_results_dir(self):
         return os.path.join(self.SCRATCH_DIR, 'results')
 
 
