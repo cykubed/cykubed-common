@@ -53,10 +53,13 @@ def get_redis(sentinel_class, redis_class, retry_class=None):
                 sleep(30)
                 hosts = []
 
+        retry = retry_class(ConstantBackoff(10), 30)
         sentinel = sentinel_class(hosts, sentinel_kwargs=dict(password=settings.REDIS_PASSWORD,
                                                               db=settings.REDIS_DB,
+                                                              retry=retry,
+                                                              retry_on_error=[BusyLoadingError, ConnectionError,
+                                                                              TimeoutError],
                                                               decode_responses=True))
-        retry = retry_class(ConstantBackoff(2), 5)
         return sentinel.master_for("mymaster", password=settings.REDIS_PASSWORD, retry=retry,
                                    decode_responses=True, db=settings.REDIS_DB,
                                     retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError])
