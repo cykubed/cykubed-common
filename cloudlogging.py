@@ -20,6 +20,9 @@ class StackDriverSink:
         source: https://github.com/Delgan/loguru/blob/master/loguru/_handler.py
         """
         record = message.record
+
+        if 'kube-probe' in record["message"]:
+            return
         log_info = {
             "exception": (None if record["exception"] is None
                           else ''.join(traceback.format_exception(None,
