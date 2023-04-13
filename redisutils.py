@@ -67,15 +67,3 @@ def get_redis(sentinel_class, redis_class, retry_class=None):
 def get_redis_sentinel_hosts():
     return list(set([(x.target.to_text(), 26379) for x in
               dns.resolver.resolve(f'{settings.REDIS_SENTINEL_PREFIX}.{settings.NAMESPACE}.svc.cluster.local', 'SRV')]))
-
-
-async def get_testrun(id: int) -> NewTestRun | None:
-    """
-    Used by agents and runners to return a deserialised NewTestRun
-    :param id:
-    :return:
-    """
-    d = await async_redis().get(f'testrun:{id}')
-    if d:
-        return NewTestRun.parse_raw(d)
-    return None
