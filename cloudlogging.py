@@ -48,7 +48,7 @@ def configure_stackdriver_logging(name: str):
         if resp.status_code == 200 and resp.headers['metadata-flavor'] == 'Google':
             resp = httpx.get('http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/email',
                              headers={'Metadata-Flavor': 'Google'})
-            if resp.status_code == 200 and resp.text.endswith('iam.gserviceaccount.com'):
+            if resp.status_code == 200 and resp.text.endswith('gserviceaccount.com'):
                 logger.add(StackDriverSink(name))
                 client = google.cloud.logging.Client()
                 client.setup_logging()
