@@ -60,6 +60,9 @@ class AppSettings(BaseSettings):
     FILESTORE_SYNC_PERIOD: int = 60*10
     CHUNK_SIZE: int = 8192*8
 
+    def get_yarn_cache_dir(self):
+        return os.path.join(self.SCRATCH_DIR, 'yarn_cache')
+
     def get_build_dir(self):
         return os.path.join(self.SCRATCH_DIR, 'build')
 
