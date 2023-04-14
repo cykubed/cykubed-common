@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from pydantic import BaseSettings
 
@@ -71,6 +72,23 @@ class AppSettings(BaseSettings):
 
     def get_temp_dir(self):
         return os.path.join(self.SCRATCH_DIR, 'tmp')
+
+    def get_screenshots_folder(self):
+        return os.path.join(self.get_results_dir(), 'screenshots')
+
+    def get_videos_folder(self):
+        return os.path.join(self.get_results_dir(), 'videos')
+
+    def init_build_dirs(self):
+
+        if os.path.exists(self.get_build_dir()):
+            # probably running as developer
+            shutil.rmtree(self.get_build_dir(), ignore_errors=True)
+
+        os.makedirs(self.get_build_dir(), exist_ok=True)
+        os.makedirs(self.get_temp_dir(), exist_ok=True)
+        os.makedirs(self.get_videos_folder(), exist_ok=True)
+        os.makedirs(self.get_screenshots_folder(), exist_ok=True)
 
 
 settings = AppSettings()
