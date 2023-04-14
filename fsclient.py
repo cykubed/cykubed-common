@@ -10,7 +10,7 @@ import aioshutil
 from aiohttp import ClientError, ClientConnectionError
 from loguru import logger
 
-from common.exceptions import FilestoreWriteError, FilestoreReadError
+from common.exceptions import FilestoreWriteError, FilestoreReadError, BuildFailedException
 from common.settings import settings
 
 
@@ -136,8 +136,11 @@ class AsyncFSClient(object):
         def untar():
             logger.debug(f'Unpacking {tarfile}')
             # lz4 is much quicker than gzip
-            subprocess.run(f'/bin/tar xf {tarfile} -I lz4', cwd=target_dir, shell=True, check=True,
-                           encoding=settings.ENCODING)
+            try:
+                subprocess.run(f'/bin/tar xf {tarfile} -I lz4', cwd=target_dir, shell=True, check=True,
+                               encoding=settings.ENCODING)
+            except subprocess.CalledProcessError as ex:
+                raise BuildFailedException(f'Failed to unpack {fname}:\n{ex.stderr}.\nBailing out')
 
         loop = asyncio.get_running_loop()
         await loop.run_in_executor(None, untar)
