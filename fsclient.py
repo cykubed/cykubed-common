@@ -10,8 +10,8 @@ import aioshutil
 from aiohttp import ClientError, ClientConnectionError
 from loguru import logger
 
-from common.exceptions import FilestoreWriteError, FilestoreReadError, BuildFailedException
-from common.settings import settings
+from .exceptions import FilestoreWriteError, FilestoreReadError, BuildFailedException
+from .settings import settings
 
 
 class AsyncFSClient(object):
