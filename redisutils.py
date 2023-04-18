@@ -38,6 +38,11 @@ def get_redis(sentinel_class, redis_class, retry_class=None):
     :param redis_class:
     :param retry_class:
     """
+    if redis_class:
+        retry = retry_class(ConstantBackoff(2), 5)
+    else:
+        retry = None
+
     if os.path.exists('/var/run/secrets/kubernetes.io/serviceaccount/namespace'):
         # we're running inside K8
         hosts = []
@@ -56,12 +61,12 @@ def get_redis(sentinel_class, redis_class, retry_class=None):
         sentinel = sentinel_class(hosts, sentinel_kwargs=dict(password=settings.REDIS_PASSWORD,
                                                               db=settings.REDIS_DB,
                                                               decode_responses=True))
-        retry = retry_class(ConstantBackoff(2), 5)
         return sentinel.master_for("mymaster", password=settings.REDIS_PASSWORD, retry=retry,
                                    decode_responses=True, db=settings.REDIS_DB,
-                                    retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError])
+                                   retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError])
     else:
-        return redis_class(host=settings.REDIS_HOST, db=settings.REDIS_DB, decode_responses=True)
+        return redis_class(host=settings.REDIS_HOST, db=settings.REDIS_DB, decode_responses=True,
+                           retry=retry, retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError])
 
 
 def get_redis_sentinel_hosts():
