@@ -19,9 +19,14 @@ def sync_redis():
     return get_redis(SyncSentinel, SyncRedis, SyncRetry)
 
 
-@cache
+_async_redis = None
+
+
 def async_redis():
-    return get_redis(AsyncSentinel, AsyncRedis, AsyncRetry)
+    global _async_redis
+    if not _async_redis:
+        _async_redis = get_redis(AsyncSentinel, AsyncRedis, AsyncRetry)
+    return _async_redis
 
 
 def get_redis(sentinel_class, redis_class, retry_class=None):
