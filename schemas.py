@@ -409,6 +409,7 @@ class AgentStateMessage(BaseAppSocketMessage):
 class TestRunErrorMessage(BaseAppSocketMessage):
     action = AppWebSocketActions.error
     message: str
+    source: str
 
 
 class TestRunDetailUpdateMessage(BaseAppSocketMessage):
@@ -490,6 +491,11 @@ class AgentCompletedBuildMessage(AgentBuildCompleted, AgentEvent):
 
 class AgentLogMessage(AgentEvent):
     msg: AppLogMessage
+
+
+class AgentErrorMessage(AgentEvent):
+    source: str
+    message: str
 
 
 
