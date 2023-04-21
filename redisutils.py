@@ -10,12 +10,11 @@ from redis.asyncio.retry import Retry as AsyncRetry
 from redis.backoff import ConstantBackoff
 from redis.retry import Retry as SyncRetry
 
-from .schemas import NewTestRun
 from .settings import settings
 
 
 @cache
-def sync_redis():
+def sync_redis() -> SyncRedis:
     return get_redis(SyncSentinel, SyncRedis, SyncRetry)
 
 
@@ -27,6 +26,15 @@ def async_redis():
     if not _async_redis:
         _async_redis = get_redis(AsyncSentinel, AsyncRedis, AsyncRetry)
     return _async_redis
+
+
+def ping_redis() -> bool:
+    try:
+        if sync_redis().ping():
+            return True
+        return False
+    except ConnectionError:
+        return False
 
 
 def get_redis(sentinel_class, redis_class, retry_class=None):
