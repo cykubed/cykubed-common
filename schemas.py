@@ -329,6 +329,10 @@ class TestRunSummary(TestRunCommon):
         orm_mode = True
 
 
+class BuildFailureReport(BaseModel):
+    msg: str
+    error_code: Optional[int]
+
 #
 # TestRun detail
 #
