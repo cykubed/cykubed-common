@@ -6,11 +6,8 @@ from decimal import Decimal
 from json import JSONEncoder
 from uuid import UUID
 
-import httpx
-
 from . import schemas
 from .enums import TestRunStatus
-from .settings import settings
 
 FAILED_STATES = [TestRunStatus.timeout, TestRunStatus.failed]
 ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.running]
