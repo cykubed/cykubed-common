@@ -422,7 +422,6 @@ class TestRunDetailUpdateMessage(BaseAppSocketMessage):
 
 
 class SpecFileMessage(BaseAppSocketMessage):
-    action = AppWebSocketActions.specfile
     testrun_id: int
     spec: SpecFile
 
