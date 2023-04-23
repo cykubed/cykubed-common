@@ -78,7 +78,8 @@ class TestResultStatus(str, enum.Enum):
 class AppWebSocketActions(str, enum.Enum):
     testrun = 'testrun'
     status = 'status'
-    specfile = 'specfile'
+    spec_started = 'spec-started'
+    spec_finished = 'spec-finished'
     buildlog = 'buildlog'
     agent = 'agent'
     error = 'error'
