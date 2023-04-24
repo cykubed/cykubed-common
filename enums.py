@@ -99,6 +99,13 @@ class LogLevel(str, enum.Enum):
     error = 'error'
 
 
+class TriggerType(str, enum.Enum):
+    started = 'started'
+    passed = 'passed'
+    failed = 'failed'
+    fixed = 'fixed'
+
+
 loglevelToInt = {LogLevel.debug: 0,
                  LogLevel.info: 1,
                  LogLevel.cmd: 1,
