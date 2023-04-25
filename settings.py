@@ -22,7 +22,6 @@ class AppSettings(BaseSettings):
     ENCODING = 'utf8'
 
     BUILD_TIMEOUT: int = 900
-    NODE_PATH: str = None
 
     TEST = False
 
@@ -35,9 +34,8 @@ class AppSettings(BaseSettings):
     CACHE_URL: str = 'http://127.0.0.1:5001'
     MAIN_API_URL: str = 'https://app.cykube.net/api'
 
-    SCRATCH_DIR = '/tmp/cykube'
-
-    CACHE_DIR: str = '/tmp/cykube/cache'
+    BUILD_DIR: str
+    NODE_CACHE_DIR: str
 
     SENTRY_DSN: str = None
 
@@ -50,22 +48,10 @@ class AppSettings(BaseSettings):
     REDIS_NODES: int = 3
     REDIS_PASSWORD = ''
     REDIS_SENTINEL_PREFIX: str = ''
-
-    FILESTORE_SERVERS: str = 'localhost:8100'  # comma-delimeted list
-    FILESTORE_CACHE_SIZE: int = 10*1024*1024*1024  # 10GB cache suze
-    FILESTORE_TOTAL_TIMEOUT: int = 600
-    FILESTORE_CONNECT_TIMEOUT: int = 10
-    FILESTORE_READ_TIMEOUT: int = 300
-    FILESTORE_DISK_SIZE_GB: float = 10.0
-    FILESTORE_MIN_WRITE: int = 1
-    FILESTORE_SYNC_PERIOD: int = 60*10
-    CHUNK_SIZE: int = 8192*8
+    SCRATCH_DIR = '/tmp'
 
     def get_yarn_cache_dir(self):
-        return os.path.join(self.SCRATCH_DIR, 'yarn_cache')
-
-    def get_build_dir(self):
-        return os.path.join(self.SCRATCH_DIR, 'build')
+        return os.path.join(self.NODE_CACHE_DIR, '.yarn_cache')
 
     def get_results_dir(self):
         return os.path.join(self.SCRATCH_DIR, 'results')
@@ -81,11 +67,11 @@ class AppSettings(BaseSettings):
 
     def init_build_dirs(self):
 
-        if os.path.exists(self.get_build_dir()):
+        if os.path.exists(self.BUILD_DIR):
             # probably running as developer
-            shutil.rmtree(self.get_build_dir(), ignore_errors=True)
+            shutil.rmtree(self.BUILD_DIR, ignore_errors=True)
 
-        os.makedirs(self.get_build_dir(), exist_ok=True)
+        os.makedirs(self.BUILD_DIR, exist_ok=True)
         os.makedirs(self.get_temp_dir(), exist_ok=True)
         os.makedirs(self.get_videos_folder(), exist_ok=True)
         os.makedirs(self.get_screenshots_folder(), exist_ok=True)

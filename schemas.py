@@ -255,13 +255,18 @@ class BaseTestRun(BaseModel):
 
 class NewTestRun(BaseTestRun):
     """
-    Sent to the agent to kick off a run
+    Sent to the agent to kick off a run.
     """
     url: str
-    cache_key: Optional[str]
 
     class Config:
         orm_mode = True
+
+
+class AgentTestRun(NewTestRun):
+    node_cache_hit: bool = False
+    cache_key: str
+    specs: list[str]
 
 
 class TestRunUpdate(BaseModel):
