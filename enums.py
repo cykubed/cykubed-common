@@ -57,8 +57,9 @@ class NotificationStates(str, enum.Enum):
 
 class AgentEventType(str, enum.Enum):
     log = 'log'
+    clone_completed = 'clone_completed'
     build_completed = 'build_completed'
-error = 'error'
+    error = 'error'
 
 ACTIVE_STATES = [TestRunStatus.pending, TestRunStatus.started, TestRunStatus.building, TestRunStatus.running]
 INACTIVE_STATES = [TestRunStatus.cancelled, TestRunStatus.failed, TestRunStatus.passed, TestRunStatus.timeout]

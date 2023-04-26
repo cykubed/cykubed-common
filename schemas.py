@@ -493,7 +493,11 @@ class AgentEvent(BaseModel):
     testrun_id: int
 
 
-class AgentCompletedBuildMessage(AgentBuildCompleted, AgentEvent):
+class CloneCompletedAgentMessage(AgentBuildCompleted, AgentEvent):
+    pass
+
+
+class BuildCompletedAgentMessage(AgentBuildCompleted, AgentEvent):
     pass
 
 
