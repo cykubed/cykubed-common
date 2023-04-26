@@ -1,5 +1,5 @@
-import datetime
 import uuid
+from datetime import date, datetime
 from typing import Optional, List, Union
 
 from pydantic import BaseModel, validator
@@ -7,7 +7,6 @@ from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
     SpecFileStatus
-from .utils import utcnow
 
 
 #
@@ -119,9 +118,9 @@ class SubscriptionType(BaseModel):
 
 
 class Subscription(BaseModel):
-    started: datetime.date
+    started: date
     subtype: SubscriptionType
-    finished: Optional[datetime.date]
+    finished: Optional[date]
 
     class Config:
         orm_mode = True
@@ -274,9 +273,6 @@ class CacheItem(BaseModel):
     name: str  # PVC or snapshot name
     ttl: int  # TTL in secs
     expires: datetime  # expiry date
-
-    def update_expiry(self):
-        self.expires = utcnow() + datetime.timedelta(seconds=self.ttl)
 
 
 class TestRunUpdate(BaseModel):
