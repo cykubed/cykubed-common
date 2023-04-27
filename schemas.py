@@ -465,6 +465,11 @@ class AgentBuildStarted(BaseModel):
     started: datetime
 
 
+class AgentBuildCompleted(BaseModel):
+    duration: int
+    specs: list[str]
+
+
 class AgentRunnerStopped(BaseModel):
     # duration in seconds
     duration: int
@@ -481,11 +486,6 @@ class AgentSpecStarted(BaseModel):
     file: str
     pod_name: Optional[str]
     started: datetime
-
-
-class AgentBuildCompleted(BaseModel):
-    duration: int
-    specs: list[str]
 
 
 #
