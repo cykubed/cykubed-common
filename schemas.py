@@ -342,6 +342,7 @@ class TestRunSummary(TestRunCommon):
 
 class BuildFailureReport(BaseModel):
     msg: str
+    duration: int
     error_code: Optional[int]
 
 #
@@ -486,6 +487,10 @@ class AgentSpecStarted(BaseModel):
     file: str
     pod_name: Optional[str]
     started: datetime
+
+
+class AgentBuildCompleted(BaseModel):
+    duration: int
 
 
 #
