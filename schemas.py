@@ -484,8 +484,7 @@ class AgentSpecStarted(BaseModel):
 
 
 class AgentBuildCompleted(BaseModel):
-    sha: str
-    finished: datetime
+    duration: int
     specs: list[str]
 
 
