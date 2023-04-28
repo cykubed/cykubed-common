@@ -342,7 +342,6 @@ class TestRunSummary(TestRunCommon):
 
 class BuildFailureReport(BaseModel):
     msg: str
-    duration: int
     error_code: Optional[int]
 
 #
@@ -481,6 +480,7 @@ class AgentSpecCompleted(BaseModel):
     file: str
     finished: datetime
     result: SpecResult
+    total_run_duration: int = 0
 
 
 class AgentSpecStarted(BaseModel):
@@ -500,15 +500,10 @@ class AgentBuildCompleted(BaseModel):
 
 class AgentEvent(BaseModel):
     type: AgentEventType
+    duration: Optional[int]
     testrun_id: int
-
-
-class CloneCompletedAgentMessage(AgentBuildCompleted, AgentEvent):
-    pass
-
-
-class BuildCompletedAgentMessage(AgentBuildCompleted, AgentEvent):
-    pass
+    msg: Optional[str]
+    error_code: Optional[int]
 
 
 class AgentLogMessage(AgentEvent):

@@ -12,6 +12,10 @@ class BuildFailedException(Exception):
         return f'{self.msg}'
 
 
+class RunFailedException(BuildFailedException):
+    pass
+
+
 class NoBranchesException(Exception):
     pass
 
