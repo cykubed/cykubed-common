@@ -497,7 +497,6 @@ class AgentBuildCompleted(BaseModel):
 # Agent websocket
 #
 
-
 class AgentEvent(BaseModel):
     type: AgentEventType
     duration: Optional[int]
