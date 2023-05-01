@@ -489,10 +489,6 @@ class AgentSpecStarted(BaseModel):
     started: datetime
 
 
-class AgentBuildCompleted(BaseModel):
-    duration: int
-
-
 #
 # Agent websocket
 #
