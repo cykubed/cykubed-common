@@ -75,6 +75,7 @@ def get_redis(sentinel_class, redis_class, retry_class=None):
 
     if settings.K8 and os.path.exists('/var/run/secrets/kubernetes.io/serviceaccount/namespace') \
             and settings.REDIS_NODES > 1:
+        logger.info('Assuming replicated Redis with Sentinel')
         # we're running inside K8
         hosts = []
         while len(hosts) < settings.REDIS_NODES:
@@ -100,6 +101,7 @@ def get_redis(sentinel_class, redis_class, retry_class=None):
                                    decode_responses=True, db=settings.REDIS_DB,
                                    retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError])
     else:
+        logger.info('Assuming standalone Redis')
         return redis_class(host=settings.REDIS_HOST, db=settings.REDIS_DB,
                            password=settings.REDIS_PASSWORD,
                            decode_responses=True,
