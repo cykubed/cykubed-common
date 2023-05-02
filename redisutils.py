@@ -13,10 +13,12 @@ from redis.retry import Retry as SyncRetry
 
 
 class RedisSettings(BaseSettings):
+    K8: bool = True
     REDIS_HOST = 'localhost'
     REDIS_DB: int = 0
     REDIS_NODES: int = 3
     REDIS_PASSWORD = ''
+    REDIS_PORT = 6379
     REDIS_SENTINEL_PREFIX: str = ''
     NAMESPACE = 'cykubed'
 
@@ -71,7 +73,8 @@ def get_redis(sentinel_class, redis_class, retry_class=None):
 
     settings = RedisSettings()
 
-    if os.path.exists('/var/run/secrets/kubernetes.io/serviceaccount/namespace'):
+    if settings.K8 and os.path.exists('/var/run/secrets/kubernetes.io/serviceaccount/namespace') \
+            and settings.REDIS_NODES > 1:
         # we're running inside K8
         hosts = []
         while len(hosts) < settings.REDIS_NODES:
@@ -97,6 +100,9 @@ def get_redis(sentinel_class, redis_class, retry_class=None):
                                    decode_responses=True, db=settings.REDIS_DB,
                                    retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError])
     else:
-        return redis_class(host=settings.REDIS_HOST, db=settings.REDIS_DB, decode_responses=True,
+        return redis_class(host=settings.REDIS_HOST, db=settings.REDIS_DB,
+                           password=settings.REDIS_PASSWORD,
+                           decode_responses=True,
+                           port=settings.REDIS_PORT,
                            retry=retry, retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError])
 
