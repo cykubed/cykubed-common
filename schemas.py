@@ -504,7 +504,6 @@ class AgentEvent(BaseModel):
     type: AgentEventType
     duration: Optional[int]
     testrun_id: int
-    msg: Optional[str]
     error_code: Optional[int]
 
 
