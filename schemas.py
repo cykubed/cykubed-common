@@ -265,9 +265,9 @@ class NewTestRun(BaseTestRun):
 
 
 class AgentTestRun(NewTestRun):
-    node_cache_hit: Optional[bool] = False
+    node_cache_hit: bool = False
     cache_key: Optional[str]
-    specs: Optional[list[str]]
+    specs: list[str]
 
 
 class CacheItemType(str, enum.Enum):
