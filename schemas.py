@@ -264,12 +264,6 @@ class NewTestRun(BaseTestRun):
         orm_mode = True
 
 
-class AgentTestRun(NewTestRun):
-    node_cache_hit: bool = False
-    cache_key: Optional[str]
-    specs: Optional[list[str]]
-
-
 class CacheItemType(str, enum.Enum):
     snapshot = 'snapshot'
     pvc = 'pvc'
@@ -508,15 +502,18 @@ class AgentEvent(BaseModel):
 
 
 class AgentCloneCompletedEvent(AgentEvent):
+    type = AgentEventType.clone_completed
     cache_key: str
     specs: list[str]
 
 
 class AgentLogMessage(AgentEvent):
+    type = AgentEventType.log
     msg: AppLogMessage
 
 
 class AgentErrorMessage(AgentEvent):
+    type = AgentEventType.error
     source: str
     message: str
 
