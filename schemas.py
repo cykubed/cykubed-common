@@ -507,6 +507,10 @@ class AgentEvent(BaseModel):
     error_code: Optional[int]
 
 
+class AgentCloneCompletedEvent(AgentEvent):
+    cache_key: str
+
+
 class AgentLogMessage(AgentEvent):
     msg: AppLogMessage
 
