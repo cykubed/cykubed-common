@@ -509,6 +509,7 @@ class AgentEvent(BaseModel):
 
 class AgentCloneCompletedEvent(AgentEvent):
     cache_key: str
+    num_specs: int
 
 
 class AgentLogMessage(AgentEvent):
