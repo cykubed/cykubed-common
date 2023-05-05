@@ -1,4 +1,3 @@
-import enum
 import uuid
 from datetime import date, datetime
 from typing import Optional, List, Union
@@ -164,7 +163,7 @@ class NewProject(BaseModel):
     build_cpu: float = 2
     build_memory: float = 4
     build_deadline: int = 10*60
-    build_ephemeral_storage: float = 10
+    build_ephemeral_storage: float = 10.0
 
     start_runners_first: bool
     runner_image: Optional[str]
@@ -270,16 +269,12 @@ class NewTestRun(BaseTestRun):
         orm_mode = True
 
 
-class CacheItemType(str, enum.Enum):
-    snapshot = 'snapshot'
-    pvc = 'pvc'
-
-
 class CacheItem(BaseModel):
     name: str  # PVC or snapshot name
     ttl: int  # TTL in secs
     expires: datetime  # expiry date
-    type: CacheItemType
+    node_snapshot: Optional[str]
+    specs: Optional[list[str]]
 
 
 class TestRunUpdate(BaseModel):
