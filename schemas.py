@@ -154,7 +154,7 @@ class NewProject(BaseModel):
     spot_enabled: bool = False
     spot_percentage: int = 80
 
-    browser: str = 'chrome'
+    browser: str = None
 
     build_cmd = 'ng build --output-path=dist'
     build_cpu: float = 2
