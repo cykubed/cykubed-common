@@ -156,6 +156,8 @@ class NewProject(BaseModel):
 
     browser: str = None
 
+    spec_deadline: int = 60
+
     build_cmd = 'ng build --output-path=dist'
     build_cpu: float = 2
     build_memory: float = 4
