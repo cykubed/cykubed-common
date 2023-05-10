@@ -156,7 +156,8 @@ class NewProject(BaseModel):
 
     browser: str = None
 
-    spec_deadline: int = 60
+    spec_deadline: int = 5 * 60   # overall spec deadline
+    spec_hang_deadline: int = 60  # if no output in 60 secs assume hanging
 
     build_cmd = 'ng build --output-path=dist'
     build_cpu: float = 2
