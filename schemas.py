@@ -155,6 +155,7 @@ class NewProject(BaseModel):
 
     browser: str = None
 
+    cypress_debug_enabled: bool = False
     spec_deadline: int = 5 * 60   # overall spec deadline
     spec_hang_deadline: int = 60  # if no output in 60 secs assume hanging
 
@@ -298,6 +299,18 @@ class SpecFile(BaseModel):
         orm_mode = True
 
 
+class SpecFileName(BaseModel):
+    file: str
+
+
+class SpecFileLog(BaseModel):
+    file: str
+    log: str
+
+    class Config:
+        orm_mode = True
+
+
 class CompletedSpecFile(BaseModel):
     file: str
     finished: datetime
@@ -436,6 +449,10 @@ class TestRunDetailUpdateMessage(BaseAppSocketMessage):
 class SpecFileMessage(BaseAppSocketMessage):
     testrun_id: int
     spec: SpecFile
+
+
+class SpecFileLogMessage(BaseAppSocketMessage, SpecFileLog):
+    action = AppWebSocketActions.spec_log_update
 
 
 class TestRunStatusUpdateMessage(BaseAppSocketMessage):
