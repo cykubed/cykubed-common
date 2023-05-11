@@ -108,3 +108,6 @@ def get_redis(sentinel_class, redis_class, retry_class=None):
                            port=settings.REDIS_PORT,
                            retry=retry, retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError])
 
+
+def get_specfile_log_key(trid: int, file: str):
+    return f'testrun:{trid}:spec:{file}:logs'
