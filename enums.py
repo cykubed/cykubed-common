@@ -85,6 +85,7 @@ class AppWebSocketActions(str, enum.Enum):
     status = 'status'
     spec_started = 'spec-started'
     spec_finished = 'spec-finished'
+    spec_log_update = 'spec-log-update'
     buildlog = 'buildlog'
     agent = 'agent'
     error = 'error'
