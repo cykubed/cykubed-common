@@ -170,7 +170,7 @@ class NewProject(BaseModel):
     runner_cpu: float = 2
     runner_memory: float = 4
     runner_deadline: int = 3600
-    runner_ephemeral_storage: float = 10
+    runner_ephemeral_storage: float = 10.0
 
     timezone: str = 'UTC'
     cypress_retries: int = 2
