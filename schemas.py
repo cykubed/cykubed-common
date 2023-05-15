@@ -498,7 +498,6 @@ class AgentSpecCompleted(BaseModel):
     file: str
     finished: datetime
     result: SpecResult
-    total_run_duration: int = 0
 
 
 class AgentSpecStarted(BaseModel):
