@@ -270,7 +270,7 @@ class NewTestRun(BaseTestRun):
 
 
 class CacheItem(BaseModel):
-    name: str  # PVC or snapshot name
+    name: str
     ttl: int  # TTL in secs
     expires: datetime  # expiry date
     node_snapshot: Optional[str]
