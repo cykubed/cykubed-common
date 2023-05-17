@@ -69,6 +69,7 @@ class CodeFrame(BaseModel):
 class TestResultError(BaseModel):
     title: str
     type: Optional[str]
+    test_line: int
     message: str
     stack: str
     code_frame: CodeFrame
