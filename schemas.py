@@ -156,8 +156,7 @@ class NewProject(BaseModel):
     browser: str = None
 
     cypress_debug_enabled: bool = False
-    spec_deadline: int = 5 * 60   # overall spec deadline
-    spec_hang_deadline: int = 60  # if no output in 60 secs assume hanging
+    spec_deadline: Optional[int] = None
 
     build_cmd = 'ng build --output-path=dist'
     build_cpu: float = 2
