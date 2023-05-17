@@ -69,7 +69,7 @@ class CodeFrame(BaseModel):
 class TestResultError(BaseModel):
     title: str
     type: Optional[str]
-    test_line: int
+    test_line: Optional[int]
     message: str
     stack: str
     code_frame: CodeFrame
@@ -156,7 +156,6 @@ class NewProject(BaseModel):
 
     browser: str = None
 
-    cypress_debug_enabled: bool = False
     spec_deadline: Optional[int] = None
 
     build_cmd = 'ng build --output-path=dist'
