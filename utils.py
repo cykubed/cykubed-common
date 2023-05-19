@@ -1,4 +1,3 @@
-import base64
 import datetime
 import logging
 import os
@@ -6,11 +5,7 @@ from decimal import Decimal
 from json import JSONEncoder
 from uuid import UUID
 
-import httpx
-
-from . import schemas
 from .enums import TestRunStatus
-from .settings import settings
 
 FAILED_STATES = [TestRunStatus.timeout, TestRunStatus.failed]
 ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.running]
@@ -42,14 +37,6 @@ class MaxBodySizeValidator:
             raise MaxBodySizeException(body_len=self.body_len)
 
 
-def encode_testrun(tr: schemas.NewTestRun) -> str:
-    return base64.b64encode(tr.json().encode()).decode()
-
-
-def decode_testrun(payload: str) -> schemas.NewTestRun:
-    return schemas.NewTestRun.parse_raw(base64.b64decode(payload).decode())
-
-
 def get_headers():
     token = os.environ.get('API_TOKEN')
     return {'Authorization': f'Bearer {token}',
@@ -59,7 +46,7 @@ def get_headers():
 def disable_hc_logging():
     class HCFilter(logging.Filter):
         def filter(self, record: logging.LogRecord) -> bool:
-            return record.getMessage().find("GET / ") == -1
+            return record.getMessage().find("kube-probe") == -1
 
     # disable logging for health check
     logging.getLogger("uvicorn.access").addFilter(HCFilter())

@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, date
+from datetime import date, datetime
 from typing import Optional, List, Union
 
 from pydantic import BaseModel, validator
@@ -69,6 +69,7 @@ class CodeFrame(BaseModel):
 class TestResultError(BaseModel):
     title: str
     type: Optional[str]
+    test_line: Optional[int]
     message: str
     stack: str
     code_frame: CodeFrame
@@ -153,18 +154,22 @@ class NewProject(BaseModel):
     spot_enabled: bool = False
     spot_percentage: int = 80
 
+    browser: str = None
+
+    spec_deadline: Optional[int] = None
+
     build_cmd = 'ng build --output-path=dist'
     build_cpu: float = 2
     build_memory: float = 4
     build_deadline: int = 10*60
-    build_ephemeral_storage: float = 10
+    build_ephemeral_storage: float = 10.0
 
     start_runners_first: bool
     runner_image: Optional[str]
     runner_cpu: float = 2
     runner_memory: float = 4
     runner_deadline: int = 3600
-    runner_ephemeral_storage: float = 4
+    runner_ephemeral_storage: float = 10.0
 
     timezone: str = 'UTC'
     cypress_retries: int = 2
@@ -255,13 +260,20 @@ class BaseTestRun(BaseModel):
 
 class NewTestRun(BaseTestRun):
     """
-    Sent to the agent to kick off a run
+    Sent to the agent to kick off a run.
     """
     url: str
-    cache_key: Optional[str]
 
     class Config:
         orm_mode = True
+
+
+class CacheItem(BaseModel):
+    name: str
+    ttl: int  # TTL in secs
+    expires: datetime  # expiry date
+    node_snapshot: Optional[str]
+    specs: Optional[list[str]]
 
 
 class TestRunUpdate(BaseModel):
@@ -281,6 +293,18 @@ class SpecFile(BaseModel):
     duration: Optional[int]
     failures: int = 0
     result: Optional[SpecResult]
+
+    class Config:
+        orm_mode = True
+
+
+class SpecFileName(BaseModel):
+    file: str
+
+
+class SpecFileLog(BaseModel):
+    file: str
+    log: str
 
     class Config:
         orm_mode = True
@@ -426,6 +450,10 @@ class SpecFileMessage(BaseAppSocketMessage):
     spec: SpecFile
 
 
+class SpecFileLogMessage(BaseAppSocketMessage, SpecFileLog):
+    action = AppWebSocketActions.spec_log_update
+
+
 class TestRunStatusUpdateMessage(BaseAppSocketMessage):
     action = AppWebSocketActions.status
     testrun_id: int
@@ -454,6 +482,11 @@ class AgentBuildStarted(BaseModel):
     started: datetime
 
 
+class AgentBuildCompleted(BaseModel):
+    duration: int
+    specs: list[str]
+
+
 class AgentRunnerStopped(BaseModel):
     # duration in seconds
     duration: int
@@ -472,31 +505,30 @@ class AgentSpecStarted(BaseModel):
     started: datetime
 
 
-class AgentBuildCompleted(BaseModel):
-    sha: str
-    finished: datetime
-    specs: list[str]
-
-
 #
 # Agent websocket
 #
 
-
 class AgentEvent(BaseModel):
     type: AgentEventType
+    duration: Optional[int]
     testrun_id: int
+    error_code: Optional[int]
 
 
-class AgentCompletedBuildMessage(AgentBuildCompleted, AgentEvent):
-    pass
+class AgentCloneCompletedEvent(AgentEvent):
+    type = AgentEventType.clone_completed
+    cache_key: str
+    specs: list[str]
 
 
 class AgentLogMessage(AgentEvent):
+    type = AgentEventType.log
     msg: AppLogMessage
 
 
 class AgentErrorMessage(AgentEvent):
+    type = AgentEventType.error
     source: str
     message: str
 

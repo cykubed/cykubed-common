@@ -57,8 +57,13 @@ class NotificationStates(str, enum.Enum):
 
 class AgentEventType(str, enum.Enum):
     log = 'log'
+    clone_failed = 'clone_failed'
+    clone_completed = 'clone_completed'
+    build_failed = 'build_failed'
     build_completed = 'build_completed'
-error = 'error'
+    run_completed = 'run_completed'
+    error = 'error'
+
 
 ACTIVE_STATES = [TestRunStatus.pending, TestRunStatus.started, TestRunStatus.building, TestRunStatus.running]
 INACTIVE_STATES = [TestRunStatus.cancelled, TestRunStatus.failed, TestRunStatus.passed, TestRunStatus.timeout]
@@ -80,6 +85,7 @@ class AppWebSocketActions(str, enum.Enum):
     status = 'status'
     spec_started = 'spec-started'
     spec_finished = 'spec-finished'
+    spec_log_update = 'spec-log-update'
     buildlog = 'buildlog'
     agent = 'agent'
     error = 'error'
