@@ -65,6 +65,12 @@ class AgentEventType(str, enum.Enum):
     error = 'error'
 
 
+class TestRunSource(str, enum.Enum):
+    webhook = 'webhook'
+    web_start = 'web_start'
+    web_rerun = 'web_rerun'
+
+
 ACTIVE_STATES = [TestRunStatus.pending, TestRunStatus.started, TestRunStatus.building, TestRunStatus.running]
 INACTIVE_STATES = [TestRunStatus.cancelled, TestRunStatus.failed, TestRunStatus.passed, TestRunStatus.timeout]
 
@@ -106,7 +112,6 @@ class LogLevel(str, enum.Enum):
 
 
 class TriggerType(str, enum.Enum):
-    started = 'started'
     passed = 'passed'
     failed = 'failed'
     fixed = 'fixed'

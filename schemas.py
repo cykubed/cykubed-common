@@ -6,7 +6,7 @@ from pydantic import BaseModel, validator
 from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
-    SpecFileStatus
+    SpecFileStatus, TriggerType
 
 
 #
@@ -356,6 +356,26 @@ class TestRunSummary(TestRunCommon):
 class BuildFailureReport(BaseModel):
     msg: str
     error_code: Optional[int]
+
+#
+# Webhooks
+#
+
+
+class NewWebHook(BaseModel):
+    name: str
+    trigger_type: Optional[TriggerType] = TriggerType.passed
+    branch_regex: str
+    url: str
+
+
+class WebHook(NewWebHook):
+    id: int
+    project_id: int
+
+    class Config:
+        orm_mode = True
+
 
 #
 # TestRun detail
