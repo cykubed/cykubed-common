@@ -536,6 +536,10 @@ class AgentEvent(BaseModel):
     error_code: Optional[int]
 
 
+class AgentRunComplete(AgentEvent):
+    type = AgentEventType.run_completed
+
+
 class AgentCloneCompletedEvent(AgentEvent):
     type = AgentEventType.clone_completed
     cache_key: str
