@@ -36,11 +36,18 @@ def sync_redis() -> SyncRedis:
 _async_redis = None
 
 
-def async_redis() -> AsyncRedis:
+def get_cached_async_redis() -> AsyncRedis:
     global _async_redis
     if not _async_redis:
         _async_redis = get_redis(AsyncSentinel, AsyncRedis, AsyncRetry)
     return _async_redis
+
+
+def async_redis() -> AsyncRedis:
+    """
+    Indirection to make this easier to mock
+    """
+    return get_cached_async_redis()
 
 
 def ping_redis() -> bool:

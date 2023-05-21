@@ -316,6 +316,14 @@ class CompletedSpecFile(BaseModel):
     result: SpecResult
 
 
+class TestRunCompleted(BaseModel):
+    testrun_id: int
+    total_build_duration: int
+    total_build_duration_spot: int
+    total_runner_duration: int
+    total_runner_duration_spot: int
+
+
 class AuthorModel(BaseModel):
     name: str
     email: str
@@ -503,7 +511,6 @@ class AgentBuildStarted(BaseModel):
 
 
 class AgentBuildCompleted(BaseModel):
-    duration: int
     specs: list[str]
 
 
