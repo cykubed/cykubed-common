@@ -256,6 +256,7 @@ class BaseTestRun(BaseModel):
     branch: str
     sha: Optional[str]
     status: str = 'started'
+    source: str = 'web_start'
 
 
 class NewTestRun(BaseTestRun):
@@ -318,10 +319,10 @@ class CompletedSpecFile(BaseModel):
 
 class TestRunCompleted(BaseModel):
     testrun_id: int
-    total_build_duration: int
-    total_build_duration_spot: int
-    total_runner_duration: int
-    total_runner_duration_spot: int
+    total_build_duration: int = 0
+    total_build_duration_spot: int = 0
+    total_runner_duration: int = 0
+    total_runner_duration_spot: int = 0
 
 
 class AuthorModel(BaseModel):
