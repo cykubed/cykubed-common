@@ -3,9 +3,10 @@ class AuthException(Exception):
 
 
 class BuildFailedException(Exception):
-    def __init__(self, msg=None, status_code=None):
+    def __init__(self, stage='building', msg=None, status_code=None):
         super().__init__(msg)
         self.msg = msg
+        self.stage = stage
         self.status_code = status_code
 
     def __str__(self):
@@ -13,7 +14,8 @@ class BuildFailedException(Exception):
 
 
 class RunFailedException(BuildFailedException):
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__('running', *args, **kwargs)
 
 
 class NoBranchesException(Exception):

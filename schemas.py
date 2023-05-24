@@ -362,7 +362,8 @@ class TestRunSummary(TestRunCommon):
         orm_mode = True
 
 
-class BuildFailureReport(BaseModel):
+class TestRunFailureReport(BaseModel):
+    stage: str
     msg: str
     error_code: Optional[int]
 
@@ -542,6 +543,11 @@ class AgentEvent(BaseModel):
     duration: Optional[int]
     testrun_id: int
     error_code: Optional[int]
+
+
+class AgentTestRunFailedEvent(AgentEvent):
+    type = AgentEventType.build_failed
+    report: TestRunFailureReport
 
 
 class AgentRunComplete(AgentEvent):
