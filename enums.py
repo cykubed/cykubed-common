@@ -57,9 +57,7 @@ class NotificationStates(str, enum.Enum):
 
 class AgentEventType(str, enum.Enum):
     log = 'log'
-    clone_failed = 'clone_failed'
     clone_completed = 'clone_completed'
-    build_failed = 'build_failed'
     build_completed = 'build_completed'
     run_completed = 'run_completed'
     error = 'error'
