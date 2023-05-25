@@ -373,6 +373,7 @@ class TestRunErrorReport(BaseModel):
 
 
 class NewWebHook(BaseModel):
+    project_id: int
     name: str
     trigger_type: Optional[TriggerType] = TriggerType.passed
     branch_regex: str
@@ -381,7 +382,6 @@ class NewWebHook(BaseModel):
 
 class WebHook(NewWebHook):
     id: int
-    project_id: int
 
     class Config:
         orm_mode = True
