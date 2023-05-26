@@ -391,17 +391,30 @@ class WebHook(NewWebHook):
 # TestRun detail
 #
 
+class TestRunJobStats(BaseModel):
+    total_build_seconds: Optional[int]
+    total_runner_seconds: Optional[int]
+
+    total_cpu_seconds: Optional[int]
+    total_memory_gb_seconds: Optional[int]
+    total_ephemeral_gb_seconds: Optional[int]
+
+    cpu_seconds_normal: Optional[int]
+    memory_gb_seconds_normal: Optional[int]
+    ephemeral_gb_seconds_normal: Optional[int]
+
+    cpu_seconds_spot: Optional[int]
+    memory_gb_seconds_spot: Optional[int]
+    ephemeral_gb_seconds_spot: Optional[int]
+
+    class Config:
+        orm_mode = True
+
 
 class TestRunDetail(TestRunCommon):
     files: Optional[list[SpecFile]]
     duration: Optional[int]
-    terminations: int = 0
-    build_started: Optional[datetime]
-    build_seconds: Optional[int] = 0
-    runner_seconds: Optional[int] = 0
-    cpu_seconds_used: Optional[int] = 0
-    memory_gb_seconds_used: Optional[int] = 0
-    ephemeral_gb_seconds_used: Optional[int] = 0
+    jobstats: Optional[TestRunJobStats] = None
 
     @validator('files', pre=True)
     def _iter_to_list(cls, v):
