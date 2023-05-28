@@ -162,14 +162,16 @@ class NewProject(BaseModel):
     build_cpu: float = 2
     build_memory: float = 4
     build_deadline: int = 10*60
-    build_ephemeral_storage: float = 10.0
+    build_ephemeral_storage: int = 2
+    node_storage: int = 10
+    build_storage: int = 1
 
     start_runners_first: bool
     runner_image: Optional[str]
     runner_cpu: float = 2
     runner_memory: float = 4
     runner_deadline: int = 3600
-    runner_ephemeral_storage: float = 10.0
+    runner_ephemeral_storage: int = 1
 
     timezone: str = 'UTC'
     cypress_retries: int = 2
