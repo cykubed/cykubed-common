@@ -274,6 +274,7 @@ class NewTestRun(BaseTestRun):
 class CacheItem(BaseModel):
     name: str
     ttl: int  # TTL in secs
+    storage_size: int # Size in GB
     expires: datetime  # expiry date
     node_snapshot: Optional[str]
     specs: Optional[list[str]]
