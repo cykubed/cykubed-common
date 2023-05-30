@@ -162,7 +162,7 @@ class NewProject(BaseModel):
     build_cpu: float = 2
     build_memory: float = 4
     build_deadline: int = 10*60
-    build_ephemeral_storage: int = 2
+    build_ephemeral_storage: int = 4
     node_storage: int = 10
     build_storage: int = 1
 
