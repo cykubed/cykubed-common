@@ -91,6 +91,7 @@ class TestResult(BaseModel):
 class SpecResult(BaseModel):
     tests: List[TestResult]
     video: Optional[str]
+    timeout: Optional[bool] = False
 
 
 class ResultSummary(BaseModel):
