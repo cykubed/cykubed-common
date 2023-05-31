@@ -46,6 +46,7 @@ class SpecFileStatus(str, enum.Enum):
     started = 'started'
     passed = 'passed'
     failed = 'failed'
+    timeout = 'timeout'
     cancelled = 'cancelled'
 
 
