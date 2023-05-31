@@ -18,16 +18,49 @@ class IntegrationSummary(BaseModel):
     user_id: Optional[int]
 
 
+class SubscriptionType(BaseModel):
+    name: str
+    free_tests: Optional[int] = None
+    users_limit: Optional[int] = None
+    artifact_ttl: Optional[int] = None
+    fully_managed: bool = False
+
+    class Config:
+        orm_mode = True
+
+
+class Subscription(BaseModel):
+    started: date
+    subtype: SubscriptionType
+    finished: Optional[date]
+
+    class Config:
+        orm_mode = True
+
+
+class Organisation(BaseModel):
+    id: int
+    name: str
+    tests_used: int
+    tests_remaining: int
+    subscription: Subscription
+
+    class Config:
+        orm_mode = True
+
+
 class UserProfile(BaseModel):
     name: str
     avatar_url: Optional[str]
     token: str
     email: str
     integrations: list[IntegrationSummary]
-    organisation_id:  int
-    organisation_name: str
+    organisation: Organisation
     is_admin: bool
     integration_user_id: Optional[int]
+
+    class Config:
+        orm_mode = True
 
 
 class APIToken(BaseModel):
@@ -108,35 +141,6 @@ class OrganisationIn(BaseModel):
 class OrganisationSummary(BaseModel):
     id: int
     name: str
-
-
-class SubscriptionType(BaseModel):
-    name: str
-    tests_limit: int
-    users_limit: int
-
-    class Config:
-        orm_mode = True
-
-
-class Subscription(BaseModel):
-    started: date
-    subtype: SubscriptionType
-    finished: Optional[date]
-
-    class Config:
-        orm_mode = True
-
-
-class Organisation(BaseModel):
-    id: int
-    name: str
-    tests_used: int
-    tests_remaining: int
-    subscription: Subscription
-
-    class Config:
-        orm_mode = True
 
 
 class NewProject(BaseModel):
