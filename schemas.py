@@ -42,7 +42,7 @@ class Organisation(BaseModel):
     id: int
     name: str
     tests_used: int
-    tests_remaining: int
+    tests_remaining: Optional[int]
     subscription: Subscription
 
     class Config:
