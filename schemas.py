@@ -6,7 +6,7 @@ from pydantic import BaseModel, validator
 from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
-    SpecFileStatus, TriggerType
+    SpecFileStatus, TriggerType, AppFramework
 
 
 #
@@ -146,6 +146,8 @@ class OrganisationSummary(BaseModel):
 class NewProject(BaseModel):
     name: str
     owner: Optional[str]
+
+    framework: AppFramework
     default_branch: str
     platform: PlatformEnum
     url: str
@@ -187,7 +189,6 @@ class NewProject(BaseModel):
 class Project(NewProject):
     id: int
     organisation: OrganisationSummary
-    is_angular: bool = False
 
     class Config:
         orm_mode = True
