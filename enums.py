@@ -1,6 +1,13 @@
 import enum
 
 
+class AppFramework(str, enum.Enum):
+    angular = 'angular'
+    vue = 'vue'
+    nextjs = 'next.js'
+    generic = 'generic'
+
+
 class VersionType(str, enum.Enum):
     major = 'major'
     minor = 'minor'
