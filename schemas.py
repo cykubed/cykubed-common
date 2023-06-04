@@ -164,8 +164,7 @@ class NewProject(BaseModel):
     build_memory: float = 4
     build_deadline: int = 10*60
     build_ephemeral_storage: int = 4
-    node_storage: int = 10
-    build_storage: int = 1
+    build_storage: int = 10
 
     start_runners_first: bool
     runner_image: Optional[str]
@@ -277,7 +276,6 @@ class CacheItem(BaseModel):
     ttl: int  # TTL in secs
     storage_size: int # Size in GB
     expires: datetime  # expiry date
-    node_snapshot: Optional[str]
     specs: Optional[list[str]]
 
 
