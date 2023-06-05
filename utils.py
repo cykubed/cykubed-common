@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 import logging
 import os
 from decimal import Decimal
@@ -6,6 +7,7 @@ from json import JSONEncoder
 from uuid import UUID
 
 from .enums import TestRunStatus
+from .exceptions import BuildFailedException
 
 FAILED_STATES = [TestRunStatus.timeout, TestRunStatus.failed]
 ACTIVE_STATES = [TestRunStatus.started, TestRunStatus.running]
@@ -59,3 +61,18 @@ def utcnow():
 def get_hostname():
     with open('/etc/hostname') as f:
         return f.read().strip()
+
+
+def get_lock_hash(build_dir):
+    m = hashlib.sha256()
+    lockfile = os.path.join(build_dir, 'package-lock.json')
+    if not os.path.exists(lockfile):
+        lockfile = os.path.join(build_dir, 'yarn.lock')
+
+    if not os.path.exists(lockfile):
+        raise BuildFailedException("No lock file")
+
+    # hash the lock
+    with open(lockfile, 'rb') as f:
+        m.update(f.read())
+    return m.hexdigest()
