@@ -571,8 +571,8 @@ class AgentRunComplete(AgentEvent):
     type = AgentEventType.run_completed
 
 
-class AgentBuildCompletedEvent(AgentEvent):
-    type = AgentEventType.build_completed
+class AgentCloneCompletedEvent(AgentEvent):
+    type = AgentEventType.clone_completed
     cache_key: str
     specs: list[str]
 
