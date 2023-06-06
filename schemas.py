@@ -573,7 +573,6 @@ class AgentRunComplete(AgentEvent):
 
 class AgentBuildCompletedEvent(AgentEvent):
     type = AgentEventType.build_completed
-    cache_key: str
     specs: list[str]
 
 
