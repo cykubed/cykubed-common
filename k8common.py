@@ -12,7 +12,7 @@ k8clients = dict()
 async def init():
     if os.path.exists('/var/run/secrets/kubernetes.io'):
         # we're inside a cluster
-        await config.load_incluster_config()
+        config.load_incluster_config()
     else:
         # we're not
         await config.load_kube_config()
