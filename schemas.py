@@ -147,7 +147,7 @@ class NewProject(BaseModel):
     name: str
     owner: Optional[str]
 
-    framework: AppFramework
+    framework: AppFramework = AppFramework.generic
     default_branch: str
     platform: PlatformEnum
     url: str
