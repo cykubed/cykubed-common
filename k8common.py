@@ -2,7 +2,7 @@ import os
 
 from kubernetes_asyncio import client, config
 from kubernetes_asyncio.client import ApiClient
-
+from loguru import logger
 
 NAMESPACE = os.environ.get('NAMESPACE', 'cykube')
 
@@ -24,7 +24,10 @@ async def init():
 
 
 async def close():
-    await get_client().close()
+    try:
+        await get_client().close()
+    except Exception as ex:
+        logger.error('Faield to close K8 client')
 
 
 def get_client() -> ApiClient:
