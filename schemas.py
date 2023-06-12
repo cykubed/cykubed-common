@@ -6,7 +6,7 @@ from pydantic import BaseModel, validator
 from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
-    SpecFileStatus, TriggerType, AppFramework
+    SpecFileStatus, TriggerType, AppFramework, KubernetesPlatform
 
 
 #
@@ -439,6 +439,7 @@ class TestRunDetail(TestRunCommon):
 
 class NewAgentModel(BaseModel):
     name: Optional[str] = 'Agent'
+    platform: KubernetesPlatform
 
 
 class AgentModel(NewAgentModel):

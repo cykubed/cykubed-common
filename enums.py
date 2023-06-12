@@ -82,8 +82,9 @@ INACTIVE_STATES = [TestRunStatus.cancelled, TestRunStatus.failed, TestRunStatus.
 
 
 class KubernetesPlatform(str, enum.Enum):
-    gke = 'Google Kubernetes Engine'
-    eks = 'Amazon'
+    gke = 'GKE'
+    eks = 'EKS'
+    minikube = 'Minikube'
 
 
 class TestResultStatus(str, enum.Enum):
