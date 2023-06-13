@@ -439,7 +439,8 @@ class TestRunDetail(TestRunCommon):
 
 class NewAgentModel(BaseModel):
     name: Optional[str] = 'Agent'
-    platform: KubernetesPlatform
+    platform: Optional[KubernetesPlatform] = KubernetesPlatform.generic
+    replication: str = 'replicated'
 
 
 class AgentModel(NewAgentModel):
@@ -447,6 +448,7 @@ class AgentModel(NewAgentModel):
     token: uuid.UUID
     name: str
     first_connected: Optional[datetime]
+    version: Optional[str]
     connected: int = 0
 
     class Config:
