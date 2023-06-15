@@ -41,6 +41,7 @@ class Subscription(BaseModel):
 class Organisation(BaseModel):
     id: int
     name: str
+    platform_id: Optional[str]
     tests_used: int
     tests_remaining: Optional[int]
     subscription: Subscription
@@ -76,10 +77,17 @@ class OAuthCodeRespose(BaseModel):
     code: str
 
 
+class GitOrganisationModel(BaseModel):
+    id: str
+    name: str
+    login: str
+
+
 class OAuthPostInstall(BaseModel):
     profile: UserProfile
     token: Optional[str]
     app_installed: Optional[bool]  # For Github
+    possible_orgs: Optional[list[GitOrganisationModel]]
 
 
 class AgentConnectionRequest(BaseModel):
