@@ -41,7 +41,6 @@ class Subscription(BaseModel):
 class Organisation(BaseModel):
     id: int
     name: str
-    platform_id: Optional[str]
     tests_used: int
     tests_remaining: Optional[int]
     subscription: Subscription
@@ -62,6 +61,10 @@ class UserProfile(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class UserInvites(BaseModel):
+    emails: list[str]
 
 
 class APIToken(BaseModel):
@@ -152,6 +155,8 @@ class OrganisationSummary(BaseModel):
 
 
 class NewProject(BaseModel):
+    repository_id: int
+
     name: str
     owner: Optional[str]
 
@@ -231,16 +236,31 @@ class Workspace(BaseModel):
     name: str
 
 
+class GitOrganisation(BaseModel):
+    id: int
+    name: str
+    platform_id: str
+    login: str
+
+    class Config:
+        orm_mode = True
+
+
 class Repository(BaseModel):
-    id: str
+    id: int
+    platform_id: str
     name: str
     url: str
-    owner: str
-    owner_avatar_url: Optional[str]
-    workspace_slug: Optional[str]
-    pushed_at: Optional[datetime]
     platform: PlatformEnum
     default_branch: Optional[str]
+    # owner: str
+    # workspace_slug: Optional[str]
+    pushed_at: Optional[datetime]
+    organisation: Optional[GitOrganisation]
+    user_id: Optional[int]
+
+    class Config:
+        orm_mode = True
 
 
 class PendingAuthorisation(BaseModel):
