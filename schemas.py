@@ -6,7 +6,7 @@ from pydantic import BaseModel, validator
 from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
-    SpecFileStatus, TriggerType, AppFramework, KubernetesPlatform
+    SpecFileStatus, TriggerType, AppFramework, KubernetesPlatform, GitOrgTypeEnum
 
 
 #
@@ -15,6 +15,7 @@ from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketAc
 
 class IntegrationSummary(BaseModel):
     name: PlatformEnum
+    login: Optional[str]
     user_id: Optional[int]
 
 
@@ -54,8 +55,9 @@ class UserProfile(BaseModel):
     avatar_url: Optional[str]
     token: str
     email: str
+    allow_user_repositories: bool = False
     integrations: list[IntegrationSummary]
-    organisation: Organisation
+    organisation: Optional[Organisation]
     is_admin: bool
     integration_user_id: Optional[int]
 
@@ -80,17 +82,10 @@ class OAuthCodeRespose(BaseModel):
     code: str
 
 
-class GitOrganisationModel(BaseModel):
-    id: str
-    name: str
-    login: str
-
-
 class OAuthPostInstall(BaseModel):
     profile: UserProfile
     token: Optional[str]
     app_installed: Optional[bool]  # For Github
-    possible_orgs: Optional[list[GitOrganisationModel]]
 
 
 class AgentConnectionRequest(BaseModel):
@@ -239,7 +234,7 @@ class Workspace(BaseModel):
 class GitOrganisation(BaseModel):
     id: int
     name: str
-    platform_id: str
+    platform_id: Optional[str]
     login: str
 
     class Config:

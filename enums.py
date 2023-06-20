@@ -36,6 +36,11 @@ GIT_PLATFORMS = [PlatformEnum.GITHUB,
                  PlatformEnum.BITBUCKET]
 
 
+class GitOrgTypeEnum(str, enum.Enum):
+    user = 'user'
+    org = 'organisation'
+
+
 class TestRunStatus(str, enum.Enum):
     __test__ = False
 
