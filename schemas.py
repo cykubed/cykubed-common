@@ -251,7 +251,7 @@ class Repository(BaseModel):
     # owner: str
     # workspace_slug: Optional[str]
     pushed_at: Optional[datetime]
-    organisation: Optional[GitOrganisation]
+    git_organisation: Optional[GitOrganisation]
     user_id: Optional[int]
 
     class Config:
