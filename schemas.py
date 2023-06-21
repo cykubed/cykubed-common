@@ -6,7 +6,7 @@ from pydantic import BaseModel, validator
 from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
-    SpecFileStatus, TriggerType, AppFramework, KubernetesPlatform, GitOrgTypeEnum
+    SpecFileStatus, TriggerType, AppFramework, KubernetesPlatform
 
 
 #
@@ -50,6 +50,14 @@ class Organisation(BaseModel):
         orm_mode = True
 
 
+class UserUISettingsModel(BaseModel):
+    last_git_org_id: Optional[int]
+    last_git_platform: Optional[PlatformEnum]
+
+    class Config:
+        orm_mode = True
+
+
 class UserProfile(BaseModel):
     name: str
     avatar_url: Optional[str]
@@ -60,6 +68,7 @@ class UserProfile(BaseModel):
     organisation: Optional[Organisation]
     is_admin: bool
     integration_user_id: Optional[int]
+    uisettings: Optional[UserUISettingsModel]
 
     class Config:
         orm_mode = True
