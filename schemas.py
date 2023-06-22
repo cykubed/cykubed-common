@@ -411,11 +411,11 @@ class CommonTriggerModel(BaseModel):
     on_pass: Optional[bool] = False
     on_fail: Optional[bool] = False
     on_fixed: Optional[bool] = False
-    branch_regex: str
 
 
 class NewWebHook(CommonTriggerModel):
     url: str
+    branch_regex: str
 
 
 class WebHook(NewWebHook):
@@ -503,11 +503,11 @@ class AgentModel(NewAgentModel):
 
 class SlackChannel(BaseModel):
     id: str
+    public: bool
     name: str
 
 
 class SlackChannels(BaseModel):
-    next_cursor: Optional[str]
     channels: list[SlackChannel]
 
 
