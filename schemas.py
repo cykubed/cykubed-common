@@ -51,7 +51,7 @@ class Organisation(BaseModel):
 
 
 class UserUISettingsModel(BaseModel):
-    last_git_org_id: Optional[int]
+    last_git_org_id: Optional[str]
     last_git_platform: Optional[PlatformEnum]
 
     class Config:
@@ -159,8 +159,6 @@ class OrganisationSummary(BaseModel):
 
 
 class NewProject(BaseModel):
-    repository_id: int
-
     name: str
     owner: Optional[str]
 
@@ -251,14 +249,12 @@ class GitOrganisation(BaseModel):
 
 
 class Repository(BaseModel):
-    id: int
-    platform_id: str
+    id: str
+    owner: str
     name: str
     url: str
     platform: PlatformEnum
     default_branch: Optional[str]
-    # owner: str
-    # workspace_slug: Optional[str]
     pushed_at: Optional[datetime]
     git_organisation: Optional[GitOrganisation]
     user_id: Optional[int]
