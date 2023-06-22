@@ -1,12 +1,12 @@
 import uuid
 from datetime import date, datetime
-from typing import Optional, List, Union
+from typing import Optional, List
 
 from pydantic import BaseModel, validator
 from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
-    SpecFileStatus, TriggerType, AppFramework, KubernetesPlatform
+    SpecFileStatus, AppFramework, KubernetesPlatform
 
 
 #
@@ -168,8 +168,6 @@ class NewProject(BaseModel):
     url: str
     parallelism: int = 10
     checks_integration: bool = True
-    slack_channel_id: Optional[str]
-    notify_on_passed: Optional[Union[bool, None]] = False
 
     agent_id: Optional[int] = None
 
@@ -407,11 +405,16 @@ class TestRunErrorReport(BaseModel):
 #
 
 
-class NewWebHook(BaseModel):
+class CommonTriggerModel(BaseModel):
     project_id: int
-    name: str
-    trigger_type: Optional[TriggerType] = TriggerType.passed
+    name: Optional[str]
+    on_pass: Optional[bool] = False
+    on_fail: Optional[bool] = False
+    on_fixed: Optional[bool] = False
     branch_regex: str
+
+
+class NewWebHook(CommonTriggerModel):
     url: str
 
 
@@ -420,6 +423,21 @@ class WebHook(NewWebHook):
 
     class Config:
         orm_mode = True
+
+
+class NewNotification(CommonTriggerModel):
+    platform: PlatformEnum
+    channel_id: str
+    channel_name: str
+
+
+class Notification(NewNotification):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
 
 
 #

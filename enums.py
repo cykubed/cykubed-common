@@ -36,6 +36,9 @@ GIT_PLATFORMS = [PlatformEnum.GITHUB,
                  PlatformEnum.BITBUCKET]
 
 
+NOTIFICATION_PLATFORMS = [PlatformEnum.SLACK]
+
+
 class GitOrgTypeEnum(str, enum.Enum):
     user = 'user'
     org = 'organisation'
