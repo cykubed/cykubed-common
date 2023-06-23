@@ -6,7 +6,7 @@ from pydantic import BaseModel, validator
 from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
-    SpecFileStatus, AppFramework, KubernetesPlatform
+    SpecFileStatus, AppFramework, KubernetesPlatform, TriggerType
 
 
 #
@@ -411,11 +411,11 @@ class CommonTriggerModel(BaseModel):
     on_pass: Optional[bool] = False
     on_fail: Optional[bool] = False
     on_fixed: Optional[bool] = False
+    branch_regex: Optional[str]
 
 
 class NewWebHook(CommonTriggerModel):
     url: str
-    branch_regex: str
 
 
 class WebHook(NewWebHook):
@@ -481,6 +481,11 @@ class TestRunDetail(TestRunCommon):
 
     class Config:
         orm_mode = True
+
+
+class WebHookPayload(BaseModel):
+    trigger: TriggerType
+    testrun: TestRunDetail
 
 
 class NewAgentModel(BaseModel):
