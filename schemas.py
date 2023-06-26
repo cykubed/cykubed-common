@@ -569,6 +569,7 @@ class AppLogMessage(BaseModel):
     ts: datetime
     level: LogLevel
     msg: str
+    host: Optional[str]
     step: Optional[int]
 
     def __str__(self):
