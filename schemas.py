@@ -177,6 +177,7 @@ class NewProject(BaseModel):
     browser: str = None
 
     spec_deadline: Optional[int] = None
+    spec_filter: Optional[str] = None
 
     build_cmd = 'ng build --output-path=dist'
     build_cpu: float = 2
