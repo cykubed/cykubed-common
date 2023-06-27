@@ -120,7 +120,7 @@ class TestResultError(BaseModel):
     test_line: Optional[int]
     message: str
     stack: str
-    code_frame: CodeFrame
+    code_frame: Optional[CodeFrame]
     video: Optional[str]
 
 
