@@ -2,7 +2,7 @@ import uuid
 from datetime import date, datetime
 from typing import Optional, List
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, PositiveInt, NonNegativeInt
 from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
@@ -53,6 +53,7 @@ class Organisation(BaseModel):
 class UserUISettingsModel(BaseModel):
     last_git_org_id: Optional[str]
     last_git_platform: Optional[PlatformEnum]
+    page_size: Optional[int]
 
     class Config:
         orm_mode = True
@@ -383,17 +384,29 @@ class TestRunCommon(BaseTestRun):
     finished: Optional[datetime] = None
     status: TestRunStatus
     commit: Optional[CommitDetailsModel]
+    duration: Optional[int]
 
     class Config:
         orm_mode = True
 
 
 class TestRunSummary(TestRunCommon):
-    progress_percentage: Optional[int]
-    duration: Optional[int]
 
     class Config:
         orm_mode = True
+
+
+class PaginationParams(BaseModel):
+    page: NonNegativeInt
+    pagesize: NonNegativeInt
+
+
+class PaginatedModel(PaginationParams):
+    total: NonNegativeInt
+
+
+class TestRunSummaries(PaginatedModel):
+    items: list[TestRunSummary]
 
 
 class TestRunErrorReport(BaseModel):
