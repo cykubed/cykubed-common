@@ -52,9 +52,9 @@ class TestRunStatus(str, enum.Enum):
     building = 'building'
     cancelled = 'cancelled'
     running = 'running'
+    passed = 'passed'
     timeout = 'timeout'
     failed = 'failed'
-    passed = 'passed'
 
 
 class SpecFileStatus(str, enum.Enum):
