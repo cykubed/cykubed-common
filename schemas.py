@@ -2,7 +2,7 @@ import uuid
 from datetime import date, datetime
 from typing import Optional, List
 
-from pydantic import BaseModel, validator, PositiveInt, NonNegativeInt
+from pydantic import BaseModel, validator, NonNegativeInt
 from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
@@ -105,6 +105,9 @@ class AgentConnectionRequest(BaseModel):
 #
 # Test results
 #
+
+class UploadResult(BaseModel):
+    urls: list[str]
 
 
 class CodeFrame(BaseModel):
