@@ -388,6 +388,9 @@ class TestRunCommon(BaseTestRun):
     status: TestRunStatus
     commit: Optional[CommitDetailsModel]
     duration: Optional[int]
+    total_tests: Optional[int]
+    failed_tests: Optional[int]
+    flakey_tests: Optional[int]
 
     class Config:
         orm_mode = True
