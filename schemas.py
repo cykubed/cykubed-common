@@ -318,7 +318,6 @@ class CacheItem(BaseModel):
 class TestRunUpdate(BaseModel):
     started: datetime
     finished: Optional[datetime] = None
-
     status: TestRunStatus
 
 
