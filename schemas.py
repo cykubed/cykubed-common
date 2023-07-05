@@ -50,7 +50,14 @@ class Organisation(BaseModel):
         orm_mode = True
 
 
+class UserOrganisationSummary(BaseModel):
+    id: int
+    name: str
+    is_admin: bool
+
+
 class UserUISettingsModel(BaseModel):
+    current_org: UserOrganisationSummary
     last_git_org_id: Optional[str]
     last_git_platform: Optional[PlatformEnum]
     page_size: Optional[int]
@@ -64,12 +71,10 @@ class UserProfile(BaseModel):
     avatar_url: Optional[str]
     token: str
     email: str
-    allow_user_repositories: bool = False
-    integrations: list[IntegrationSummary]
-    organisation: Optional[Organisation]
-    is_admin: bool
-    integration_user_id: Optional[int]
     uisettings: Optional[UserUISettingsModel]
+    # allow_user_repositories: bool = False
+    # integrations: list[IntegrationSummary]
+    # organisations: list[UserOrganisationSummary]
 
     class Config:
         orm_mode = True
@@ -93,7 +98,6 @@ class OAuthCodeRespose(BaseModel):
 
 
 class OAuthPostInstall(BaseModel):
-    profile: UserProfile
     token: Optional[str]
     app_installed: Optional[bool]  # For Github
 
