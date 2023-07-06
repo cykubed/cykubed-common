@@ -18,6 +18,9 @@ class IntegrationSummary(BaseModel):
     login: Optional[str]
     user_id: Optional[int]
 
+    class Config:
+        orm_mode = True
+
 
 class SubscriptionType(BaseModel):
     name: str
@@ -69,9 +72,8 @@ class UserUISettingsModel(BaseModel):
 class UserProfile(BaseModel):
     name: str
     avatar_url: Optional[str]
-    token: str
+    token: uuid.UUID
     email: str
-    uisettings: Optional[UserUISettingsModel]
     # allow_user_repositories: bool = False
     # integrations: list[IntegrationSummary]
     # organisations: list[UserOrganisationSummary]
@@ -100,6 +102,7 @@ class OAuthCodeRespose(BaseModel):
 class OAuthPostInstall(BaseModel):
     token: Optional[str]
     app_installed: Optional[bool]  # For Github
+    profile: UserProfile
 
 
 class AgentConnectionRequest(BaseModel):
@@ -168,6 +171,8 @@ class OrganisationSummary(BaseModel):
 
 class NewProject(BaseModel):
     name: str
+    organisation_id: Optional[int] # although we'll through an error if the user has > 1 org
+
     owner: Optional[str]
 
     framework: AppFramework = AppFramework.generic
@@ -210,7 +215,6 @@ class NewProject(BaseModel):
 
 class Project(NewProject):
     id: int
-    organisation: OrganisationSummary
 
     class Config:
         orm_mode = True
