@@ -17,6 +17,7 @@ class IntegrationSummary(BaseModel):
     name: PlatformEnum
     login: Optional[str]
     user_id: Optional[int]
+    allow_user_repositories: Optional[bool]
 
     class Config:
         orm_mode = True
@@ -60,7 +61,7 @@ class UserOrganisationSummary(BaseModel):
 
 
 class UserUISettingsModel(BaseModel):
-    current_org: UserOrganisationSummary
+    current_org_id: Optional[int]
     last_git_org_id: Optional[str]
     last_git_platform: Optional[PlatformEnum]
     page_size: Optional[int]
@@ -74,6 +75,7 @@ class UserProfile(BaseModel):
     avatar_url: Optional[str]
     token: uuid.UUID
     email: str
+    uisettings: UserUISettingsModel
     # allow_user_repositories: bool = False
     # integrations: list[IntegrationSummary]
     # organisations: list[UserOrganisationSummary]
