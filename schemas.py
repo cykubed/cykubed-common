@@ -55,9 +55,12 @@ class Organisation(BaseModel):
 
 
 class UserOrganisationSummary(BaseModel):
-    id: int
-    name: str
-    is_admin: bool
+    organisation_id: int
+    organisation_name: str
+    is_admin: Optional[bool]
+
+    class Config:
+        orm_mode = True
 
 
 class UserUISettingsModel(BaseModel):
@@ -78,7 +81,7 @@ class UserProfile(BaseModel):
     uisettings: UserUISettingsModel
     # allow_user_repositories: bool = False
     # integrations: list[IntegrationSummary]
-    # organisations: list[UserOrganisationSummary]
+    organisations: list[UserOrganisationSummary]
 
     class Config:
         orm_mode = True
@@ -169,6 +172,7 @@ class OrganisationIn(BaseModel):
 class OrganisationSummary(BaseModel):
     id: int
     name: str
+
 
 
 class NewProject(BaseModel):
@@ -518,12 +522,16 @@ class WebHookPayload(BaseModel):
 
 
 class NewAgentModel(BaseModel):
+    organisation_id: int
+
+
+class UpdatedAgentModel(BaseModel):
     name: Optional[str] = 'Agent'
     platform: Optional[KubernetesPlatform] = KubernetesPlatform.generic
     replication: str = 'replicated'
 
 
-class AgentModel(NewAgentModel):
+class AgentModel(UpdatedAgentModel, NewAgentModel):
     id: int
     token: uuid.UUID
     name: str
