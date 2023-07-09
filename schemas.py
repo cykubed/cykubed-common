@@ -9,6 +9,15 @@ from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketAc
     SpecFileStatus, AppFramework, KubernetesPlatform, TriggerType
 
 
+class PaginationParams(BaseModel):
+    page: NonNegativeInt
+    pagesize: NonNegativeInt
+
+
+class PaginatedModel(PaginationParams):
+    total: NonNegativeInt
+
+
 #
 # Auth
 #
@@ -73,6 +82,21 @@ class UserUISettingsModel(BaseModel):
         orm_mode = True
 
 
+class UserModel(BaseModel):
+    name: str
+    avatar_url: Optional[str]
+    email: str
+    is_active: bool
+    organisation_id: int
+
+    class Config:
+        orm_mode = True
+
+
+class PaginatedUsers(PaginatedModel):
+    items: list[UserModel]
+
+
 class UserProfile(BaseModel):
     name: str
     avatar_url: Optional[str]
@@ -87,8 +111,9 @@ class UserProfile(BaseModel):
         orm_mode = True
 
 
-class UserInvites(BaseModel):
-    emails: list[str]
+class UserInvite(BaseModel):
+    email: str
+    is_admin: bool
 
 
 class APIToken(BaseModel):
@@ -167,6 +192,8 @@ class ResultSummary(BaseModel):
 
 class OrganisationIn(BaseModel):
     name: str
+    auto_signup_domain: Optional[str]
+    project_auto_signup: bool
 
 
 class OrganisationSummary(BaseModel):
@@ -414,14 +441,6 @@ class TestRunSummary(TestRunCommon):
     class Config:
         orm_mode = True
 
-
-class PaginationParams(BaseModel):
-    page: NonNegativeInt
-    pagesize: NonNegativeInt
-
-
-class PaginatedModel(PaginationParams):
-    total: NonNegativeInt
 
 
 class TestRunSummaries(PaginatedModel):
