@@ -225,7 +225,7 @@ class NewProject(BaseModel):
     spec_deadline: Optional[int] = None
     spec_filter: Optional[str] = None
 
-    build_cmd = 'ng build --output-path=dist'
+    build_cmd: str
     build_cpu: float = 2
     build_memory: float = 4
     build_deadline: int = 10*60
@@ -590,18 +590,18 @@ class BaseAppSocketMessage(BaseModel):
 
 
 class AgentStateMessage(BaseAppSocketMessage):
-    action = AppWebSocketActions.agent
+    action: AppWebSocketActions = AppWebSocketActions.agent
     agent: AgentModel
 
 
 class TestRunErrorMessage(BaseAppSocketMessage):
-    action = AppWebSocketActions.error
+    action: AppWebSocketActions = AppWebSocketActions.error
     message: str
     source: str
 
 
 class TestRunDetailUpdateMessage(BaseAppSocketMessage):
-    action = AppWebSocketActions.testrun
+    action: AppWebSocketActions = AppWebSocketActions.testrun
     testrun: TestRunDetail
 
 
@@ -611,11 +611,11 @@ class SpecFileMessage(BaseAppSocketMessage):
 
 
 class SpecFileLogMessage(BaseAppSocketMessage, SpecFileLog):
-    action = AppWebSocketActions.spec_log_update
+    action: AppWebSocketActions = AppWebSocketActions.spec_log_update
 
 
 class TestRunStatusUpdateMessage(BaseAppSocketMessage):
-    action = AppWebSocketActions.status
+    action: AppWebSocketActions = AppWebSocketActions.status
     testrun_id: int
     status: TestRunStatus
 
@@ -633,7 +633,7 @@ class AppLogMessage(BaseModel):
 
 
 class LogUpdateMessage(BaseAppSocketMessage):
-    action = AppWebSocketActions.buildlog
+    action: AppWebSocketActions = AppWebSocketActions.buildlog
     testrun_id: int
     line_num: int
     msg: AppLogMessage
@@ -677,26 +677,26 @@ class AgentEvent(BaseModel):
 
 
 class AgentTestRunErrorEvent(AgentEvent):
-    type = AgentEventType.error
+    type: AgentEventType = AgentEventType.error
     report: TestRunErrorReport
 
 
 class AgentRunComplete(AgentEvent):
-    type = AgentEventType.run_completed
+    type: AgentEventType = AgentEventType.run_completed
 
 
 class AgentBuildCompletedEvent(AgentEvent):
-    type = AgentEventType.build_completed
+    type: AgentEventType = AgentEventType.build_completed
     specs: list[str]
 
 
 class AgentLogMessage(AgentEvent):
-    type = AgentEventType.log
+    type: AgentEventType = AgentEventType.log
     msg: AppLogMessage
 
 
 class AgentErrorMessage(AgentEvent):
-    type = AgentEventType.error
+    type: AgentEventType = AgentEventType.error
     source: str
     message: str
 
