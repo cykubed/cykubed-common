@@ -113,7 +113,7 @@ class UserProfile(BaseModel):
 
 class UserInvite(BaseModel):
     email: str
-    is_admin: bool
+    is_admin: Optional[bool]
 
 
 class APIToken(BaseModel):
