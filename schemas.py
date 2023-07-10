@@ -201,7 +201,6 @@ class OrganisationSummary(BaseModel):
     name: str
 
 
-
 class NewProject(BaseModel):
     name: str
     organisation_id: Optional[int] # although we'll through an error if the user has > 1 org
