@@ -83,11 +83,14 @@ class UserUISettingsModel(BaseModel):
 
 
 class UserModel(BaseModel):
+    """
+    User in a particular organisation
+    """
     name: str
     avatar_url: Optional[str]
     email: str
     is_active: bool
-    organisation_id: int
+    is_admin: bool
 
     class Config:
         orm_mode = True
@@ -194,11 +197,6 @@ class OrganisationIn(BaseModel):
     name: str
     auto_signup_domain: Optional[str]
     project_auto_signup: bool
-
-
-class OrganisationSummary(BaseModel):
-    id: int
-    name: str
 
 
 class NewProject(BaseModel):
