@@ -136,6 +136,7 @@ class APIToken(BaseModel):
 
 class OAuthCodeRespose(BaseModel):
     code: str
+    orgtoken: Optional[str]
 
 
 class OAuthPostInstall(BaseModel):
