@@ -86,6 +86,7 @@ class UserModel(BaseModel):
     """
     User in a particular organisation
     """
+    id: int
     name: str
     avatar_url: Optional[str]
     email: str
@@ -94,10 +95,6 @@ class UserModel(BaseModel):
 
     class Config:
         orm_mode = True
-
-
-class PaginatedUsers(PaginatedModel):
-    items: list[UserModel]
 
 
 class UserProfile(BaseModel):
@@ -117,6 +114,14 @@ class UserProfile(BaseModel):
 class UserInvite(BaseModel):
     email: str
     is_admin: Optional[bool]
+
+
+class UserEmail(BaseModel):
+    email: str
+
+
+class UserUpdate(BaseModel):
+    is_admin: bool
 
 
 class APIToken(BaseModel):
