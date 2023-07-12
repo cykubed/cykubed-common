@@ -98,6 +98,7 @@ class UserModel(BaseModel):
 
 
 class UserProfile(BaseModel):
+    id: int
     name: str
     avatar_url: Optional[str]
     token: uuid.UUID
