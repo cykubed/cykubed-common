@@ -64,8 +64,8 @@ class Organisation(BaseModel):
 
 
 class UserOrganisationSummary(BaseModel):
-    organisation_id: int
-    organisation_name: str
+    id: int
+    name: str
     is_admin: Optional[bool]
 
     class Config:
