@@ -200,10 +200,8 @@ class ResultSummary(BaseModel):
     failures: int = 0
 
 
-class OrganisationIn(BaseModel):
+class OrganisationUpdate(BaseModel):
     name: str
-    auto_signup_domain: Optional[str]
-    project_auto_signup: bool
 
 
 class NewProject(BaseModel):
