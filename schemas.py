@@ -9,6 +9,10 @@ from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketAc
     SpecFileStatus, AppFramework, KubernetesPlatform, TriggerType
 
 
+class Token(BaseModel):
+    token: str
+
+
 class PaginationParams(BaseModel):
     page: NonNegativeInt
     pagesize: NonNegativeInt
@@ -134,7 +138,7 @@ class APIToken(BaseModel):
         orm_mode = True
 
 
-class OAuthCodeRespose(BaseModel):
+class OAuthCodeResponse(BaseModel):
     code: str
     orgtoken: Optional[str]
 
