@@ -32,6 +32,11 @@ class PlatformEnum(str, enum.Enum):
     GITHUB = 'github'
 
 
+class PlatformType(str, enum.Enum):
+    git = 'git'
+    messaging = 'messaging'
+
+
 GIT_PLATFORMS = [PlatformEnum.GITHUB,
                  PlatformEnum.BITBUCKET]
 

@@ -6,7 +6,7 @@ from pydantic import BaseModel, validator, NonNegativeInt
 from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
-    SpecFileStatus, AppFramework, KubernetesPlatform, TriggerType
+    SpecFileStatus, AppFramework, KubernetesPlatform, TriggerType, PlatformType
 
 
 class Token(BaseModel):
@@ -28,6 +28,8 @@ class PaginatedModel(PaginationParams):
 
 class IntegrationSummary(BaseModel):
     name: PlatformEnum
+    type: PlatformType
+    connected: bool = False
     login: Optional[str]
     user_id: Optional[int]
     allow_user_repositories: Optional[bool]
