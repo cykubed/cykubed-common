@@ -403,7 +403,10 @@ class CompletedSpecFile(BaseModel):
     result: SpecResult
 
 
-class TestRunCompleted(BaseModel):
+class TestRunJobStats(BaseModel):
+    """
+    All durations are in seconds
+    """
     testrun_id: int
     total_build_duration: int = 0
     total_build_duration_spot: int = 0
