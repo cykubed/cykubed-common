@@ -586,6 +586,16 @@ class TestRunJobStatus(BaseModel):
     message: Optional[str]
 
 
+class PodStatus(BaseModel):
+    pod_name:  str
+    project_id: int
+    testrun_id: int
+    phase: str
+    is_spot: bool
+    start_time: Optional[datetime]
+    end_time: Optional[datetime]
+    duration: Optional[int]
+
 #
 # App messages
 #
@@ -707,6 +717,5 @@ class AgentErrorMessage(AgentEvent):
     type: AgentEventType = AgentEventType.error
     source: str
     message: str
-
 
 
