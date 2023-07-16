@@ -699,10 +699,6 @@ class AgentTestRunErrorEvent(AgentEvent):
     report: TestRunErrorReport
 
 
-class AgentRunComplete(AgentEvent):
-    type: AgentEventType = AgentEventType.run_completed
-
-
 class AgentBuildCompletedEvent(AgentEvent):
     type: AgentEventType = AgentEventType.build_completed
     specs: list[str]
