@@ -212,7 +212,7 @@ class OrganisationUpdate(BaseModel):
 
 class NewProject(BaseModel):
     name: str
-    organisation_id: Optional[int] # although we'll through an error if the user has > 1 org
+    organisation_id: int
 
     owner: Optional[str]
 
