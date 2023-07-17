@@ -6,7 +6,7 @@ from pydantic import BaseModel, validator, NonNegativeInt
 from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
-    SpecFileStatus, AppFramework, KubernetesPlatform, TriggerType, PlatformType
+    SpecFileStatus, AppFramework, KubernetesPlatform, TriggerType, PlatformType, JobType
 
 
 class Token(BaseModel):
@@ -403,15 +403,17 @@ class CompletedSpecFile(BaseModel):
     result: SpecResult
 
 
-class TestRunDurations(BaseModel):
+class PodDuration(BaseModel):
     """
-    All durations are in seconds
+    Duration in seconds for a single pod
     """
+    pod_name: str
     testrun_id: int
-    total_build_duration: int = 0
-    total_build_duration_spot: int = 0
-    total_runner_duration: int = 0
-    total_runner_duration_spot: int = 0
+    project_id: int
+    succeeded: bool
+    job_type: JobType
+    is_spot: bool = False
+    duration: int = 0
 
 
 class AuthorModel(BaseModel):
