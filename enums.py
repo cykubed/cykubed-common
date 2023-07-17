@@ -19,6 +19,11 @@ class ImageType(str, enum.Enum):
     runner = 'runner'
 
 
+class JobType(str, enum.Enum):
+    builder = 'builder'
+    runner = 'runner'
+
+
 class Region(str, enum.Enum):
     europe = 'europe'
     us = 'us'
