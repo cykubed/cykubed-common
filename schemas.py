@@ -403,7 +403,7 @@ class CompletedSpecFile(BaseModel):
     result: SpecResult
 
 
-class TestRunJobStats(BaseModel):
+class TestRunDurations(BaseModel):
     """
     All durations are in seconds
     """
@@ -594,10 +594,11 @@ class PodStatus(BaseModel):
     project_id: int
     testrun_id: int
     phase: str
-    is_spot: bool
     start_time: Optional[datetime]
     end_time: Optional[datetime]
+    is_spot: bool
     duration: Optional[int]
+    job_type: str
 
 #
 # App messages
