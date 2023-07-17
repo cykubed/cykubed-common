@@ -505,6 +505,7 @@ class Notification(NewNotification):
 # TestRun detail
 #
 
+
 class TestRunJobStats(BaseModel):
     total_build_seconds: Optional[int]
     total_runner_seconds: Optional[int]
