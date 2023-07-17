@@ -408,7 +408,6 @@ class PodDuration(BaseModel):
     Duration in seconds for a single pod
     """
     pod_name: str
-    testrun_id: int
     project_id: int
     succeeded: bool
     job_type: JobType
