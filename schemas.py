@@ -507,6 +507,7 @@ class Notification(NewNotification):
 
 
 class TestRunJobStats(BaseModel):
+
     total_build_seconds: Optional[int]
     total_runner_seconds: Optional[int]
 
@@ -521,6 +522,8 @@ class TestRunJobStats(BaseModel):
     cpu_seconds_spot: Optional[int]
     memory_gb_seconds_spot: Optional[int]
     ephemeral_gb_seconds_spot: Optional[int]
+
+    total_cost_usd: Optional[float]
 
     class Config:
         orm_mode = True
