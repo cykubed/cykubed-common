@@ -114,6 +114,7 @@ class TestResultStatus(str, enum.Enum):
 
 class AppWebSocketActions(str, enum.Enum):
     testrun = 'testrun'
+    jobstats = 'jobstats'
     status = 'status'
     spec_started = 'spec-started'
     spec_finished = 'spec-finished'
