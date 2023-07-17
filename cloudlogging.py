@@ -49,7 +49,7 @@ def configure_stackdriver_logging(name: str):
     try:
         resp = httpx.get('http://metadata.google.internal')
         if resp.status_code == 200 and resp.headers['metadata-flavor'] == 'Google':
-            resp = httpx.get('http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/email',
+            resp = httpx.get('http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/email',
                              headers={'Metadata-Flavor': 'Google'})
             if resp.status_code == 200 and resp.text.endswith('gserviceaccount.com'):
                 logger.add(StackDriverSink(name))
