@@ -505,7 +505,6 @@ class Notification(NewNotification):
 # TestRun detail
 #
 
-
 class TestRunJobStats(BaseModel):
 
     total_build_seconds: Optional[int]
@@ -524,6 +523,19 @@ class TestRunJobStats(BaseModel):
     ephemeral_gb_seconds_spot: Optional[int]
 
     total_cost_usd: Optional[float]
+
+    class Config:
+        orm_mode = True
+
+
+class GKEPricingModel(BaseModel):
+    updated: datetime
+    region: str
+    cpu_spot_price: Optional[float]
+    cpu_normal_price: Optional[float]
+    memory_spot_price: Optional[float]
+    memory_normal_price: Optional[float]
+    ephemeral_price: Optional[float]
 
     class Config:
         orm_mode = True
