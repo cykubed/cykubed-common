@@ -589,7 +589,8 @@ class NewAgentModel(BaseModel):
 class UpdatedAgentModel(BaseModel):
     name: Optional[str] = 'Agent'
     platform: Optional[KubernetesPlatform] = KubernetesPlatform.generic
-    replication: str = 'replicated'
+    replication: str = 'singleton'
+    serviceAccount: Optional[str]
 
 
 class AgentModel(UpdatedAgentModel, NewAgentModel):
