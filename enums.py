@@ -106,6 +106,9 @@ class KubernetesPlatform(str, enum.Enum):
     minikube = 'minikube'
 
 
+PLATFORMS_SUPPORTING_SPOT = [KubernetesPlatform.gke]
+
+
 class TestResultStatus(str, enum.Enum):
     passed = 'passed'
     skipped = 'skipped'
