@@ -211,44 +211,66 @@ class OrganisationUpdate(BaseModel):
 
 
 class NewProject(BaseModel):
-    name: str
-    organisation_id: int
+    name: str = Field(description="Project name i.e name of Git repository")
+    organisation_id: int = Field(description="Owner organisation ID")
 
     owner: Optional[str]
 
     framework: AppFramework = AppFramework.generic
-    default_branch: str
-    platform: PlatformEnum
-    url: str
-    parallelism: int = 10
+    default_branch: str = Field(description="Default branch")
+    platform: PlatformEnum = Field(description="Git platform")
+    url: str = Field(description="URL to git repository")
+    parallelism: int = Field(description="Number of runner pods i.e the parallelism of the runner job",
+                             default=4, ge=0, le=30)
     checks_integration: bool = True
 
-    agent_id: Optional[int] = None
+    agent_id: Optional[int] = Field(description="ID of the agent that should be used to run this test. "
+                                                "Only required for self-hosted agents")
 
-    spot_enabled: bool = False
-    spot_percentage: int = 80
+    spot_enabled: bool = Field(description="Determines if 'spot' pods are used if available on the platform",
+                               default=True)
+    spot_percentage: int = Field(description="Percentage of runner pods that will be spot",
+                                 default=80, ge=0, le=100)
 
     browser: str = None
 
-    spec_deadline: Optional[int] = None
-    spec_filter: Optional[str] = None
+    spec_deadline: Optional[int] = Field(
+        description="Deadline in seconds to assign to an individual spec. If 0 then there will be no deadline set "
+                    "(although the runner deadline still applies)",
+        default=0,
+        le=3600)
+    spec_filter: Optional[str] = Field(description="Only test specs matching this regex")
 
-    build_cmd: str
-    build_cpu: float = 2
-    build_memory: float = 4
-    build_deadline: int = 10*60
-    build_ephemeral_storage: int = 4
-    build_storage: int = 10
+    build_cmd: str = Field(description="Command used to build the app distribution")
+    build_cpu: float = Field(description="Number of vCPU units to assign to the builder Job", default=2,
+                             ge=2,
+                             le=10)
+    build_memory: float = Field(description="Amount of memory in GB to assign to the builder Pod", default=4,
+                                ge=2, le=10)
+    build_deadline: int = Field(description="Build deadline in seconds", default=10 * 60,
+                                ge=60, le=3600)
+    build_ephemeral_storage: int = Field(description="Build ephemeral storage in GB", default=4,
+                                         ge=1, le=20)
+    build_storage: int = Field(description="Build working storage size in GB", default=10,
+                               ge=1, le=100)
 
     start_runners_first: bool
-    runner_image: Optional[str]
-    runner_cpu: float = 2
-    runner_memory: float = 4
-    runner_deadline: int = 3600
-    runner_ephemeral_storage: int = 1
+    runner_image: Optional[str] = Field(
+        description="Docker image to use in the runner. Can only be specified for self-hosted agents")
+    runner_cpu: float = Field(description="Number of vCPU units to assign to each runner Pod", default=2,
+                              ge=1,
+                              le=10)
+    runner_memory: float = Field(description="Amount of memory in GB to assign to each runner Pod", default=5,
+                                 ge=2, le=10)
+    runner_deadline: int = Field(description="Deadline in seconds to assign to the entire runner job", default=3600,
+                                 ge=60, le=3 * 3600)
+    runner_ephemeral_storage: int = Field(description="Runner ephemeral storage in GB", default=4,
+                                          ge=1, le=20)
 
-    timezone: str = 'UTC'
-    cypress_retries: int = 2
+    timezone: str = Field(description="Timezone used in runners", default='UTC')
+    cypress_retries: int = Field(
+        description="Number of retries of failed tests. If 0 then default to any retry value set in the Cypress config file",
+        default=0, le=10, ge=0)
 
     class Config:
         orm_mode = True
@@ -359,7 +381,7 @@ class NewTestRun(BaseTestRun):
 class CacheItem(BaseModel):
     name: str
     ttl: int  # TTL in secs
-    storage_size: int # Size in GB
+    storage_size: int  # Size in GB
     expires: datetime  # expiry date
     specs: Optional[list[str]]
 
@@ -446,10 +468,8 @@ class TestRunCommon(BaseTestRun):
 
 
 class TestRunSummary(TestRunCommon):
-
     class Config:
         orm_mode = True
-
 
 
 class TestRunSummaries(PaginatedModel):
@@ -460,6 +480,7 @@ class TestRunErrorReport(BaseModel):
     stage: str
     msg: str
     error_code: Optional[int]
+
 
 #
 # Webhooks
@@ -499,14 +520,11 @@ class Notification(NewNotification):
         orm_mode = True
 
 
-
-
 #
 # TestRun detail
 #
 
 class TestRunJobStats(BaseModel):
-
     total_build_seconds: Optional[int]
     total_runner_seconds: Optional[int]
 
@@ -604,7 +622,7 @@ class TestRunJobStatus(BaseModel):
 
 
 class PodStatus(BaseModel):
-    pod_name:  str
+    pod_name: str
     project_id: int
     testrun_id: int
     phase: str
@@ -613,6 +631,7 @@ class PodStatus(BaseModel):
     is_spot: bool
     duration: Optional[int]
     job_type: str
+
 
 #
 # App messages
@@ -737,5 +756,3 @@ class AgentErrorMessage(AgentEvent):
     type: AgentEventType = AgentEventType.error
     source: str
     message: str
-
-
