@@ -254,7 +254,6 @@ class NewProject(BaseModel):
     build_storage: int = Field(description="Build working storage size in GB", default=10,
                                ge=1, le=100)
 
-    start_runners_first: bool
     runner_image: Optional[str] = Field(
         description="Docker image to use in the runner. Can only be specified for self-hosted agents")
     runner_cpu: float = Field(description="Number of vCPU units to assign to each runner Pod", default=2,
