@@ -587,10 +587,10 @@ class NewAgentModel(BaseModel):
 
 
 class UpdatedAgentModel(BaseModel):
-    name: Optional[str] = 'Agent'
+    name: Optional[str] = 'A'
     platform: Optional[KubernetesPlatform] = KubernetesPlatform.generic
     replication: str = 'singleton'
-    serviceAccount: Optional[str]
+    service_account: Optional[str]
 
 
 class AgentModel(UpdatedAgentModel, NewAgentModel):
