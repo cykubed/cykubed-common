@@ -73,6 +73,7 @@ class UserOrganisationSummary(BaseModel):
     id: int
     name: str
     is_admin: Optional[bool]
+    is_initialised: Optional[bool] = False
 
     class Config:
         orm_mode = True
