@@ -6,7 +6,12 @@ from pydantic import BaseModel, validator, NonNegativeInt
 from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
-    SpecFileStatus, AppFramework, KubernetesPlatform, TriggerType, PlatformType, JobType
+    SpecFileStatus, AppFramework, KubernetesPlatform, TriggerType, PlatformType, JobType, ErrorType
+
+
+class GenericError(BaseModel):
+    type: ErrorType
+    msg: Optional[str]
 
 
 class Token(BaseModel):
@@ -61,8 +66,6 @@ class Subscription(BaseModel):
 class Organisation(BaseModel):
     id: int
     name: str
-    tests_used: int
-    tests_remaining: Optional[int]
     subscription: Subscription
 
     class Config:

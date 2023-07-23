@@ -1,6 +1,10 @@
 import enum
 
 
+class ErrorType(str, enum.Enum):
+    quota_exceeded = 'quota_exceeded'
+
+
 class AppFramework(str, enum.Enum):
     angular = 'angular'
     vue = 'vue'
