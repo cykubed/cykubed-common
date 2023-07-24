@@ -3,6 +3,7 @@ import enum
 
 class ErrorType(str, enum.Enum):
     quota_exceeded = 'quota_exceeded'
+    payment_gateway_error = 'payment_gateway_error'
 
 
 class AppFramework(str, enum.Enum):

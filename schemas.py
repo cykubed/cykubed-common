@@ -114,6 +114,7 @@ class UserProfile(BaseModel):
     token: uuid.UUID
     email: str
     uisettings: UserUISettingsModel
+    is_pending: bool
     # allow_user_repositories: bool = False
     # integrations: list[IntegrationSummary]
     organisations: list[UserOrganisationSummary]
