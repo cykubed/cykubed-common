@@ -102,6 +102,7 @@ class UserOrganisationSummary(BaseModel):
 
 
 class UserUISettingsModel(BaseModel):
+    preferred_currency: Optional[Currency]
     current_org_id: Optional[int]
     last_git_org_id: Optional[str]
     last_git_platform: Optional[PlatformEnum]
