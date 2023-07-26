@@ -6,7 +6,7 @@ from pydantic import BaseModel, validator, NonNegativeInt
 from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
-    SpecFileStatus, AppFramework, KubernetesPlatform, TriggerType, PlatformType, JobType, ErrorType
+    SpecFileStatus, AppFramework, KubernetesPlatform, TriggerType, PlatformType, JobType, ErrorType, Currency
 
 
 class GenericError(BaseModel):
@@ -43,12 +43,24 @@ class IntegrationSummary(BaseModel):
         orm_mode = True
 
 
-class SubscriptionType(BaseModel):
+class Prices(BaseModel):
+    currency: Currency
+    flat_fee: float
+    per_1k_tests: float
+    per_10k_build_credits: float
+
+    class Config:
+        orm_mode = True
+
+
+class SubscriptionPlan(BaseModel):
     name: str
-    free_tests: Optional[int] = None
+    included_test_results: Optional[int] = None
+    included_build_credits: Optional[int] = None
+    max_days: Optional[int] = None
     users_limit: Optional[int] = None
     artifact_ttl: Optional[int] = None
-    fully_managed: bool = False
+    prices: Optional[Prices] = None
 
     class Config:
         orm_mode = True
@@ -56,7 +68,7 @@ class SubscriptionType(BaseModel):
 
 class Subscription(BaseModel):
     started: date
-    subtype: SubscriptionType
+    plan: SubscriptionPlan
     finished: Optional[date]
 
     class Config:
@@ -66,10 +78,16 @@ class Subscription(BaseModel):
 class Organisation(BaseModel):
     id: int
     name: str
-    subscription: Subscription
+    subscription: Optional[Subscription]
+    prefer_self_host: bool
 
     class Config:
         orm_mode = True
+
+
+class OrganisationUpdate(BaseModel):
+    name: str
+    prefer_self_host: Optional[bool]
 
 
 class UserOrganisationSummary(BaseModel):
@@ -209,10 +227,6 @@ class ResultSummary(BaseModel):
     skipped: int = 0
     passes: int = 0
     failures: int = 0
-
-
-class OrganisationUpdate(BaseModel):
-    name: str
 
 
 class NewProject(BaseModel):
@@ -550,7 +564,8 @@ class TestRunJobStats(BaseModel):
         orm_mode = True
 
 
-class GKEPricingModel(BaseModel):
+class KubernetesPlatformPricingModel(BaseModel):
+    platform: KubernetesPlatform
     updated: datetime
     region: str
     cpu_spot_price: Optional[float]

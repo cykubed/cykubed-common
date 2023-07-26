@@ -1,6 +1,12 @@
 import enum
 
 
+class Currency(str, enum.Enum):
+    usd = 'usd'
+    gbp = 'gbp'
+    eur = 'eur'
+
+
 class ErrorType(str, enum.Enum):
     quota_exceeded = 'quota_exceeded'
     payment_gateway_error = 'payment_gateway_error'
