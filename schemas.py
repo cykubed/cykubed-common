@@ -60,7 +60,8 @@ class SubscriptionPlan(BaseModel):
     max_days: Optional[int] = None
     users_limit: Optional[int] = None
     artifact_ttl: Optional[int] = None
-    prices: Optional[Prices] = None
+    max_parallelism: Optional[int] = None
+    prices: list[Prices] = []
 
     class Config:
         orm_mode = True
