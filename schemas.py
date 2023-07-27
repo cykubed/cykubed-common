@@ -87,13 +87,15 @@ class Organisation(BaseModel):
 
 
 class OrganisationUpdate(BaseModel):
-    name: str
+    name: Optional[str]
     prefer_self_host: Optional[bool]
+    is_initialised: Optional[bool]
 
 
 class UserOrganisationSummary(BaseModel):
     id: int
     name: str
+    prefer_self_host: Optional[bool]
     is_admin: Optional[bool]
     is_initialised: Optional[bool] = False
 
