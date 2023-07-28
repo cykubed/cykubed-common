@@ -61,6 +61,12 @@ class SubscriptionPlan(BaseModel):
     users_limit: Optional[int] = None
     artifact_ttl: Optional[int] = None
     max_parallelism: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
+
+class SubscriptionPlanWithPrices(SubscriptionPlan):
     prices: list[Prices] = []
 
     class Config:
@@ -74,6 +80,12 @@ class Subscription(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class AccountDetails(BaseModel):
+    subscription: Subscription
+    test_results_used: int
+    build_credits_used: int
 
 
 class Organisation(BaseModel):
