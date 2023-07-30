@@ -149,6 +149,7 @@ class UserProfile(BaseModel):
     email: str
     uisettings: UserUISettingsModel
     is_pending: bool
+    is_staff: Optional[bool] = False
     # allow_user_repositories: bool = False
     # integrations: list[IntegrationSummary]
     organisations: list[UserOrganisationSummary]
@@ -628,6 +629,7 @@ class UpdatedAgentModel(BaseModel):
     platform: Optional[KubernetesPlatform] = KubernetesPlatform.generic
     replication: str = 'singleton'
     service_account: Optional[str]
+    is_public: Optional[bool]
 
 
 class AgentModel(UpdatedAgentModel, NewAgentModel):
@@ -637,6 +639,7 @@ class AgentModel(UpdatedAgentModel, NewAgentModel):
     first_connected: Optional[datetime]
     version: Optional[str]
     connected: int = 0
+    is_public: Optional[bool]
 
     class Config:
         orm_mode = True
