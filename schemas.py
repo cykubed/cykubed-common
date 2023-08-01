@@ -357,7 +357,7 @@ class GitOrganisation(BaseModel):
 
 class Repository(BaseModel):
     id: str
-    owner: str
+    owner: Optional[str]
     name: str
     url: str
     platform: PlatformEnum
