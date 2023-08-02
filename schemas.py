@@ -413,6 +413,7 @@ class NewTestRun(BaseTestRun):
 
 
 class CacheItem(BaseModel):
+    organisation_id: int
     name: str
     ttl: int  # TTL in secs
     storage_size: int  # Size in GB
