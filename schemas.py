@@ -86,6 +86,7 @@ class AccountDetails(BaseModel):
     subscription: Subscription
     test_results_used: int
     build_credits_used: int
+    users: int
 
 
 class Organisation(BaseModel):
