@@ -465,6 +465,7 @@ class PodDuration(BaseModel):
     Duration in seconds for a single pod
     """
     job_type: JobType
+    pod_name: str
     is_spot: bool = False
     duration: int = 0
 
