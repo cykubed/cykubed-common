@@ -66,6 +66,11 @@ class SubscriptionPlan(BaseModel):
         orm_mode = True
 
 
+class SelectedPlan(BaseModel):
+    name: str
+    currency: Currency
+
+
 class SubscriptionPlanWithPrices(SubscriptionPlan):
     prices: list[Prices] = []
 
