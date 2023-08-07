@@ -80,8 +80,10 @@ class SubscriptionPlanWithPrices(SubscriptionPlan):
 
 class Subscription(BaseModel):
     started: date
+    expires: Optional[date]
     plan: SubscriptionPlan
-    finished: Optional[date]
+    cancelled: Optional[date]
+    payment_failure_date: Optional[date]
 
     class Config:
         orm_mode = True
@@ -702,6 +704,17 @@ class TestRunErrorMessage(BaseAppSocketMessage):
 class TestRunDetailUpdateMessage(BaseAppSocketMessage):
     action: AppWebSocketActions = AppWebSocketActions.testrun
     testrun: TestRunDetail
+
+
+class PlanUpgradeSuccessfulMessage(BaseAppSocketMessage):
+    action: AppWebSocketActions = AppWebSocketActions.plan_upgrade_successful
+    subscription: Subscription
+
+
+class PaymentFailedMessage(BaseAppSocketMessage):
+    action: AppWebSocketActions = AppWebSocketActions.payment_failed
+    subscription: Subscription
+    message: str
 
 
 class SpecFileMessage(BaseAppSocketMessage):
