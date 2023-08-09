@@ -6,7 +6,8 @@ from pydantic import BaseModel, validator, NonNegativeInt
 from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
-    SpecFileStatus, AppFramework, KubernetesPlatform, TriggerType, PlatformType, JobType, ErrorType, Currency
+    SpecFileStatus, AppFramework, KubernetesPlatform, TriggerType, PlatformType, JobType, ErrorType, Currency, \
+    OrganisationDeleteReason
 
 
 class GenericError(BaseModel):
@@ -109,6 +110,11 @@ class Organisation(BaseModel):
 class OrganisationUpdate(BaseModel):
     name: Optional[str]
     prefer_self_host: Optional[bool]
+
+
+class OrganisationDelete(BaseModel):
+    message: Optional[str]
+    reason: Optional[OrganisationDeleteReason]
 
 
 class UserOrganisationSummary(BaseModel):

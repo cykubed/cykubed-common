@@ -160,6 +160,13 @@ class TriggerType(str, enum.Enum):
     fixed = 'fixed'
 
 
+class OrganisationDeleteReason(str, enum.Enum):
+    too_expensive = 'too_expensive'
+    missing_features = 'missing_features'
+    unused = 'unused'
+    other = 'other'
+
+
 loglevelToInt = {LogLevel.debug: 0,
                  LogLevel.info: 1,
                  LogLevel.cmd: 1,
