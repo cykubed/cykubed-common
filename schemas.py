@@ -113,6 +113,9 @@ class OrganisationUpdate(BaseModel):
 
 
 class OrganisationDelete(BaseModel):
+    """
+    Post-org delete
+    """
     token: str
     comments: Optional[str]
     reason: Optional[OrganisationDeleteReason]
