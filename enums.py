@@ -160,6 +160,12 @@ class TriggerType(str, enum.Enum):
     fixed = 'fixed'
 
 
+class PolicyType(str, enum.Enum):
+    privacy = 'privacy'
+    cookie = 'cookie'
+    terms = 'terms'
+
+
 class OrganisationDeleteReason(str, enum.Enum):
     too_expensive = 'too_expensive'
     missing_features = 'missing_features'
