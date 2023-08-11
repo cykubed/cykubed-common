@@ -541,7 +541,8 @@ class TestRunErrorReport(BaseModel):
 
 
 class CommonTriggerModel(BaseModel):
-    project_id: int
+    organisation_id: int
+    project_id: Optional[int]
     name: Optional[str]
     on_pass: Optional[bool] = False
     on_fail: Optional[bool] = False
