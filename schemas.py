@@ -198,7 +198,7 @@ class APIToken(BaseModel):
 
 class OAuthCodeResponse(BaseModel):
     code: str
-    organisationId: Optional[int]
+    organisation_id: Optional[int]
     orgtoken: Optional[str]
 
 
