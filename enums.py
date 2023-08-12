@@ -45,6 +45,7 @@ class PlatformEnum(str, enum.Enum):
     BITBUCKET = 'bitbucket'
     JIRA = 'jira'
     SLACK = 'slack'
+    ROCKETCHAT = 'rocketchat'
     GITHUB = 'github'
 
 
@@ -57,7 +58,7 @@ GIT_PLATFORMS = [PlatformEnum.GITHUB,
                  PlatformEnum.BITBUCKET]
 
 
-NOTIFICATION_PLATFORMS = [PlatformEnum.SLACK]
+NOTIFICATION_PLATFORMS = [PlatformEnum.SLACK, PlatformEnum.ROCKETCHAT]
 
 
 class GitOrgTypeEnum(str, enum.Enum):

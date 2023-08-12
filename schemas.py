@@ -32,6 +32,11 @@ class PaginatedModel(PaginationParams):
 # Auth
 #
 
+class BasicAuth(BaseModel):
+    username: str
+    password: str
+
+
 class IntegrationSummary(BaseModel):
     name: PlatformEnum
     type: PlatformType
@@ -662,14 +667,14 @@ class AgentModel(UpdatedAgentModel, NewAgentModel):
         orm_mode = True
 
 
-class SlackChannel(BaseModel):
+class NotificationChannel(BaseModel):
     id: str
     public: bool
     name: str
 
 
-class SlackChannels(BaseModel):
-    channels: list[SlackChannel]
+class NotificationChannels(BaseModel):
+    channels: list[NotificationChannel]
 
 
 class TestRunJobStatus(BaseModel):
