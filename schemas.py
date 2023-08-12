@@ -32,8 +32,9 @@ class PaginatedModel(PaginationParams):
 # Auth
 #
 
-class BasicAuth(BaseModel):
-    username: str
+class RocketChatAuth(BaseModel):
+    url: str
+    user: str
     password: str
 
 
@@ -669,7 +670,7 @@ class AgentModel(UpdatedAgentModel, NewAgentModel):
 
 class NotificationChannel(BaseModel):
     id: str
-    public: bool
+    public: Optional[bool]
     name: str
 
 
