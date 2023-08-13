@@ -49,6 +49,11 @@ class PlatformEnum(str, enum.Enum):
     GITHUB = 'github'
 
 
+class NotificationPlatformEnum(str, enum.Enum):
+    SLACK = 'slack'
+    ROCKETCHAT = 'rocketchat'
+
+
 class PlatformType(str, enum.Enum):
     git = 'git'
     messaging = 'messaging'
