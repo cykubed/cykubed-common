@@ -34,8 +34,8 @@ class PaginatedModel(PaginationParams):
 
 class RocketChatAuth(BaseModel):
     url: str
-    user: str
-    password: str
+    user_id: str
+    access_token: str
 
 
 class IntegrationSummary(BaseModel):
