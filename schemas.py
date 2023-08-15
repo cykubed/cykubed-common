@@ -44,6 +44,7 @@ class IntegrationSummary(BaseModel):
     connected: bool = False
     login: Optional[str]
     user_id: Optional[int]
+    app_installed: Optional[bool]  # For Github
     allow_user_repositories: Optional[bool]
 
     class Config:
@@ -116,6 +117,7 @@ class Organisation(BaseModel):
 class OrganisationUpdate(BaseModel):
     name: Optional[str]
     prefer_self_host: Optional[bool]
+    is_initialised: Optional[bool]
 
 
 class OrganisationDelete(BaseModel):
@@ -131,6 +133,7 @@ class UserOrganisationSummary(BaseModel):
     id: int
     name: Optional[str]
     prefer_self_host: Optional[bool]
+    is_initialised: Optional[bool]
     is_admin: Optional[bool]
 
     class Config:
@@ -209,8 +212,7 @@ class OAuthCodeResponse(BaseModel):
 
 
 class OAuthPostInstall(BaseModel):
-    token: Optional[str]
-    app_installed: Optional[bool]  # For Github
+    integration: IntegrationSummary
     profile: UserProfile
 
 

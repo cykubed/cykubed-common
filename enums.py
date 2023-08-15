@@ -185,3 +185,13 @@ loglevelToInt = {LogLevel.debug: 0,
                  LogLevel.cmdout: 1,
                  LogLevel.warning: 2,
                  LogLevel.error: 3}
+platform_types = {
+    PlatformEnum.BITBUCKET: PlatformType.git,
+    PlatformEnum.GITHUB: PlatformType.git,
+    PlatformEnum.SLACK: PlatformType.messaging,
+    PlatformEnum.ROCKETCHAT: PlatformType.messaging
+}
+
+
+def get_platform_type(platform: PlatformEnum):
+    return platform_types[platform]
