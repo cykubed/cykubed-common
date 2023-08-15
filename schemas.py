@@ -573,6 +573,7 @@ class NewNotification(CommonTriggerModel):
     platform: PlatformEnum
     channel_id: str
     channel_name: str
+    include_private: bool = False
 
 
 class Notification(NewNotification):
