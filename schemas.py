@@ -6,7 +6,7 @@ from pydantic import BaseModel, validator, NonNegativeInt
 from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
-    SpecFileStatus, AppFramework, KubernetesPlatform, TriggerType, PlatformType, JobType, ErrorType, Currency, \
+    SpecFileStatus, AppFramework, KubernetesPlatform, PlatformType, JobType, ErrorType, Currency, \
     OrganisationDeleteReason
 
 
@@ -555,6 +555,7 @@ class CommonTriggerModel(BaseModel):
     on_pass: Optional[bool] = False
     on_fail: Optional[bool] = False
     on_fixed: Optional[bool] = False
+    on_flake: Optional[bool] = False
     branch_regex: Optional[str]
 
 
@@ -625,6 +626,7 @@ class KubernetesPlatformPricingModel(BaseModel):
 
 class TestRunDetail(TestRunCommon):
     files: Optional[list[SpecFile]]
+    fixed: Optional[bool]
     duration: Optional[int]
     jobstats: Optional[TestRunJobStats] = None
 
@@ -643,7 +645,6 @@ class TestRunDetail(TestRunCommon):
 
 
 class WebHookPayload(BaseModel):
-    trigger: TriggerType
     testrun: TestRunDetail
 
 

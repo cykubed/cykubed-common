@@ -160,12 +160,6 @@ class LogLevel(str, enum.Enum):
     error = 'error'
 
 
-class TriggerType(str, enum.Enum):
-    passed = 'passed'
-    failed = 'failed'
-    fixed = 'fixed'
-
-
 class PolicyType(str, enum.Enum):
     privacy = 'privacy'
     cookie = 'cookie'
