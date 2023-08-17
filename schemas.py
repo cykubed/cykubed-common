@@ -570,6 +570,27 @@ class WebHook(NewWebHook):
         orm_mode = True
 
 
+class WebhookHistory(BaseModel):
+    hook_id: int
+    testrun_id: int
+    created: datetime
+    status_code: Optional[int]
+    response: Optional[str]
+    error: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+class WebhookTesterResponse(BaseModel):
+    testrun_id: int
+    status: TestRunStatus
+
+
+#
+# Notifications
+#
+
 class NewNotification(CommonTriggerModel):
     platform: PlatformEnum
     channel_id: str
