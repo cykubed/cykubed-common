@@ -7,7 +7,7 @@ from pydantic.fields import Field
 
 from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
     SpecFileStatus, AppFramework, KubernetesPlatform, PlatformType, JobType, ErrorType, Currency, \
-    OrganisationDeleteReason
+    OrganisationDeleteReason, OnboardingState
 
 
 class GenericError(BaseModel):
@@ -117,7 +117,7 @@ class Organisation(BaseModel):
 class OrganisationUpdate(BaseModel):
     name: Optional[str]
     prefer_self_host: Optional[bool]
-    is_initialised: Optional[bool]
+    onboarding_state: Optional[OnboardingState]
 
 
 class OrganisationDelete(BaseModel):
@@ -132,8 +132,8 @@ class OrganisationDelete(BaseModel):
 class UserOrganisationSummary(BaseModel):
     id: int
     name: Optional[str]
+    onboarding_state: OnboardingState
     prefer_self_host: Optional[bool]
-    is_initialised: Optional[bool]
     is_admin: Optional[bool]
 
     class Config:

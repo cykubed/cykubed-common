@@ -1,6 +1,14 @@
 import enum
 
 
+class OnboardingState(str, enum.Enum):
+    choose_org_name = 'choose-org-name'
+    choose_hosted = 'choose-hosted'
+    choose_notification = 'choose-notification'
+    choose_plan = 'choose-plan'
+    completed = 'completed'
+
+
 class Currency(str, enum.Enum):
     usd = 'usd'
     gbp = 'gbp'
