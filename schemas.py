@@ -644,10 +644,6 @@ class TestRunDetail(TestRunCommon):
         orm_mode = True
 
 
-class WebHookPayload(BaseModel):
-    testrun: TestRunDetail
-
-
 class NewAgentModel(BaseModel):
     organisation_id: int
 
