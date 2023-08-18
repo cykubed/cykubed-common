@@ -92,6 +92,18 @@ class TestRunStatus(str, enum.Enum):
     failed = 'failed'
 
 
+class TestRunStatusFilter(str, enum.Enum):
+    pending = 'pending'
+    started = 'started'
+    building = 'building'
+    cancelled = 'cancelled'
+    running = 'running'
+    passed = 'passed'
+    timeout = 'timeout'
+    failed = 'failed'
+    flakey = 'flakey'
+
+
 class SpecFileStatus(str, enum.Enum):
     started = 'started'
     passed = 'passed'
