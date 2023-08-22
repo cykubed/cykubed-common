@@ -93,6 +93,8 @@ class TestRunStatus(str, enum.Enum):
 
 
 class TestRunStatusFilter(str, enum.Enum):
+    __test__ = False
+
     pending = 'pending'
     started = 'started'
     building = 'building'

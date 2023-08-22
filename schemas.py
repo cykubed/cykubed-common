@@ -5,9 +5,14 @@ from typing import Optional, List
 from pydantic import BaseModel, validator, NonNegativeInt
 from pydantic.fields import Field
 
-from .enums import PlatformEnum, TestRunStatus, TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
-    SpecFileStatus, AppFramework, KubernetesPlatform, PlatformType, JobType, ErrorType, Currency, \
-    OrganisationDeleteReason, OnboardingState
+from .enums import (PlatformEnum, TestRunStatus, TestRunStatusFilter,
+                    TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
+                    SpecFileStatus, AppFramework, KubernetesPlatform, PlatformType, JobType, ErrorType, Currency, \
+                    OrganisationDeleteReason, OnboardingState)
+
+
+class DummyTestRunStatusFilter(BaseModel):
+    filter: TestRunStatusFilter
 
 
 class GenericError(BaseModel):
