@@ -84,6 +84,11 @@ class SelectedPlan(BaseModel):
     currency: Currency
 
 
+class StripeClientSecret(BaseModel):
+    subscription_id: str
+    client_secret: str
+
+
 class SubscriptionPlanWithPrices(SubscriptionPlan):
     prices: list[Prices] = []
 
