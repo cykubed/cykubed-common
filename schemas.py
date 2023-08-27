@@ -102,6 +102,13 @@ class Subscription(BaseModel):
         orm_mode = True
 
 
+class OrganisationStripeDetails(BaseModel):
+    """
+    Only used internally for Stripe testing
+    """
+    frozen_time: Optional[datetime]
+
+
 class AccountDetails(BaseModel):
     subscription: Subscription
     selected_subscription: Optional[str]
@@ -110,14 +117,33 @@ class AccountDetails(BaseModel):
     users: int
 
 
-class Organisation(BaseModel):
+class OrganisationBase(BaseModel):
     id: int
     name: str
-    subscription: Optional[Subscription]
     prefer_self_host: bool
+
+
+class Organisation(OrganisationBase):
+    subscription: Optional[Subscription]
 
     class Config:
         orm_mode = True
+
+
+class StaffOrganisation(OrganisationBase):
+    """
+    Additional information available to staff users
+    """
+    account: AccountDetails
+    stripe: Optional[OrganisationStripeDetails]
+
+
+class StaffOrganisationList(PaginatedModel):
+    items: list[StaffOrganisation]
+
+
+class OrgTimeAdvance(BaseModel):
+    timestamp: datetime
 
 
 class OrganisationUpdate(BaseModel):
