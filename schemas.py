@@ -135,6 +135,11 @@ class Organisation(OrganisationBase):
         orm_mode = True
 
 
+class Country(BaseModel):
+    name: str
+    code: str
+
+
 class StaffOrganisation(OrganisationBase):
     """
     Additional information available to staff users
@@ -151,10 +156,23 @@ class OrgTimeAdvance(BaseModel):
     timestamp: datetime
 
 
+class Address(BaseModel):
+    city: Optional[str]
+    country_code: str = Field(..., max_length=2)
+    line1: str = Field(..., max_length=255)
+    line2: Optional[str] = Field(None, max_length=255)
+    postal_code: Optional[str] = Field(None, max_length=255)
+    state: Optional[str] = Field(None, max_length=255)
+
+    class Config:
+        orm_mode = True
+
+
 class OrganisationUpdate(BaseModel):
     name: Optional[str]
     prefer_self_host: Optional[bool]
     onboarding_state: Optional[OnboardingState]
+    address: Optional[Address]
 
 
 class OrganisationDelete(BaseModel):
@@ -170,6 +188,7 @@ class UserOrganisationSummary(BaseModel):
     id: int
     name: Optional[str]
     onboarding_state: OnboardingState
+    address: Optional[Address]
     prefer_self_host: Optional[bool]
     is_admin: Optional[bool]
 
@@ -889,3 +908,4 @@ class AgentErrorMessage(AgentEvent):
     type: AgentEventType = AgentEventType.error
     source: str
     message: str
+
