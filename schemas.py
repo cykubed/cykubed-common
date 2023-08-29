@@ -79,6 +79,10 @@ class SubscriptionPlan(BaseModel):
         orm_mode = True
 
 
+class SelectedSubscriptionPlan(SubscriptionPlan, Prices):
+    pass
+
+
 class SelectedPlan(BaseModel):
     name: str
     currency: Currency
@@ -116,7 +120,10 @@ class OrganisationStripeDetails(BaseModel):
 
 class AccountDetails(BaseModel):
     subscription: Subscription
-    selected_subscription: Optional[str]
+    selected_plan: Optional[str]
+    stripe_client_secret: Optional[str]
+    new_stripe_subscription_id: Optional[str]
+    new_subscription_id: Optional[int]
     test_results_used: int
     build_credits_used: int
     users: int
@@ -158,7 +165,7 @@ class OrgTimeAdvance(BaseModel):
 
 class Address(BaseModel):
     city: Optional[str]
-    country_code: str = Field(..., max_length=2)
+    country: str = Field(..., max_length=2)
     line1: str = Field(..., max_length=255)
     line2: Optional[str] = Field(None, max_length=255)
     postal_code: Optional[str] = Field(None, max_length=255)
