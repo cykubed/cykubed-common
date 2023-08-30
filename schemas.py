@@ -102,6 +102,7 @@ class SubscriptionPlanWithPrices(SubscriptionPlan):
 
 class Subscription(BaseModel):
     started: date
+    active: bool
     expires: Optional[date]
     plan: SubscriptionPlan
     cancelled: Optional[date]
@@ -236,10 +237,9 @@ class UserProfile(BaseModel):
     token: uuid.UUID
     email: str
     uisettings: UserUISettingsModel
+    account: AccountDetails
     is_pending: bool
     is_staff: Optional[bool] = False
-    # allow_user_repositories: bool = False
-    # integrations: list[IntegrationSummary]
     organisations: list[UserOrganisationSummary]
 
     class Config:
@@ -808,15 +808,9 @@ class TestRunDetailUpdateMessage(BaseAppSocketMessage):
     testrun: TestRunDetail
 
 
-class PlanUpgradeSuccessfulMessage(BaseAppSocketMessage):
-    action: AppWebSocketActions = AppWebSocketActions.plan_upgrade_successful
+class SubscriptionUpdatedMessage(BaseAppSocketMessage):
+    action: AppWebSocketActions = AppWebSocketActions.subscription_updated
     subscription: Subscription
-
-
-class PaymentFailedMessage(BaseAppSocketMessage):
-    action: AppWebSocketActions = AppWebSocketActions.payment_failed
-    subscription: Subscription
-    message: str
 
 
 class SpecFileMessage(BaseAppSocketMessage):

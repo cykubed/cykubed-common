@@ -166,7 +166,8 @@ class AppWebSocketActions(str, enum.Enum):
     agent = 'agent'
     error = 'error'
     payment_failed = 'payment-failed'
-    plan_upgrade_successful = 'plan-upgrade-successful'
+    subscription_cancelled = 'subscription-cancelled'
+    subscription_updated = 'subscription-updated'
 
 
 class AgentWebsocketActions(str, enum.Enum):
