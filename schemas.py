@@ -237,7 +237,7 @@ class UserProfile(BaseModel):
     token: uuid.UUID
     email: str
     uisettings: UserUISettingsModel
-    account: AccountDetails
+    account: Optional[AccountDetails]
     is_pending: bool
     is_staff: Optional[bool] = False
     organisations: list[UserOrganisationSummary]
