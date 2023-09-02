@@ -2,7 +2,7 @@ import uuid
 from datetime import date, datetime
 from typing import Optional, List
 
-from pydantic import BaseModel, validator, NonNegativeInt
+from pydantic import BaseModel, validator, NonNegativeInt, AnyHttpUrl
 from pydantic.fields import Field
 
 from .enums import (PlatformEnum, TestRunStatus, TestRunStatusFilter,
@@ -484,10 +484,8 @@ class TestRunStatusUpdate(BaseModel):
 class BaseTestRun(BaseModel):
     id: int
     local_id: int
-    project: Project
     branch: str
     sha: Optional[str]
-    status: str = 'started'
     source: str = 'web_start'
 
 
@@ -496,6 +494,7 @@ class NewTestRun(BaseTestRun):
     Sent to the agent to kick off a run.
     """
     url: str
+    project: Project
 
     class Config:
         orm_mode = True
@@ -561,7 +560,7 @@ class PodDuration(BaseModel):
 class AuthorModel(BaseModel):
     name: str
     email: str
-    avatar_url: Optional[str]
+    avatar_url: Optional[AnyHttpUrl]
 
     class Config:
         orm_mode = True
@@ -577,10 +576,10 @@ class CommitDetailsModel(BaseModel):
 
 
 class TestRunCommon(BaseTestRun):
+    status: TestRunStatus
     error: Optional[str]
     started: Optional[datetime]
     finished: Optional[datetime] = None
-    status: TestRunStatus
     commit: Optional[CommitDetailsModel]
     duration: Optional[int]
     total_tests: Optional[int]
@@ -592,6 +591,9 @@ class TestRunCommon(BaseTestRun):
 
 
 class TestRunSummary(TestRunCommon):
+    project_id: int
+    project_name: str
+
     class Config:
         orm_mode = True
 
@@ -709,6 +711,7 @@ class KubernetesPlatformPricingModel(BaseModel):
 
 
 class TestRunDetail(TestRunCommon):
+    project: Project
     files: Optional[list[SpecFile]]
     fixed: Optional[bool]
     duration: Optional[int]
