@@ -495,6 +495,7 @@ class NewTestRun(BaseTestRun):
     """
     url: str
     project: Project
+    status: Optional[TestRunStatus]
 
     class Config:
         orm_mode = True
