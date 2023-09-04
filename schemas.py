@@ -577,6 +577,7 @@ class CommitDetailsModel(BaseModel):
 
 class TestRunCommon(BaseTestRun):
     status: TestRunStatus
+    fixed: Optional[bool]
     error: Optional[str]
     started: Optional[datetime]
     finished: Optional[datetime] = None
@@ -713,8 +714,6 @@ class KubernetesPlatformPricingModel(BaseModel):
 class TestRunDetail(TestRunCommon):
     project: Project
     files: Optional[list[SpecFile]]
-    fixed: Optional[bool]
-    duration: Optional[int]
     jobstats: Optional[TestRunJobStats] = None
 
     @validator('files', pre=True)
