@@ -740,7 +740,6 @@ class UpdatedAgentModel(BaseModel):
     platform: Optional[KubernetesPlatform] = KubernetesPlatform.generic
     replication: str = 'singleton'
     platform_project_id: Optional[str]
-    enable_logging: Optional[bool]
     spot_enabled: Optional[bool]
     spot_percentage: Optional[int]
     service_account: Optional[str]
