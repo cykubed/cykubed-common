@@ -351,11 +351,6 @@ class NewProject(BaseModel):
     agent_id: Optional[int] = Field(description="ID of the agent that should be used to run this test. "
                                                 "Only required for self-hosted agents")
 
-    spot_enabled: bool = Field(description="Determines if 'spot' pods are used if available on the platform",
-                               default=True)
-    spot_percentage: int = Field(description="Percentage of runner pods that will be spot",
-                                 default=80, ge=0, le=100)
-
     browser: str = None
 
     spec_deadline: Optional[int] = Field(
@@ -489,7 +484,14 @@ class BaseTestRun(BaseModel):
     source: str = 'web_start'
 
 
-class NewTestRun(BaseTestRun):
+class SpotEnabledModel(BaseModel):
+    spot_enabled: bool = Field(description="Determines if 'spot' pods are used if available on the platform",
+                               default=True)
+    spot_percentage: int = Field(description="Percentage of runner pods that will be spot",
+                                 default=80, ge=0, le=100)
+
+
+class NewTestRun(BaseTestRun, SpotEnabledModel):
     """
     Sent to the agent to kick off a run.
     """
@@ -735,13 +737,17 @@ class NewAgentModel(BaseModel):
     organisation_id: int
 
 
-class UpdatedAgentModel(BaseModel):
+class UpdatedAgentModel(SpotEnabledModel):
     name: Optional[str] = 'A'
     platform: Optional[KubernetesPlatform] = KubernetesPlatform.generic
     replication: str = 'singleton'
     platform_project_id: Optional[str]
-    spot_enabled: Optional[bool]
-    spot_percentage: Optional[int]
+
+    spot_enabled: bool = Field(description="Determines if 'spot' pods are used if available on the platform",
+                               default=True)
+    spot_percentage: int = Field(description="Percentage of runner pods that will be spot",
+                                 default=80, ge=0, le=100)
+
     service_account: Optional[str]
     is_public: Optional[bool]
 
