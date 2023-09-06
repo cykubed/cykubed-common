@@ -497,6 +497,7 @@ class NewTestRun(BaseTestRun, SpotEnabledModel):
     """
     url: str
     project: Project
+    preprovision: Optional[bool]
     status: Optional[TestRunStatus]
 
     class Config:
@@ -747,6 +748,7 @@ class UpdatedAgentModel(SpotEnabledModel):
                                default=True)
     spot_percentage: int = Field(description="Percentage of runner pods that will be spot",
                                  default=80, ge=0, le=100)
+    preprovision: Optional[bool]
 
     service_account: Optional[str]
     is_public: Optional[bool]
