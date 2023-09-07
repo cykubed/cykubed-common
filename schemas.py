@@ -739,7 +739,7 @@ class NewAgentModel(BaseModel):
 class UpdatedAgentModel(SpotEnabledModel):
     name: Optional[str] = 'A'
     platform: Optional[KubernetesPlatform] = KubernetesPlatform.generic
-    replication: str = 'singleton'
+    replicated: Optional[bool] = False
     platform_project_id: Optional[str]
     preprovision: Optional[bool]
 
