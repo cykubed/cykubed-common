@@ -485,10 +485,8 @@ class BaseTestRun(BaseModel):
 
 
 class SpotEnabledModel(BaseModel):
-    spot_enabled: bool = Field(description="Determines if 'spot' pods are used if available on the platform",
-                               default=True)
-    spot_percentage: int = Field(description="Percentage of runner pods that will be spot",
-                                 default=80, ge=0, le=100)
+    spot_percentage: int = Field(description="Percentage of runner pods that will be spot, if available",
+                                 default=0, ge=0, le=100)
 
 
 class NewTestRun(BaseTestRun, SpotEnabledModel):
@@ -743,11 +741,6 @@ class UpdatedAgentModel(SpotEnabledModel):
     platform: Optional[KubernetesPlatform] = KubernetesPlatform.generic
     replication: str = 'singleton'
     platform_project_id: Optional[str]
-
-    spot_enabled: bool = Field(description="Determines if 'spot' pods are used if available on the platform",
-                               default=True)
-    spot_percentage: int = Field(description="Percentage of runner pods that will be spot",
-                                 default=80, ge=0, le=100)
     preprovision: Optional[bool]
 
     service_account: Optional[str]
