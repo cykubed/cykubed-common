@@ -2,7 +2,7 @@ import uuid
 from datetime import date, datetime
 from typing import Optional, List
 
-from pydantic import BaseModel, validator, NonNegativeInt, AnyHttpUrl
+from pydantic import BaseModel, validator, NonNegativeInt, AnyHttpUrl, root_validator
 from pydantic.fields import Field
 
 from .enums import (PlatformEnum, TestRunStatus, TestRunStatusFilter,
@@ -626,6 +626,13 @@ class CommonTriggerModel(BaseModel):
     on_flake: Optional[bool] = False
     branch_regex: Optional[str]
 
+    @root_validator
+    def check_triggers(cls, values):
+        if (not values.get('on_pass') and not values.get('on_fail') and not values.get('on_flake') and
+                not values.get('on_fixed')):
+            raise ValueError('Specify at least one trigger')
+        return values
+
 
 class NewWebHook(CommonTriggerModel):
     url: str
@@ -633,6 +640,7 @@ class NewWebHook(CommonTriggerModel):
 
 class WebHook(NewWebHook):
     id: int
+    project_name: Optional[str]
 
     class Config:
         orm_mode = True
@@ -668,6 +676,7 @@ class NewNotification(CommonTriggerModel):
 
 class Notification(NewNotification):
     id: int
+    project_name: Optional[str]
 
     class Config:
         orm_mode = True
