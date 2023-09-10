@@ -168,6 +168,7 @@ class AppWebSocketActions(str, enum.Enum):
     payment_failed = 'payment-failed'
     subscription_cancelled = 'subscription-cancelled'
     subscription_updated = 'subscription-updated'
+    webhook_notified = 'webhook_called'
 
 
 class AgentWebsocketActions(str, enum.Enum):

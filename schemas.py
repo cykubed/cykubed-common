@@ -651,6 +651,7 @@ class WebhookHistory(BaseModel):
     testrun_id: int
     created: datetime
     status_code: Optional[int]
+    request: str
     response: Optional[str]
     error: Optional[str]
 
@@ -832,6 +833,11 @@ class SubscriptionUpdatedMessage(BaseAppSocketMessage):
 class SpecFileMessage(BaseAppSocketMessage):
     testrun_id: int
     spec: SpecFile
+
+
+class WebhookNotifiedMessage(BaseAppSocketMessage):
+    action = AppWebSocketActions.webhook_notified
+    details: WebhookHistory
 
 
 class SpecFileLogMessage(BaseAppSocketMessage, SpecFileLog):
