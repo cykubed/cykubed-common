@@ -5,7 +5,7 @@ from typing import Optional, List
 from pydantic import BaseModel, validator, NonNegativeInt, AnyHttpUrl, root_validator
 from pydantic.fields import Field
 
-from enums import (PlatformEnum, TestRunStatus, TestRunStatusFilter,
+from .enums import (PlatformEnum, TestRunStatus, TestRunStatusFilter,
                     TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
                     SpecFileStatus, AppFramework, KubernetesPlatform, PlatformType, JobType, ErrorType, Currency, \
                     OrganisationDeleteReason, OnboardingState)
