@@ -403,7 +403,8 @@ class Project(NewProject):
 
 class NewRunnerImage(BaseModel):
     tag: str = Field(description="Docker image tag")
-    node_version: str = Field(description="Node version")
+    image: str = Field(description="Docker image (without the tag)")
+    node_version: str = Field(description="Node major version")
     description: Optional[str] = Field(description="Description")
     chrome: Optional[bool] = Field(description="True if this image contains Chrome", default=True)
     firefox: Optional[bool] = Field(description="True if this image contains Firefox", default=False)
@@ -411,11 +412,6 @@ class NewRunnerImage(BaseModel):
 
     class Config:
         orm_mode = True
-
-
-class NewRunnerImages(BaseModel):
-    images: list[NewRunnerImage] = Field(description="List of Docker images")
-    replace: bool = Field(description="If true then replace all existing images with this list", default=False)
 
 
 class RunnerImage(NewRunnerImage):
