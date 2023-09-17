@@ -335,7 +335,10 @@ class ResultSummary(BaseModel):
 
 
 class NewProject(BaseModel):
-    name: str = Field(description="Project name i.e name of Git repository")
+    name: str = Field(description="Project name e.g Git repository name")
+
+    repos: str = Field(description="Repository name")
+
     organisation_id: int = Field(description="Owner organisation ID")
 
     owner: Optional[str]
@@ -359,6 +362,9 @@ class NewProject(BaseModel):
         default=0,
         le=3600)
     spec_filter: Optional[str] = Field(description="Only test specs matching this regex")
+
+    max_failures: Optional[int] = Field(description="Maximum number of failed test allowed before we quit and mark the"
+                                        " run as failed")
 
     build_cmd: str = Field(description="Command used to build the app distribution")
     build_cpu: float = Field(description="Number of vCPU units to assign to the builder Job", default=2,
