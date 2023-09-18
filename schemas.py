@@ -334,19 +334,19 @@ class ResultSummary(BaseModel):
     failures: int = 0
 
 
-class NewProject(BaseModel):
-    name: str = Field(description="Project name e.g Git repository name")
-
+class BaseProject(BaseModel):
     repos: str = Field(description="Repository name")
-
+    platform: PlatformEnum = Field(description="Git platform")
     organisation_id: int = Field(description="Owner organisation ID")
-
+    default_branch: str = Field(description="Default branch")
+    url: str = Field(description="URL to git repository")
     owner: Optional[str]
 
+
+class NewProject(BaseProject):
+    name: str = Field(description="Project name e.g Git repository name")
+
     framework: AppFramework = AppFramework.generic
-    default_branch: str = Field(description="Default branch")
-    platform: PlatformEnum = Field(description="Git platform")
-    url: str = Field(description="URL to git repository")
     parallelism: int = Field(description="Number of runner pods i.e the parallelism of the runner job",
                              default=4, ge=0, le=30)
     checks_integration: bool = True
@@ -401,6 +401,13 @@ class NewProject(BaseModel):
 
 
 class Project(NewProject):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class UpdatedProject(NewProject):
     id: int
 
     class Config:
