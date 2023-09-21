@@ -422,9 +422,7 @@ class NewRunnerImage(BaseModel):
     image: str = Field(description="Docker image (without the tag)")
     node_version: str = Field(description="Node major version")
     description: Optional[str] = Field(description="Description")
-    chrome: Optional[bool] = Field(description="True if this image contains Chrome", default=True)
-    firefox: Optional[bool] = Field(description="True if this image contains Firefox", default=False)
-    edge: Optional[bool] = Field(description="True if this image contains Edge", default=False)
+    browsers: Optional[list[str]] = Field(description="Supported browsers e.g chrome,firefox")
 
     class Config:
         orm_mode = True
