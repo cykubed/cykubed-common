@@ -379,8 +379,8 @@ class NewProject(BaseProject):
     build_storage: int = Field(description="Build working storage size in GB", default=10,
                                ge=1, le=100)
 
-    image: Optional[str] = Field(
-        description="Docker image. Can only be specified for self-hosted agents")
+    runner_image: Optional[str] = Field(
+        description="Docker image used for both build and run steps. Can only be specified for self-hosted agents")
 
     public_image_id: Optional[int] = Field(description="ID of the public Cykubed image used, if any")
 
@@ -422,7 +422,9 @@ class NewRunnerImage(BaseModel):
     image: str = Field(description="Docker image (without the tag)")
     node_version: str = Field(description="Node major version")
     description: Optional[str] = Field(description="Description")
-    browsers: Optional[list[str]] = Field(description="Supported browsers e.g chrome,firefox")
+    chrome: Optional[bool] = Field(description="True if this image contains Chrome", default=True)
+    firefox: Optional[bool] = Field(description="True if this image contains Firefox", default=False)
+    edge: Optional[bool] = Field(description="True if this image contains Edge", default=False)
 
     class Config:
         orm_mode = True
