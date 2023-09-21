@@ -379,8 +379,11 @@ class NewProject(BaseProject):
     build_storage: int = Field(description="Build working storage size in GB", default=10,
                                ge=1, le=100)
 
-    runner_image: Optional[str] = Field(
-        description="Docker image to use in the runner. Can only be specified for self-hosted agents")
+    image: Optional[str] = Field(
+        description="Docker image. Can only be specified for self-hosted agents")
+
+    public_image_id: Optional[int] = Field(description="ID of the public Cykubed image used, if any")
+
     runner_cpu: float = Field(description="Number of vCPU units to assign to each runner Pod", default=2,
                               ge=1,
                               le=10)
