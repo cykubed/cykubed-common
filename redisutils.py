@@ -101,19 +101,25 @@ def get_redis(sentinel_class, redis_class, retry_class=None):
         sentinel = sentinel_class(hosts, sentinel_kwargs=dict(password=settings.REDIS_PASSWORD,
                                                               db=settings.REDIS_DB,
                                                               retry=retry,
-                                                              retry_on_error=[BusyLoadingError, ConnectionError,
+                                                              retry_on_error=[BusyLoadingError,
+                                                                              ConnectionError,
+                                                                              ConnectionRefusedError,
                                                                               TimeoutError],
                                                               decode_responses=True))
         return sentinel.master_for("mymaster", password=settings.REDIS_PASSWORD, retry=retry,
                                    decode_responses=True, db=settings.REDIS_DB,
-                                   retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError])
+                                   retry_on_error=[BusyLoadingError, ConnectionError,
+                                                   ConnectionRefusedError,
+                                                   TimeoutError])
     else:
         logger.info('Assuming standalone Redis')
         return redis_class(host=settings.REDIS_HOST, db=settings.REDIS_DB,
                            password=settings.REDIS_PASSWORD,
                            decode_responses=True,
                            port=settings.REDIS_PORT,
-                           retry=retry, retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError])
+                           retry=retry, retry_on_error=[BusyLoadingError, ConnectionError,
+                                                        ConnectionRefusedError,
+                                                        TimeoutError])
 
 
 def get_specfile_log_key(trid: int, file: str):
