@@ -101,7 +101,7 @@ class SubscriptionPlanWithPrices(SubscriptionPlan):
 
 
 class Subscription(BaseModel):
-    started: date
+    started: Optional[date]
     active: bool
     expires: Optional[date]
     plan: SubscriptionPlan
@@ -148,7 +148,7 @@ class Country(BaseModel):
     code: str
 
 
-class StaffOrganisation(OrganisationBase):
+class AdminOrganisation(OrganisationBase):
     """
     Additional information available to staff users
     """
@@ -156,8 +156,13 @@ class StaffOrganisation(OrganisationBase):
     stripe: Optional[OrganisationStripeDetails]
 
 
-class StaffOrganisationList(PaginatedModel):
-    items: list[StaffOrganisation]
+class AdminOrganisationList(PaginatedModel):
+    items: list[AdminOrganisation]
+
+
+class AdminOrgPlanChange(BaseModel):
+    plan: str
+    expires: Optional[date]
 
 
 class OrgTimeAdvance(BaseModel):
