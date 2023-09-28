@@ -135,10 +135,6 @@ class OrganisationBase(BaseModel):
     name: str
     prefer_self_host: bool
 
-
-class Organisation(OrganisationBase):
-    subscription: Optional[Subscription]
-
     class Config:
         orm_mode = True
 
