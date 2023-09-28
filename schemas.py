@@ -774,6 +774,8 @@ class AgentModel(UpdatedAgentModel, NewAgentModel):
     id: int
     token: uuid.UUID
     name: str
+    organisation_id: int
+    organisation_name: Optional[str]
     first_connected: Optional[datetime]
     version: Optional[str]
     connected: int = 0
