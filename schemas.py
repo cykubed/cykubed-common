@@ -763,6 +763,8 @@ class UpdatedAgentModel(SpotEnabledModel):
     name: Optional[str] = 'A'
     platform: Optional[KubernetesPlatform] = KubernetesPlatform.generic
     replicated: Optional[bool] = False
+    namespace: Optional[str]
+    storage_class: Optional[str]
     platform_project_id: Optional[str]
     preprovision: Optional[bool]
 
@@ -774,6 +776,8 @@ class AgentModel(UpdatedAgentModel, NewAgentModel):
     id: int
     token: uuid.UUID
     name: str
+    storage_class: Optional[str]
+    namespace: Optional[str]
     organisation_id: int
     organisation_name: Optional[str]
     first_connected: Optional[datetime]
