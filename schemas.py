@@ -193,6 +193,11 @@ class OrganisationDelete(BaseModel):
     reason: Optional[OrganisationDeleteReason]
 
 
+class OrganisationSecret(BaseModel):
+    key: Optional[str] = Field(..., max_length=255)
+    value: Optional[str] = Field(..., max_length=1024)
+
+
 class UserOrganisationSummary(BaseModel):
     id: int
     name: Optional[str]
@@ -394,6 +399,8 @@ class NewProject(BaseProject):
                                  ge=60, le=3 * 3600)
     runner_ephemeral_storage: int = Field(description="Runner ephemeral storage in GB", default=4,
                                           ge=1, le=20)
+
+    deploy_cmd: Optional[str] = Field(description="Command used to build and deploy the app")
 
     timezone: str = Field(description="Timezone used in runners", default='UTC')
     cypress_retries: int = Field(
