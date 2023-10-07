@@ -152,6 +152,27 @@ class AdminOrganisation(OrganisationBase):
     stripe: Optional[OrganisationStripeDetails]
 
 
+class IdName(BaseModel):
+    id: int
+    name: str
+
+
+class AdminUser(BaseModel):
+    id: int
+    name: str
+    email: str
+    is_active: bool
+    is_pending: bool
+    organisations: Optional[list[IdName]]
+
+    class Config:
+        orm_mode = True
+
+
+class AdminUserList(PaginatedModel):
+    items: list[AdminUser]
+
+
 class AdminOrganisationList(PaginatedModel):
     items: list[AdminOrganisation]
 
