@@ -356,6 +356,14 @@ class ResultSummary(BaseModel):
     failures: int = 0
 
 
+class EnvironmentVariable(BaseModel):
+    name: str = Field(..., max_length=255)
+    value: str = Field(..., max_length=1024)
+
+    class Config:
+        orm_mode = True
+
+
 class BaseProject(BaseModel):
     repos: str = Field(description="Repository name")
     platform: PlatformEnum = Field(description="Git platform")
@@ -388,7 +396,7 @@ class NewProject(BaseProject):
     max_failures: Optional[int] = Field(description="Maximum number of failed test allowed before we quit and mark the"
                                         " run as failed")
 
-    build_cmd: str = Field(description="Command used to build the app distribution")
+    build_cmd: str = Field(description="Command used to build the app distribution", max_length=255)
     build_cpu: float = Field(description="Number of vCPU units to assign to the builder Job", default=2,
                              ge=2,
                              le=10)
@@ -415,6 +423,13 @@ class NewProject(BaseProject):
                                  ge=60, le=3 * 3600)
     runner_ephemeral_storage: int = Field(description="Runner ephemeral storage in GB", default=4,
                                           ge=1, le=20)
+
+    deploy_cmd: Optional[str] = Field(description="Optional command that is run in a Job after a successful test run "
+                                                  "to build and deploy the app",
+                                      max_length=255)
+
+    environment_variables: Optional[list[EnvironmentVariable]] = Field(
+        description="Optional list of environment variablest that will be passed to each Job")
 
     timezone: str = Field(description="Timezone used in runners", default='UTC')
     cypress_retries: int = Field(
@@ -611,7 +626,9 @@ class CommitDetailsModel(BaseModel):
         orm_mode = True
 
 
-class TestRunCommon(BaseTestRun):
+class TestRunSummary(BaseTestRun):
+    project_id: int
+    project_name: str
     status: TestRunStatus
     fixed: Optional[bool]
     error: Optional[str]
@@ -622,14 +639,6 @@ class TestRunCommon(BaseTestRun):
     total_tests: Optional[int]
     failed_tests: Optional[int]
     flakey_tests: Optional[int]
-
-    class Config:
-        orm_mode = True
-
-
-class TestRunSummary(TestRunCommon):
-    project_id: int
-    project_name: str
 
     class Config:
         orm_mode = True
@@ -757,8 +766,7 @@ class KubernetesPlatformPricingModel(BaseModel):
         orm_mode = True
 
 
-class TestRunDetail(TestRunCommon):
-    project: Project
+class TestRunDetail(TestRunSummary):
     files: Optional[list[SpecFile]]
     jobstats: Optional[TestRunJobStats] = None
 
