@@ -345,6 +345,7 @@ class TestResult(BaseModel):
 
 class SpecResult(BaseModel):
     tests: List[TestResult]
+    failures: int = 0
     video: Optional[str]
     timeout: Optional[bool] = False
 
