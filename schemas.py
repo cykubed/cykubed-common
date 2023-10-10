@@ -427,6 +427,8 @@ class NewProject(BaseProject):
     deploy_cmd: Optional[str] = Field(description="Optional command that is run in a Job after a successful test run "
                                                   "to build and deploy the app",
                                       max_length=255)
+    deploy_branch: Optional[str] = Field(description="A successful test run on this branch will trigger the deploy",
+                                      max_length=255)
 
     environment_variables: Optional[list[EnvironmentVariable]] = Field(
         description="Optional list of environment variablest that will be passed to each Job")
