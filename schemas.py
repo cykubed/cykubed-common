@@ -182,6 +182,10 @@ class AdminOrgPlanChange(BaseModel):
     expires: Optional[date]
 
 
+class BuildCredits(BaseModel):
+    credits: int
+
+
 class OrgTimeAdvance(BaseModel):
     timestamp: datetime
 
@@ -868,6 +872,10 @@ class TestRunDetailUpdateMessage(BaseAppSocketMessage):
 class SubscriptionUpdatedMessage(BaseAppSocketMessage):
     action: AppWebSocketActions = AppWebSocketActions.subscription_updated
     subscription: Subscription
+
+
+class ExceededIncludeBuildCredits(BaseAppSocketMessage):
+    action: AppWebSocketActions = AppWebSocketActions.exceeded_build_credits
 
 
 class SpecFileMessage(BaseAppSocketMessage):
