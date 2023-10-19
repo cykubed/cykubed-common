@@ -170,6 +170,7 @@ class AppWebSocketActions(str, enum.Enum):
     subscription_cancelled = 'subscription-cancelled'
     subscription_updated = 'subscription-updated'
     webhook_notified = 'webhook_called'
+    build_credits_updated = 'build_credits_updated'
 
 
 class AgentWebsocketActions(str, enum.Enum):

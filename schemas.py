@@ -130,6 +130,9 @@ class AccountDetails(BaseModel):
     build_credits_remaining_before_topup: Optional[int]
     users: int
 
+    payment_failed: Optional[bool]
+    exceeded_free_plan: Optional[bool]
+
 
 class OrganisationBase(BaseModel):
     id: int
