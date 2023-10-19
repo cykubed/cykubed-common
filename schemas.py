@@ -126,7 +126,8 @@ class AccountDetails(BaseModel):
     new_stripe_subscription_id: Optional[str]
     new_subscription_id: Optional[int]
     test_results_used: int
-    build_credits_used: int
+    build_credits_used_this_month: Optional[int]
+    build_credits_remaining_before_topup: Optional[int]
     users: int
 
 
@@ -163,6 +164,7 @@ class AdminUser(BaseModel):
     email: str
     is_active: bool
     is_pending: bool
+    created: datetime
     organisations: Optional[list[IdName]]
 
     class Config:
