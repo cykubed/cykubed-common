@@ -985,3 +985,8 @@ class AgentErrorMessage(AgentEvent):
     source: str
     message: str
 
+####
+
+
+class AdminDateTime(BaseModel):
+    dt: Optional[datetime]
