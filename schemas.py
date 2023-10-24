@@ -819,6 +819,11 @@ class AgentModel(UpdatedAgentModel, NewAgentModel):
         orm_mode = True
 
 
+class AgentListModel(BaseModel):
+    agents: list[AgentModel]
+    latest_version: str
+
+
 class NotificationChannel(BaseModel):
     id: str
     public: Optional[bool]
