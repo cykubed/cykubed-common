@@ -6,9 +6,6 @@ from decimal import Decimal
 from json import JSONEncoder
 from uuid import UUID
 
-from pytz import utc
-
-from settings import settings
 from .enums import TestRunStatus
 from .exceptions import BuildFailedException
 
@@ -56,18 +53,6 @@ def disable_hc_logging():
 
     # disable logging for health check
     logging.getLogger("uvicorn.access").addFilter(HCFilter())
-
-
-def utcnow() -> datetime.datetime:
-    if settings.FAKE_DATETIME:
-        # mock time for simulations
-        return settings.FAKE_DATETIME
-    return datetime.datetime.now(tz=datetime.timezone.utc)
-
-
-def mytoday() -> datetime.date:
-    dt = utcnow()
-    return datetime.datetime.combine(dt.date(), datetime.time(0, tzinfo=utc))
 
 
 def get_hostname():
