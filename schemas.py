@@ -2,7 +2,7 @@ import uuid
 from datetime import date, datetime
 from typing import Optional, List
 
-from pydantic import BaseModel, validator, NonNegativeInt, AnyHttpUrl, root_validator
+from pydantic import field_validator, ConfigDict, BaseModel, NonNegativeInt, AnyHttpUrl, model_validator
 from pydantic.fields import Field
 
 from .enums import (PlatformEnum, TestRunStatus, TestRunStatusFilter,
@@ -17,7 +17,7 @@ class DummyTestRunStatusFilter(BaseModel):
 
 class GenericError(BaseModel):
     type: ErrorType
-    msg: Optional[str]
+    msg: Optional[str] = None
 
 
 class Token(BaseModel):
@@ -47,13 +47,11 @@ class IntegrationSummary(BaseModel):
     name: PlatformEnum
     type: PlatformType
     connected: bool = False
-    login: Optional[str]
-    user_id: Optional[int]
-    app_installed: Optional[bool]  # For Github
-    allow_user_repositories: Optional[bool]
-
-    class Config:
-        orm_mode = True
+    login: Optional[str] = None
+    user_id: Optional[int] = None
+    app_installed: Optional[bool] = None  # For Github
+    allow_user_repositories: Optional[bool] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class Prices(BaseModel):
@@ -61,9 +59,7 @@ class Prices(BaseModel):
     flat_fee: float
     per_1k_tests: float
     per_10k_build_credits: float
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SubscriptionPlan(BaseModel):
@@ -74,9 +70,7 @@ class SubscriptionPlan(BaseModel):
     users_limit: Optional[int] = None
     artifact_ttl: Optional[int] = None
     max_parallelism: Optional[int] = None
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SelectedSubscriptionPlan(SubscriptionPlan, Prices):
@@ -95,52 +89,46 @@ class StripeClientSecret(BaseModel):
 
 class SubscriptionPlanWithPrices(SubscriptionPlan):
     prices: list[Prices] = []
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class Subscription(BaseModel):
-    started: Optional[date]
+    started: Optional[datetime] = None
     active: bool
-    expires: Optional[date]
+    expires: Optional[date] = None
     plan: SubscriptionPlan
-    cancelled: Optional[date]
-    payment_failure_date: Optional[date]
-
-    class Config:
-        orm_mode = True
+    cancelled: Optional[datetime] = None
+    payment_failure_date: Optional[datetime] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class OrganisationStripeDetails(BaseModel):
     """
     Only used internally for Stripe testing
     """
-    frozen_time: Optional[datetime]
+    frozen_time: Optional[datetime] = None
 
 
 class AccountDetails(BaseModel):
     subscription: Subscription
-    selected_plan: Optional[str]
-    stripe_client_secret: Optional[str]
-    new_stripe_subscription_id: Optional[str]
-    new_subscription_id: Optional[int]
+    selected_plan: Optional[str] = None
+    stripe_client_secret: Optional[str] = None
+    new_stripe_subscription_id: Optional[str] = None
+    new_subscription_id: Optional[int] = None
     test_results_used: int
-    build_credits_used_this_month: Optional[int]
-    build_credits_remaining_before_topup: Optional[int]
+    build_credits_used_this_month: Optional[int] = None
+    build_credits_remaining_before_topup: Optional[int] = None
     users: int
 
-    payment_failed: Optional[bool]
-    exceeded_free_plan: Optional[bool]
+    payment_failed: Optional[bool] = None
+    exceeded_free_plan: Optional[bool] = None
 
 
 class OrganisationBase(BaseModel):
     id: int
     name: str
     prefer_self_host: bool
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class Country(BaseModel):
@@ -153,7 +141,7 @@ class AdminOrganisation(OrganisationBase):
     Additional information available to staff users
     """
     account: AccountDetails
-    stripe: Optional[OrganisationStripeDetails]
+    stripe: Optional[OrganisationStripeDetails] = None
 
 
 class IdName(BaseModel):
@@ -168,10 +156,8 @@ class AdminUser(BaseModel):
     is_active: bool
     is_pending: bool
     created: datetime
-    organisations: Optional[list[IdName]]
-
-    class Config:
-        orm_mode = True
+    organisations: Optional[list[IdName]] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AdminUserList(PaginatedModel):
@@ -184,7 +170,7 @@ class AdminOrganisationList(PaginatedModel):
 
 class AdminOrgPlanChange(BaseModel):
     plan: str
-    expires: Optional[date]
+    expires: Optional[date] = None
 
 
 class BuildCredits(BaseModel):
@@ -196,22 +182,20 @@ class OrgTimeAdvance(BaseModel):
 
 
 class Address(BaseModel):
-    city: Optional[str]
+    city: Optional[str] = None
     country: str = Field(..., max_length=2)
     line1: str = Field(..., max_length=255)
     line2: Optional[str] = Field(None, max_length=255)
     postal_code: Optional[str] = Field(None, max_length=255)
     state: Optional[str] = Field(None, max_length=255)
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class OrganisationUpdate(BaseModel):
-    name: Optional[str]
-    prefer_self_host: Optional[bool]
-    onboarding_state: Optional[OnboardingState]
-    address: Optional[Address]
+    name: Optional[str] = None
+    prefer_self_host: Optional[bool] = None
+    onboarding_state: Optional[OnboardingState] = None
+    address: Optional[Address] = None
 
 
 class OrganisationDelete(BaseModel):
@@ -219,31 +203,27 @@ class OrganisationDelete(BaseModel):
     Post-org delete
     """
     token: str
-    comments: Optional[str]
-    reason: Optional[OrganisationDeleteReason]
+    comments: Optional[str] = None
+    reason: Optional[OrganisationDeleteReason] = None
 
 
 class UserOrganisationSummary(BaseModel):
     id: int
-    name: Optional[str]
+    name: Optional[str] = None
     onboarding_state: OnboardingState
-    address: Optional[Address]
-    prefer_self_host: Optional[bool]
-    is_admin: Optional[bool]
-
-    class Config:
-        orm_mode = True
+    address: Optional[Address] = None
+    prefer_self_host: Optional[bool] = None
+    is_admin: Optional[bool] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserUISettingsModel(BaseModel):
-    preferred_currency: Optional[Currency]
-    current_org_id: Optional[int]
-    last_git_org_id: Optional[str]
-    last_git_platform: Optional[PlatformEnum]
-    page_size: Optional[int]
-
-    class Config:
-        orm_mode = True
+    preferred_currency: Optional[Currency] = None
+    current_org_id: Optional[int] = None
+    last_git_org_id: Optional[str] = None
+    last_git_platform: Optional[PlatformEnum] = None
+    page_size: Optional[int] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserModel(BaseModel):
@@ -252,34 +232,30 @@ class UserModel(BaseModel):
     """
     id: int
     name: str
-    avatar_url: Optional[str]
+    avatar_url: Optional[str] = None
     email: str
     is_active: bool
     is_admin: bool
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserProfile(BaseModel):
     id: int
     name: str
-    avatar_url: Optional[str]
+    avatar_url: Optional[str] = None
     token: uuid.UUID
     email: str
     uisettings: UserUISettingsModel
-    account: Optional[AccountDetails]
+    account: Optional[AccountDetails] = None
     is_pending: bool
     is_staff: Optional[bool] = False
     organisations: list[UserOrganisationSummary]
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserInvite(BaseModel):
     email: str
-    is_admin: Optional[bool]
+    is_admin: Optional[bool] = None
 
 
 class UserEmail(BaseModel):
@@ -294,15 +270,13 @@ class APIToken(BaseModel):
     id: int
     token: uuid.UUID
     created: datetime
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class OAuthCodeResponse(BaseModel):
     code: str
-    organisation_id: Optional[int]
-    orgtoken: Optional[str]
+    organisation_id: Optional[int] = None
+    orgtoken: Optional[str] = None
 
 
 class OAuthPostInstall(BaseModel):
@@ -323,7 +297,7 @@ class UploadResult(BaseModel):
 
 
 class CodeFrame(BaseModel):
-    file: Optional[str]  # TODO make this required
+    file: Optional[str] = None  # TODO make this required
     line: int
     column: int
     frame: str
@@ -332,12 +306,12 @@ class CodeFrame(BaseModel):
 
 class TestResultError(BaseModel):
     title: str
-    type: Optional[str]
-    test_line: Optional[int]
+    type: Optional[str] = None
+    test_line: Optional[int] = None
     message: str
     stack: str
-    code_frame: Optional[CodeFrame]
-    video: Optional[str]
+    code_frame: Optional[CodeFrame] = None
+    video: Optional[str] = None
 
 
 class TestResult(BaseModel):
@@ -345,16 +319,16 @@ class TestResult(BaseModel):
     context: str
     status: TestResultStatus
     retry: int = 0
-    duration: Optional[int]
-    failure_screenshots: Optional[list[str]]
-    started_at: Optional[datetime]
-    finished_at: Optional[datetime]
-    error: Optional[TestResultError]
+    duration: Optional[float] = None
+    failure_screenshots: Optional[list[str]] = None
+    started_at: Optional[datetime] = None
+    finished_at: Optional[datetime] = None
+    error: Optional[TestResultError] = None
 
 
 class SpecResult(BaseModel):
     tests: List[TestResult]
-    video: Optional[str]
+    video: Optional[str] = None
     timeout: Optional[bool] = False
 
 
@@ -371,7 +345,7 @@ class BaseProject(BaseModel):
     organisation_id: int = Field(description="Owner organisation ID")
     default_branch: str = Field(description="Default branch")
     url: str = Field(description="URL to git repository")
-    owner: Optional[str]
+    owner: Optional[str] = None
 
 
 class NewProject(BaseProject):
@@ -382,19 +356,19 @@ class NewProject(BaseProject):
                              default=4, ge=0, le=30)
     checks_integration: bool = True
 
-    agent_id: Optional[int] = Field(description="ID of the agent that should be used to run this test. "
+    agent_id: Optional[int] = Field(None, description="ID of the agent that should be used to run this test. "
                                                 "Only required for self-hosted agents")
 
-    browser: str = None
+    browser: str
 
     spec_deadline: Optional[int] = Field(
         description="Deadline in seconds to assign to an individual spec. If 0 then there will be no deadline set "
                     "(although the runner deadline still applies)",
         default=0,
         le=3600)
-    spec_filter: Optional[str] = Field(description="Only test specs matching this regex")
+    spec_filter: Optional[str] = Field(None, description="Only test specs matching this regex")
 
-    max_failures: Optional[int] = Field(description="Maximum number of failed test allowed before we quit and mark the"
+    max_failures: Optional[int] = Field(None, description="Maximum number of failed test allowed before we quit and mark the"
                                         " run as failed")
 
     build_cmd: str = Field(description="Command used to build the app distribution")
@@ -411,9 +385,9 @@ class NewProject(BaseProject):
                                ge=1, le=100)
 
     runner_image: Optional[str] = Field(
-        description="Docker image used for both build and run steps. Can only be specified for self-hosted agents")
+        None, description="Docker image used for both build and run steps. Can only be specified for self-hosted agents")
 
-    public_image_id: Optional[int] = Field(description="ID of the public Cykubed image used, if any")
+    public_image_id: Optional[int] = Field(None, description="ID of the public Cykubed image used, if any")
 
     runner_cpu: float = Field(description="Number of vCPU units to assign to each runner Pod", default=2,
                               ge=1,
@@ -429,43 +403,33 @@ class NewProject(BaseProject):
     cypress_retries: int = Field(
         description="Number of retries of failed tests. If 0 then default to any retry value set in the Cypress config file",
         default=0, le=10, ge=0)
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class Project(NewProject):
     id: int
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UpdatedProject(NewProject):
     id: int
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class NewRunnerImage(BaseModel):
     tag: str = Field(description="Docker image tag")
     image: str = Field(description="Docker image (without the tag)")
     node_version: str = Field(description="Node major version")
-    description: Optional[str] = Field(description="Description")
+    description: Optional[str] = Field(None, description="Description")
     chrome: Optional[bool] = Field(description="True if this image contains Chrome", default=True)
     firefox: Optional[bool] = Field(description="True if this image contains Firefox", default=False)
     edge: Optional[bool] = Field(description="True if this image contains Edge", default=False)
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class RunnerImage(NewRunnerImage):
     id: int
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class Workspace(BaseModel):
@@ -476,31 +440,27 @@ class Workspace(BaseModel):
 class GitOrganisation(BaseModel):
     id: int
     name: str
-    platform_id: Optional[str]
+    platform_id: Optional[str] = None
     login: str
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class Repository(BaseModel):
-    id: str
-    owner: Optional[str]
+    id: str | int
+    owner: Optional[str] = None
     name: str
     url: str
     platform: PlatformEnum
-    default_branch: Optional[str]
-    pushed_at: Optional[datetime]
-    git_organisation: Optional[GitOrganisation]
-    user_id: Optional[int]
-
-    class Config:
-        orm_mode = True
+    default_branch: Optional[str] = None
+    pushed_at: Optional[datetime] = None
+    git_organisation: Optional[GitOrganisation] = None
+    user_id: Optional[int] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class PendingAuthorisation(BaseModel):
     platform: PlatformEnum
-    redirect_uri: Optional[str]
+    redirect_uri: Optional[str] = None
 
 
 class AppInstallationState(BaseModel):
@@ -510,9 +470,7 @@ class AppInstallationState(BaseModel):
 class TestRunSpec(BaseModel):
     id: int
     file: str
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TestRunStatusUpdate(BaseModel):
@@ -523,7 +481,7 @@ class BaseTestRun(BaseModel):
     id: int
     local_id: int
     branch: str
-    sha: Optional[str]
+    sha: Optional[str] = None
     source: str = 'web_start'
 
 
@@ -538,11 +496,9 @@ class NewTestRun(BaseTestRun, SpotEnabledModel):
     """
     url: str
     project: Project
-    preprovision: Optional[bool]
-    status: Optional[TestRunStatus]
-
-    class Config:
-        orm_mode = True
+    preprovision: Optional[bool] = None
+    status: Optional[TestRunStatus] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CacheItem(BaseModel):
@@ -551,7 +507,7 @@ class CacheItem(BaseModel):
     ttl: int  # TTL in secs
     storage_size: int  # Size in GB
     expires: datetime  # expiry date
-    specs: Optional[list[str]]
+    specs: Optional[list[str]] = None
 
 
 class TestRunUpdate(BaseModel):
@@ -562,17 +518,15 @@ class TestRunUpdate(BaseModel):
 
 class SpecFile(BaseModel):
     file: str
-    status: Optional[SpecFileStatus]
-    pod_name: Optional[str]
+    status: Optional[SpecFileStatus] = None
+    pod_name: Optional[str] = None
     started: Optional[datetime] = None
     finished: Optional[datetime] = None
     termination_count: Optional[int] = 0
-    duration: Optional[int]
+    duration: Optional[int] = None
     failures: int = 0
-    result: Optional[SpecResult]
-
-    class Config:
-        orm_mode = True
+    result: Optional[SpecResult] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SpecFileName(BaseModel):
@@ -582,9 +536,7 @@ class SpecFileName(BaseModel):
 class SpecFileLog(BaseModel):
     file: str
     log: str
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CompletedSpecFile(BaseModel):
@@ -605,43 +557,35 @@ class PodDuration(BaseModel):
 class AuthorModel(BaseModel):
     name: str
     email: str
-    avatar_url: Optional[AnyHttpUrl]
-
-    class Config:
-        orm_mode = True
+    avatar_url: Optional[AnyHttpUrl] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CommitDetailsModel(BaseModel):
     author: AuthorModel
     message: str
     commit_url: str
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TestRunCommon(BaseTestRun):
     status: TestRunStatus
-    fixed: Optional[bool]
-    error: Optional[str]
-    started: Optional[datetime]
+    fixed: Optional[bool] = None
+    error: Optional[str] = None
+    started: Optional[datetime] = None
     finished: Optional[datetime] = None
-    commit: Optional[CommitDetailsModel]
-    duration: Optional[int]
-    total_tests: Optional[int]
-    failed_tests: Optional[int]
-    flakey_tests: Optional[int]
-
-    class Config:
-        orm_mode = True
+    commit: Optional[CommitDetailsModel] = None
+    duration: Optional[int] = None
+    total_tests: Optional[int] = None
+    failed_tests: Optional[int] = None
+    flakey_tests: Optional[int] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TestRunSummary(TestRunCommon):
     project_id: int
     project_name: str
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TestRunSummaries(PaginatedModel):
@@ -651,7 +595,7 @@ class TestRunSummaries(PaginatedModel):
 class TestRunErrorReport(BaseModel):
     stage: str
     msg: str
-    error_code: Optional[int]
+    error_code: Optional[int] = None
 
 
 #
@@ -661,19 +605,20 @@ class TestRunErrorReport(BaseModel):
 
 class CommonTriggerModel(BaseModel):
     organisation_id: int
-    project_id: Optional[int]
-    name: Optional[str]
+    project_id: Optional[int] = None
+    name: Optional[str] = None
     on_pass: Optional[bool] = False
     on_fail: Optional[bool] = False
     on_fixed: Optional[bool] = False
     on_flake: Optional[bool] = False
-    branch_regex: Optional[str]
+    branch_regex: Optional[str] = None
 
-    @root_validator
+    @model_validator(mode='before')
     def check_triggers(cls, values):
-        if (not values.get('on_pass') and not values.get('on_fail') and not values.get('on_flake') and
-                not values.get('on_fixed')):
-            raise ValueError('Specify at least one trigger')
+        if type(values) is dict:
+            if (not values.get('on_pass') and not values.get('on_fail') and not values.get('on_flake') and
+                    not values.get('on_fixed')):
+                raise ValueError('Specify at least one trigger')
         return values
 
 
@@ -683,23 +628,19 @@ class NewWebHook(CommonTriggerModel):
 
 class WebHook(NewWebHook):
     id: int
-    project_name: Optional[str]
-
-    class Config:
-        orm_mode = True
+    project_name: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class WebhookHistory(BaseModel):
     hook_id: int
     testrun_id: int
     created: datetime
-    status_code: Optional[int]
+    status_code: Optional[int] = None
     request: str
-    response: Optional[str]
-    error: Optional[str]
-
-    class Config:
-        orm_mode = True
+    response: Optional[str] = None
+    error: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class WebhookTesterResponse(BaseModel):
@@ -720,10 +661,9 @@ class NewNotification(CommonTriggerModel):
 
 class Notification(NewNotification):
     id: int
-    project_name: Optional[str]
+    project_name: Optional[str] = None
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 #
@@ -731,47 +671,44 @@ class Notification(NewNotification):
 #
 
 class TestRunJobStats(BaseModel):
-    total_build_seconds: Optional[int]
-    total_runner_seconds: Optional[int]
+    total_build_seconds: Optional[int] = None
+    total_runner_seconds: Optional[int] = None
 
-    total_cpu_seconds: Optional[int]
-    total_memory_gb_seconds: Optional[int]
-    total_ephemeral_gb_seconds: Optional[int]
+    total_cpu_seconds: Optional[int] = None
+    total_memory_gb_seconds: Optional[int] = None
+    total_ephemeral_gb_seconds: Optional[int] = None
 
-    cpu_seconds_normal: Optional[int]
-    memory_gb_seconds_normal: Optional[int]
-    ephemeral_gb_seconds_normal: Optional[int]
+    cpu_seconds_normal: Optional[int] = None
+    memory_gb_seconds_normal: Optional[int] = None
+    ephemeral_gb_seconds_normal: Optional[int] = None
 
-    cpu_seconds_spot: Optional[int]
-    memory_gb_seconds_spot: Optional[int]
-    ephemeral_gb_seconds_spot: Optional[int]
+    cpu_seconds_spot: Optional[int] = None
+    memory_gb_seconds_spot: Optional[int] = None
+    ephemeral_gb_seconds_spot: Optional[int] = None
 
-    total_cost_usd: Optional[float]
-
-    class Config:
-        orm_mode = True
+    total_cost_usd: Optional[float] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class KubernetesPlatformPricingModel(BaseModel):
     platform: KubernetesPlatform
     updated: datetime
     region: str
-    cpu_spot_price: Optional[float]
-    cpu_normal_price: Optional[float]
-    memory_spot_price: Optional[float]
-    memory_normal_price: Optional[float]
-    ephemeral_price: Optional[float]
-
-    class Config:
-        orm_mode = True
+    cpu_spot_price: Optional[float] = None
+    cpu_normal_price: Optional[float] = None
+    memory_spot_price: Optional[float] = None
+    memory_normal_price: Optional[float] = None
+    ephemeral_price: Optional[float] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TestRunDetail(TestRunCommon):
     project: Project
-    files: Optional[list[SpecFile]]
+    files: Optional[list[SpecFile]] = None
     jobstats: Optional[TestRunJobStats] = None
 
-    @validator('files', pre=True)
+    @field_validator('files', mode="before")
+    @classmethod
     def _iter_to_list(cls, v):
         """
         It's not entirely obvious why I need this, as according to the docs this should serialize fine.
@@ -780,9 +717,7 @@ class TestRunDetail(TestRunCommon):
         :return:
         """
         return list(v or [])
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class NewAgentModel(BaseModel):
@@ -793,30 +728,28 @@ class UpdatedAgentModel(SpotEnabledModel):
     name: Optional[str] = 'A'
     platform: Optional[KubernetesPlatform] = KubernetesPlatform.generic
     replicated: Optional[bool] = False
-    namespace: Optional[str]
-    storage_class: Optional[str]
-    platform_project_id: Optional[str]
-    preprovision: Optional[bool]
+    namespace: Optional[str] = None
+    storage_class: Optional[str] = None
+    platform_project_id: Optional[str] = None
+    preprovision: Optional[bool] = None
 
-    service_account: Optional[str]
-    is_public: Optional[bool]
+    service_account: Optional[str] = None
+    is_public: Optional[bool] = None
 
 
 class AgentModel(UpdatedAgentModel, NewAgentModel):
     id: int
     token: uuid.UUID
     name: str
-    storage_class: Optional[str]
-    namespace: Optional[str]
+    storage_class: Optional[str] = None
+    namespace: Optional[str] = None
     organisation_id: int
-    organisation_name: Optional[str]
-    first_connected: Optional[datetime]
-    version: Optional[str]
+    organisation_name: Optional[str] = None
+    first_connected: Optional[datetime] = None
+    version: Optional[str] = None
     connected: int = 0
-    is_public: Optional[bool]
-
-    class Config:
-        orm_mode = True
+    is_public: Optional[bool] = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AgentListModel(BaseModel):
@@ -826,7 +759,7 @@ class AgentListModel(BaseModel):
 
 class NotificationChannel(BaseModel):
     id: str
-    public: Optional[bool]
+    public: Optional[bool] = None
     name: str
 
 
@@ -837,7 +770,7 @@ class NotificationChannels(BaseModel):
 class TestRunJobStatus(BaseModel):
     name: str
     status: str
-    message: Optional[str]
+    message: Optional[str] = None
 
 
 class PodStatus(BaseModel):
@@ -845,10 +778,10 @@ class PodStatus(BaseModel):
     project_id: int
     testrun_id: int
     phase: str
-    start_time: Optional[datetime]
-    end_time: Optional[datetime]
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
     is_spot: bool
-    duration: Optional[int]
+    duration: Optional[float] = None
     job_type: str
 
 
@@ -894,7 +827,7 @@ class SpecFileMessage(BaseAppSocketMessage):
 
 
 class WebhookNotifiedMessage(BaseAppSocketMessage):
-    action = AppWebSocketActions.webhook_notified
+    action: AppWebSocketActions = AppWebSocketActions.webhook_notified
     details: WebhookHistory
 
 
@@ -919,8 +852,8 @@ class AppLogMessage(BaseModel):
     ts: datetime
     level: LogLevel
     msg: str
-    host: Optional[str]
-    step: Optional[int]
+    host: Optional[str] = None
+    step: Optional[int] = None
 
     def __str__(self):
         return self.msg
@@ -943,7 +876,7 @@ class AgentBuildCompleted(BaseModel):
 
 class AgentRunnerStopped(BaseModel):
     # duration in seconds
-    duration: int
+    duration: float
     terminated: bool = False
 
 
@@ -955,7 +888,7 @@ class AgentSpecCompleted(BaseModel):
 
 class AgentSpecStarted(BaseModel):
     file: str
-    pod_name: Optional[str]
+    pod_name: Optional[str] = None
     started: datetime
 
 
@@ -965,9 +898,9 @@ class AgentSpecStarted(BaseModel):
 
 class AgentEvent(BaseModel):
     type: AgentEventType
-    duration: Optional[int]
+    duration: Optional[float] = None
     testrun_id: int
-    error_code: Optional[int]
+    error_code: Optional[int] = None
 
 
 class AgentTestRunErrorEvent(AgentEvent):
@@ -994,4 +927,4 @@ class AgentErrorMessage(AgentEvent):
 
 
 class AdminDateTime(BaseModel):
-    dt: Optional[datetime]
+    dt: Optional[datetime] = None
