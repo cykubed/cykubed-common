@@ -397,7 +397,8 @@ class NewProject(BaseProject):
     max_failures: Optional[int] = Field(description="Maximum number of failed test allowed before we quit and mark the"
                                         " run as failed")
 
-    build_cmd: str = Field(description="Command used to build the app distribution")
+    build_cmd: Optional[str] = Field(description="Command used to build the app distribution. "
+                                                 "Optional if the only build step required is node install")
     build_cpu: float = Field(description="Number of vCPU units to assign to the builder Job", default=2,
                              ge=2,
                              le=10)
@@ -415,6 +416,8 @@ class NewProject(BaseProject):
 
     public_image_id: Optional[int] = Field(description="ID of the public Cykubed image used, if any")
 
+    server_cmd: Optional[str] = Field(description="Command to serve your app if you don't want to use the built-in SPA server")
+    server_port: Optional[int] = Field(description="If server_cmd is specifed then this will be the port used")
     runner_cpu: float = Field(description="Number of vCPU units to assign to each runner Pod", default=2,
                               ge=1,
                               le=10)

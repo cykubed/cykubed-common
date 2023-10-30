@@ -24,6 +24,7 @@ class AppFramework(str, enum.Enum):
     angular = 'angular'
     vue = 'vue'
     nextjs = 'next.js'
+    react = 'react'
     generic = 'generic'
 
 
