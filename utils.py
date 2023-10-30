@@ -73,3 +73,12 @@ def get_lock_hash(build_dir):
     with open(lockfile, 'rb') as f:
         m.update(f.read())
     return m.hexdigest()
+
+
+def utcnow() -> datetime.datetime:
+    return datetime.datetime.now(tz=datetime.timezone.utc)
+
+
+def mytoday() -> datetime.date:
+    dt = utcnow()
+    return datetime.datetime.combine(dt.date(), datetime.time(0, tzinfo=datetime.timezone.utc))
