@@ -440,6 +440,12 @@ class NewProject(BaseProject):
 class Project(NewProject):
     id: int
 
+    @root_validator
+    def check_server_port(cls, values):
+        if values.get('server_cmd') and not values.get('server_port'):
+            raise ValueError("Must specify the server_port")
+        return values
+
     class Config:
         orm_mode = True
 
