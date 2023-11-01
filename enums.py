@@ -45,6 +45,7 @@ class JobType(str, enum.Enum):
 
 
 class Browser(str, enum.Enum):
+    electron = 'electron'
     chrome = 'chrome'
     firefox = 'firefox'
     edge = 'edge'
