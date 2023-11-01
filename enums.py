@@ -44,6 +44,12 @@ class JobType(str, enum.Enum):
     runner = 'runner'
 
 
+class Browser(str, enum.Enum):
+    chrome = 'chrome'
+    firefox = 'firefox'
+    edge = 'edge'
+
+
 class Region(str, enum.Enum):
     europe = 'europe'
     us = 'us'

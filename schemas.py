@@ -8,7 +8,7 @@ from pydantic.fields import Field
 from .enums import (PlatformEnum, TestRunStatus, TestRunStatusFilter,
                     TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
                     SpecFileStatus, AppFramework, KubernetesPlatform, PlatformType, JobType, ErrorType, Currency, \
-                    OrganisationDeleteReason, OnboardingState)
+                    OrganisationDeleteReason, OnboardingState, Browser)
 
 
 class DummyTestRunStatusFilter(BaseModel):
@@ -365,17 +365,25 @@ class ResultSummary(BaseModel):
     failures: int = 0
 
 
+class DockerImage(BaseModel):
+    image: str = Field(description="Docker image")
+    node_major_version: int = Field(description="Node major version")
+    description: Optional[str] = Field(description="Description")
+    browser: Optional[Browser] = Field(description="Browser (if blank then use built-in electron)")
+
+    class Config:
+        orm_mode = True
+
+
 class BaseProject(BaseModel):
+    name: str = Field(description="Project name e.g Git repository name")
+
     repos: str = Field(description="Repository name")
     platform: PlatformEnum = Field(description="Git platform")
     organisation_id: int = Field(description="Owner organisation ID")
     default_branch: str = Field(description="Default branch")
     url: str = Field(description="URL to git repository")
     owner: Optional[str]
-
-
-class NewProject(BaseProject):
-    name: str = Field(description="Project name e.g Git repository name")
 
     framework: AppFramework = AppFramework.generic
     parallelism: int = Field(description="Number of runner pods i.e the parallelism of the runner job",
@@ -385,8 +393,6 @@ class NewProject(BaseProject):
     agent_id: Optional[int] = Field(description="ID of the agent that should be used to run this test. "
                                                 "Only required for self-hosted agents")
 
-    browser: str = None
-
     spec_deadline: Optional[int] = Field(
         description="Deadline in seconds to assign to an individual spec. If 0 then there will be no deadline set "
                     "(although the runner deadline still applies)",
@@ -395,7 +401,7 @@ class NewProject(BaseProject):
     spec_filter: Optional[str] = Field(description="Only test specs matching this regex")
 
     max_failures: Optional[int] = Field(description="Maximum number of failed test allowed before we quit and mark the"
-                                        " run as failed")
+                                                    " run as failed")
 
     build_cmd: Optional[str] = Field(description="Command used to build the app distribution. "
                                                  "Optional if the only build step required is node install")
@@ -411,12 +417,8 @@ class NewProject(BaseProject):
     build_storage: int = Field(description="Build working storage size in GB", default=10,
                                ge=1, le=100)
 
-    runner_image: Optional[str] = Field(
-        description="Docker image used for both build and run steps. Can only be specified for self-hosted agents")
-
-    public_image_id: Optional[int] = Field(description="ID of the public Cykubed image used, if any")
-
-    server_cmd: Optional[str] = Field(description="Command to serve your app if you don't want to use the built-in SPA server")
+    server_cmd: Optional[str] = Field(
+        description="Command to serve your app if you don't want to use the built-in SPA server")
     server_port: Optional[int] = Field(description="If server_cmd is specifed then this will be the port used")
     runner_cpu: float = Field(description="Number of vCPU units to assign to each runner Pod", default=2,
                               ge=1,
@@ -433,12 +435,14 @@ class NewProject(BaseProject):
         description="Number of retries of failed tests. If 0 then default to any retry value set in the Cypress config file",
         default=0, le=10, ge=0)
 
+
+class NewProject(BaseProject):
+    node_major_version: int = Field(description="Node major version", ge=14, le=20)
+
+    browser: Browser = None
+
     class Config:
         orm_mode = True
-
-
-class Project(NewProject):
-    id: int
 
     @root_validator
     def check_server_port(cls, values):
@@ -446,32 +450,11 @@ class Project(NewProject):
             raise ValueError("Must specify the server_port")
         return values
 
-    class Config:
-        orm_mode = True
 
-
-class UpdatedProject(NewProject):
+class Project(BaseProject):
     id: int
 
-    class Config:
-        orm_mode = True
-
-
-class NewRunnerImage(BaseModel):
-    tag: str = Field(description="Docker image tag")
-    image: str = Field(description="Docker image (without the tag)")
-    node_version: str = Field(description="Node major version")
-    description: Optional[str] = Field(description="Description")
-    chrome: Optional[bool] = Field(description="True if this image contains Chrome", default=True)
-    firefox: Optional[bool] = Field(description="True if this image contains Firefox", default=False)
-    edge: Optional[bool] = Field(description="True if this image contains Edge", default=False)
-
-    class Config:
-        orm_mode = True
-
-
-class RunnerImage(NewRunnerImage):
-    id: int
+    docker_image: DockerImage = Field(description="Docker image used for both build and run steps")
 
     class Config:
         orm_mode = True
@@ -998,6 +981,7 @@ class AgentErrorMessage(AgentEvent):
     type: AgentEventType = AgentEventType.error
     source: str
     message: str
+
 
 ####
 
