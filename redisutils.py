@@ -33,11 +33,6 @@ def sync_redis() -> SyncRedis:
     return get_redis(SyncSentinel, SyncRedis, SyncRetry)
 
 
-@cache
-def binary_sync_redis():
-    return get_redis(SyncSentinel, SyncRedis, SyncRetry, decode=False)
-
-
 _async_redis = None
 
 
@@ -64,7 +59,7 @@ def ping_redis() -> bool:
         return False
 
 
-def get_redis(sentinel_class, redis_class, retry_class=None, decode=True):
+def get_redis(sentinel_class, redis_class, retry_class=None):
     """
     We use Redis as the glue as the central "database", and the glue that binds runners to agents via the
     "messages" queue. On a clean install it's Redis we're waiting for as it takes a while to spin up the
@@ -110,9 +105,9 @@ def get_redis(sentinel_class, redis_class, retry_class=None, decode=True):
                                                                               ConnectionError,
                                                                               ConnectionRefusedError,
                                                                               TimeoutError],
-                                                              decode_responses=decode))
+                                                              decode_responses=True))
         return sentinel.master_for("mymaster", password=settings.REDIS_PASSWORD, retry=retry,
-                                   decode_responses=decode, db=settings.REDIS_DB,
+                                   decode_responses=True, db=settings.REDIS_DB,
                                    retry_on_error=[BusyLoadingError, ConnectionError,
                                                    ConnectionRefusedError,
                                                    TimeoutError])
@@ -120,7 +115,7 @@ def get_redis(sentinel_class, redis_class, retry_class=None, decode=True):
         logger.info('Assuming standalone Redis')
         return redis_class(host=settings.REDIS_HOST, db=settings.REDIS_DB,
                            password=settings.REDIS_PASSWORD,
-                           decode_responses=decode,
+                           decode_responses=True,
                            port=settings.REDIS_PORT,
                            retry=retry, retry_on_error=[BusyLoadingError, ConnectionError,
                                                         ConnectionRefusedError,
