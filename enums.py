@@ -28,6 +28,11 @@ class AppFramework(str, enum.Enum):
     generic = 'generic'
 
 
+class TestFramework(str, enum.Enum):
+    cypress = 'cypress'
+    playwright = 'playwright'
+
+
 class VersionType(str, enum.Enum):
     major = 'major'
     minor = 'minor'

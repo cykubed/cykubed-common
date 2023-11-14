@@ -1,6 +1,6 @@
 import uuid
 from datetime import date, datetime
-from typing import Optional, List
+from typing import Optional
 
 from pydantic import BaseModel, validator, NonNegativeInt, AnyHttpUrl, root_validator
 from pydantic.fields import Field
@@ -327,22 +327,21 @@ class CodeFrame(BaseModel):
     line: int
     column: int
     frame: str
-    language: str
+    language: Optional[str]
 
 
 class TestResultError(BaseModel):
-    title: str
+    message: str
+    title: Optional[str]
     type: Optional[str]
     test_line: Optional[int]
-    message: str
-    stack: str
+    stack: Optional[str]
     code_frame: Optional[CodeFrame]
     video: Optional[str]
 
 
 class TestResult(BaseModel):
-    title: str
-    context: str
+    browser: str
     status: TestResultStatus
     retry: int = 0
     duration: Optional[int]
@@ -352,10 +351,18 @@ class TestResult(BaseModel):
     error: Optional[TestResultError]
 
 
-class SpecResult(BaseModel):
-    tests: List[TestResult]
+class SpecTest(BaseModel):
+    title: str
+    context: Optional[str]
+    status: TestResultStatus
     video: Optional[str]
-    timeout: Optional[bool] = False
+    results: list[TestResult]
+
+
+# class SpecResult(BaseModel):
+#     tests: List[TestResult]
+#     video: Optional[str]
+#     timeout: Optional[bool] = False
 
 
 class ResultSummary(BaseModel):
@@ -552,6 +559,11 @@ class TestRunUpdate(BaseModel):
     status: TestRunStatus
 
 
+class SpecResult(BaseModel):
+    tests: list[SpecTest] = []
+    timeout: Optional[bool] = False
+
+
 class SpecFile(BaseModel):
     file: str
     status: Optional[SpecFileStatus]
@@ -577,12 +589,6 @@ class SpecFileLog(BaseModel):
 
     class Config:
         orm_mode = True
-
-
-class CompletedSpecFile(BaseModel):
-    file: str
-    finished: datetime
-    result: SpecResult
 
 
 class PodDuration(BaseModel):
