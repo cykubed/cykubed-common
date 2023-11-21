@@ -745,14 +745,14 @@ class TestRunJobStats(BaseModel):
 
 
 class KubernetesPlatformPricingModel(BaseModel):
-    platform: KubernetesPlatform
-    updated: datetime
-    region: str
-    cpu_spot_price: Optional[float]
-    cpu_normal_price: Optional[float]
-    memory_spot_price: Optional[float]
-    memory_normal_price: Optional[float]
-    ephemeral_price: Optional[float]
+    platform: KubernetesPlatform = Field(description="Target platform")
+    updated: datetime = Field(description="Last update")
+    region: str = Field(description="Platform region")
+    cpu_spot_price: Optional[float] = Field(description="Spot VM price per CPU hour")
+    cpu_normal_price: Optional[float] = Field(description="Normal VM price per CPU hour")
+    memory_spot_price: Optional[float] = Field(description="Spot VM price per GB hour")
+    memory_normal_price: Optional[float] = Field(description="Normal VM price per GB hour")
+    ephemeral_price: Optional[float] = Field(description="Ephemeral storage price per GB hour")
 
     class Config:
         orm_mode = True
