@@ -34,3 +34,6 @@ class InvalidTemplateException(Exception):
     pass
 
 
+class ServerConnectionFailed(Exception):
+    pass
+
