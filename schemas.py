@@ -988,3 +988,23 @@ class AgentErrorMessage(AgentEvent):
 
 class AdminDateTime(BaseModel):
     dt: Optional[datetime]
+
+
+class TestRunBuildState(BaseModel):
+    trid: int
+    project_id: int
+    specs: list[str] = []
+    parallelism: Optional[int]
+    build_storage: int
+    cache_key: str = None
+    build_snapshot_name: str = None
+    node_snapshot_name: str = None
+    build_job: str = None
+    prepare_cache_job: str = None
+    preprovision_job: str = None
+    run_job: str = None
+    runner_deadline: datetime = None
+    run_job_index = 0
+    completed: bool = False
+    rw_build_pvc: Optional[str]
+    ro_build_pvc: Optional[str]
