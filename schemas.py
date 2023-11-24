@@ -930,6 +930,7 @@ class AgentBuildStarted(BaseModel):
 
 
 class AgentBuildCompleted(BaseModel):
+    testrun_id: int
     specs: list[str]
 
 
