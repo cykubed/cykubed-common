@@ -945,6 +945,10 @@ class AgentSpecCompleted(BaseModel):
     result: SpecResult
 
 
+class AgentSpecRequest(BaseModel):
+    pod_name: Optional[str]
+
+
 class AgentSpecStarted(BaseModel):
     file: str
     pod_name: Optional[str]
