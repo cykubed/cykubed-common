@@ -933,7 +933,6 @@ class AgentBuildStarted(BaseModel):
 
 
 class AgentBuildCompleted(BaseModel):
-    testrun_id: int
     specs: list[str]
 
 
@@ -1002,9 +1001,7 @@ class AdminDateTime(BaseModel):
     dt: Optional[datetime]
 
 
-class TestRunBuildState(BaseModel):
-    trid: int
-    project_id: int
+class NewTestRunBuildState(BaseModel):
     specs: list[str] = []
     parallelism: Optional[int]
     build_storage: int
@@ -1020,6 +1017,13 @@ class TestRunBuildState(BaseModel):
     completed: bool = False
     rw_build_pvc: Optional[str]
     ro_build_pvc: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+class TestRunBuildState(NewTestRunBuildState):
+    testrun_id: int
 
     class Config:
         orm_mode = True
