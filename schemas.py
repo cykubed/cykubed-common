@@ -538,12 +538,15 @@ class NewTestRun(BaseTestRun, SpotEnabledModel):
 
 
 class CacheItem(BaseModel):
-    organisation_id: int
     name: str
+    organisation_id: int
     ttl: int  # TTL in secs
     storage_size: int  # Size in GB
-    expires: datetime  # expiry date
+    expires: Optional[datetime]  # expiry date
     specs: Optional[list[str]]
+
+    class Config:
+        orm_mode = True
 
 
 class TestRunUpdate(BaseModel):
@@ -1017,3 +1020,6 @@ class TestRunBuildState(BaseModel):
     completed: bool = False
     rw_build_pvc: Optional[str]
     ro_build_pvc: Optional[str]
+
+    class Config:
+        orm_mode = True
