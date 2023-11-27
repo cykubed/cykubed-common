@@ -33,6 +33,9 @@ class PaginatedModel(PaginationParams):
     total: NonNegativeInt
 
 
+class GenericCountModel(BaseModel):
+    count: int
+
 #
 # Auth
 #
@@ -934,7 +937,6 @@ class AgentBuildStarted(BaseModel):
 
 class AgentBuildCompleted(BaseModel):
     specs: list[str]
-
 
 class AgentRunnerStopped(BaseModel):
     # duration in seconds
