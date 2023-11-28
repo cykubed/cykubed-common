@@ -32,10 +32,6 @@ class PaginationParams(BaseModel):
 class PaginatedModel(PaginationParams):
     total: NonNegativeInt
 
-
-class GenericCountModel(BaseModel):
-    count: int
-
 #
 # Auth
 #
@@ -589,6 +585,10 @@ class CompletedSpecFile(BaseModel):
     file: str
     finished: datetime
     result: SpecResult
+
+
+class SpecFilesList(BaseModel):
+    specs: list[str]
 
 
 class PodDuration(BaseModel):
