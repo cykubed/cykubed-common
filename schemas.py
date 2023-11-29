@@ -524,6 +524,8 @@ class SpotEnabledModel(BaseModel):
 
 
 class NewTestRunBuildState(BaseModel):
+    parallelism: int
+    build_storage: int
     cache_key: str = None
     build_snapshot_name: str = None
     node_snapshot_name: str = None
@@ -548,6 +550,10 @@ class TestRunBuildState(NewTestRunBuildState):
         orm_mode = True
 
 
+def get_build_snapshot_name(testrun):
+    return f'{testrun.project.organisation_id}-build-{testrun.sha}'
+
+
 class NewTestRun(BaseTestRun, SpotEnabledModel):
     """
     Sent to the agent to kick off a run.
@@ -557,9 +563,6 @@ class NewTestRun(BaseTestRun, SpotEnabledModel):
     preprovision: Optional[bool]
     status: Optional[TestRunStatus]
     buildstate: TestRunBuildState
-
-    def get_build_snapshot_name(self):
-        return f'{self.project.organisation_id}-build-{self.sha}'
 
     class Config:
         orm_mode = True
