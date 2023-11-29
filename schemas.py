@@ -523,6 +523,31 @@ class SpotEnabledModel(BaseModel):
                                  default=0, ge=0, le=100)
 
 
+class NewTestRunBuildState(BaseModel):
+    cache_key: str = None
+    build_snapshot_name: str = None
+    node_snapshot_name: str = None
+    build_job: str = None
+    prepare_cache_job: str = None
+    preprovision_job: str = None
+    run_job: str = None
+    runner_deadline: datetime = None
+    run_job_index = 0
+    completed: bool = False
+    rw_build_pvc: Optional[str]
+    ro_build_pvc: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+class TestRunBuildState(NewTestRunBuildState):
+    testrun_id: int
+
+    class Config:
+        orm_mode = True
+
+
 class NewTestRun(BaseTestRun, SpotEnabledModel):
     """
     Sent to the agent to kick off a run.
@@ -531,6 +556,10 @@ class NewTestRun(BaseTestRun, SpotEnabledModel):
     project: Project
     preprovision: Optional[bool]
     status: Optional[TestRunStatus]
+    buildstate: TestRunBuildState
+
+    def get_build_snapshot_name(self):
+        return f'{self.project.organisation_id}-build-{self.sha}'
 
     class Config:
         orm_mode = True
@@ -939,6 +968,7 @@ class AgentBuildStarted(BaseModel):
 class AgentBuildCompleted(BaseModel):
     specs: list[str]
 
+
 class AgentRunnerStopped(BaseModel):
     # duration in seconds
     duration: int
@@ -1003,30 +1033,3 @@ class AgentErrorMessage(AgentEvent):
 class AdminDateTime(BaseModel):
     dt: Optional[datetime]
 
-
-class NewTestRunBuildState(BaseModel):
-    specs: list[str] = []
-    parallelism: Optional[int]
-    build_storage: int
-    cache_key: str = None
-    build_snapshot_name: str = None
-    node_snapshot_name: str = None
-    build_job: str = None
-    prepare_cache_job: str = None
-    preprovision_job: str = None
-    run_job: str = None
-    runner_deadline: datetime = None
-    run_job_index = 0
-    completed: bool = False
-    rw_build_pvc: Optional[str]
-    ro_build_pvc: Optional[str]
-
-    class Config:
-        orm_mode = True
-
-
-class TestRunBuildState(NewTestRunBuildState):
-    testrun_id: int
-
-    class Config:
-        orm_mode = True
