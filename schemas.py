@@ -561,7 +561,7 @@ class NewTestRun(BaseTestRun, SpotEnabledModel):
     total_files: int = 0
     preprovision: Optional[bool]
     status: Optional[TestRunStatus]
-    buildstate: NewTestRunBuildState
+    buildstate: TestRunBuildState
 
     class Config:
         orm_mode = True
