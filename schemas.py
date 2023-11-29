@@ -523,7 +523,9 @@ class SpotEnabledModel(BaseModel):
                                  default=0, ge=0, le=100)
 
 
-class NewTestRunBuildState(BaseModel):
+class TestRunBuildState(BaseModel):
+    testrun_id: int
+    specs: list[str] = []
     cache_key: str = None
     build_snapshot_name: str = None
     node_snapshot_name: str = None
@@ -536,13 +538,6 @@ class NewTestRunBuildState(BaseModel):
     completed: bool = False
     rw_build_pvc: Optional[str]
     ro_build_pvc: Optional[str]
-
-    class Config:
-        orm_mode = True
-
-
-class TestRunBuildState(NewTestRunBuildState):
-    testrun_id: int
 
     class Config:
         orm_mode = True
