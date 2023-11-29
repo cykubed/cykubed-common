@@ -524,8 +524,6 @@ class SpotEnabledModel(BaseModel):
 
 
 class NewTestRunBuildState(BaseModel):
-    parallelism: int
-    build_storage: int
     cache_key: str = None
     build_snapshot_name: str = None
     node_snapshot_name: str = None
@@ -563,7 +561,7 @@ class NewTestRun(BaseTestRun, SpotEnabledModel):
     total_files: int = 0
     preprovision: Optional[bool]
     status: Optional[TestRunStatus]
-    buildstate: TestRunBuildState
+    buildstate: NewTestRunBuildState
 
     class Config:
         orm_mode = True
