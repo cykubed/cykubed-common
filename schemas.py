@@ -560,6 +560,7 @@ class NewTestRun(BaseTestRun, SpotEnabledModel):
     """
     url: str
     project: Project
+    total_files: int = 0
     preprovision: Optional[bool]
     status: Optional[TestRunStatus]
     buildstate: TestRunBuildState
