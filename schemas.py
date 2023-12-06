@@ -565,7 +565,6 @@ class NewTestRun(BaseTestRun, SpotEnabledModel):
 class CacheItem(BaseModel):
     name: str
     organisation_id: int
-    ttl: int  # TTL in secs
     storage_size: int  # Size in GB
     expires: Optional[datetime]  # expiry date
     specs: Optional[list[str]]
