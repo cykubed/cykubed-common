@@ -1007,11 +1007,6 @@ class AgentTestRunErrorEvent(AgentEvent):
     report: TestRunErrorReport
 
 
-class AgentBuildCompletedEvent(AgentEvent):
-    type: AgentEventType = AgentEventType.build_completed
-    specs: list[str]
-
-
 class AgentLogMessage(AgentEvent):
     type: AgentEventType = AgentEventType.log
     msg: AppLogMessage
