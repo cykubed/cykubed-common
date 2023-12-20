@@ -32,7 +32,6 @@ class PaginationParams(BaseModel):
 class PaginatedModel(PaginationParams):
     total: NonNegativeInt
 
-
 #
 # Auth
 #
@@ -531,26 +530,54 @@ class SpotEnabledModel(BaseModel):
                                  default=0, ge=0, le=100)
 
 
+class TestRunBuildState(BaseModel):
+    testrun_id: int
+    specs: list[str] = []
+    cache_key: str = None
+    build_snapshot_name: str = None
+    node_snapshot_name: str = None
+    build_job: str = None
+    prepare_cache_job: str = None
+    preprovision_job: str = None
+    run_job: str = None
+    runner_deadline: datetime = None
+    run_job_index = 0
+    completed: bool = False
+    rw_build_pvc: Optional[str]
+    ro_build_pvc: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+def get_build_snapshot_name(testrun):
+    return f'{testrun.project.organisation_id}-build-{testrun.sha}'
+
+
 class NewTestRun(BaseTestRun, SpotEnabledModel):
     """
     Sent to the agent to kick off a run.
     """
     url: str
     project: Project
+    total_files: int = 0
     preprovision: Optional[bool]
     status: Optional[TestRunStatus]
+    buildstate: TestRunBuildState
 
     class Config:
         orm_mode = True
 
 
 class CacheItem(BaseModel):
-    organisation_id: int
     name: str
-    ttl: int  # TTL in secs
+    organisation_id: int
     storage_size: int  # Size in GB
-    expires: datetime  # expiry date
+    expires: Optional[datetime]  # expiry date
     specs: Optional[list[str]]
+
+    class Config:
+        orm_mode = True
 
 
 class TestRunUpdate(BaseModel):
@@ -591,10 +618,21 @@ class SpecFileLog(BaseModel):
         orm_mode = True
 
 
+class CompletedSpecFile(BaseModel):
+    file: str
+    finished: datetime
+    result: SpecResult
+
+
+class SpecFilesList(BaseModel):
+    specs: list[str]
+
+
 class PodDuration(BaseModel):
     """
     Duration in seconds for a single pod
     """
+    pod_name: str
     job_type: JobType
     is_spot: bool = False
     duration: int = 0
@@ -751,14 +789,14 @@ class TestRunJobStats(BaseModel):
 
 
 class KubernetesPlatformPricingModel(BaseModel):
-    platform: KubernetesPlatform
-    updated: datetime
-    region: str
-    cpu_spot_price: Optional[float]
-    cpu_normal_price: Optional[float]
-    memory_spot_price: Optional[float]
-    memory_normal_price: Optional[float]
-    ephemeral_price: Optional[float]
+    platform: KubernetesPlatform = Field(description="Target platform")
+    updated: datetime = Field(description="Last update")
+    region: str = Field(description="Platform region")
+    cpu_spot_price: Optional[float] = Field(description="Spot VM price per CPU hour")
+    cpu_normal_price: Optional[float] = Field(description="Normal VM price per CPU hour")
+    memory_spot_price: Optional[float] = Field(description="Spot VM price per GB hour")
+    memory_normal_price: Optional[float] = Field(description="Normal VM price per GB hour")
+    ephemeral_price: Optional[float] = Field(description="Ephemeral storage price per GB hour")
 
     class Config:
         orm_mode = True
@@ -951,6 +989,14 @@ class AgentSpecCompleted(BaseModel):
     result: SpecResult
 
 
+class AgentSpecRequest(BaseModel):
+    pod_name: Optional[str]
+
+
+class AgentReturnedSpec(BaseModel):
+    file: str
+
+
 class AgentSpecStarted(BaseModel):
     file: str
     pod_name: Optional[str]
@@ -973,11 +1019,6 @@ class AgentTestRunErrorEvent(AgentEvent):
     report: TestRunErrorReport
 
 
-class AgentBuildCompletedEvent(AgentEvent):
-    type: AgentEventType = AgentEventType.build_completed
-    specs: list[str]
-
-
 class AgentLogMessage(AgentEvent):
     type: AgentEventType = AgentEventType.log
     msg: AppLogMessage
@@ -994,3 +1035,4 @@ class AgentErrorMessage(AgentEvent):
 
 class AdminDateTime(BaseModel):
     dt: Optional[datetime]
+
