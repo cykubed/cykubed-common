@@ -135,7 +135,7 @@ class AccountDetails(BaseModel):
 
 class OrganisationBase(BaseModel):
     id: int
-    name: str
+    name: Optional[str]
     prefer_self_host: bool
 
     class Config:
@@ -160,6 +160,11 @@ class IdName(BaseModel):
     name: str
 
 
+class IdOptionalName(BaseModel):
+    id: int
+    name: Optional[str]
+
+
 class AdminUser(BaseModel):
     id: int
     name: str
@@ -167,7 +172,7 @@ class AdminUser(BaseModel):
     is_active: bool
     is_pending: bool
     created: datetime
-    organisations: Optional[list[IdName]]
+    organisations: Optional[list[IdOptionalName]]
 
     class Config:
         orm_mode = True
