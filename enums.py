@@ -171,6 +171,7 @@ class AppWebSocketActions(str, enum.Enum):
     spec_finished = 'spec-finished'
     spec_log_update = 'spec-log-update'
     buildlog = 'buildlog'
+    exceeded_user_quota = 'exceeded-user-quota'
     exceeded_build_credits = 'exceeded-build-credits'
     agent = 'agent'
     error = 'error'
