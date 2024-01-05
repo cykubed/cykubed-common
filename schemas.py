@@ -58,7 +58,6 @@ class IntegrationSummary(BaseModel):
 class Prices(BaseModel):
     currency: Currency
     flat_fee: float
-    per_1k_tests: float
     per_10k_build_credits: float
 
     class Config:
@@ -101,6 +100,7 @@ class SubscriptionPlanWithPrices(SubscriptionPlan):
 class Subscription(BaseModel):
     started: Optional[date]
     active: bool
+    free_trial: bool
     expires: Optional[date]
     plan: SubscriptionPlan
     cancelled: Optional[date]
@@ -128,7 +128,6 @@ class AccountDetails(BaseModel):
     users: int
 
     payment_failed: Optional[bool]
-    exceeded_free_plan: Optional[bool]
 
 
 class OrganisationBase(BaseModel):
