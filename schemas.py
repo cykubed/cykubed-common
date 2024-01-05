@@ -67,7 +67,6 @@ class Prices(BaseModel):
 
 class SubscriptionPlan(BaseModel):
     name: str
-    included_test_results: Optional[int] = None
     included_build_credits: Optional[int] = None
     max_days: Optional[int] = None
     users_limit: Optional[int] = None
@@ -124,7 +123,6 @@ class AccountDetails(BaseModel):
     stripe_client_secret: Optional[str]
     new_stripe_subscription_id: Optional[str]
     new_subscription_id: Optional[int]
-    test_results_used: int
     build_credits_used_this_month: Optional[int]
     build_credits_remaining_before_topup: Optional[int]
     users: int
