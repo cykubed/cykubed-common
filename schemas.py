@@ -58,7 +58,7 @@ class IntegrationSummary(BaseModel):
 class Prices(BaseModel):
     currency: Currency
     flat_fee: float
-    per_1k_tests: float
+    per_10k_tests: float
     per_10k_build_credits: float
 
     class Config:
