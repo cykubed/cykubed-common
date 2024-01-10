@@ -325,7 +325,7 @@ class CodeFrame(BaseModel):
     file: Optional[str]  # TODO make this required
     line: int
     column: int
-    frame: str
+    frame: Optional[str]
     language: Optional[str]
 
 
@@ -340,21 +340,29 @@ class TestResultError(BaseModel):
 
 
 class TestResult(BaseModel):
-    browser: str
     status: TestResultStatus
     retry: int = 0
     duration: Optional[int]
     failure_screenshots: Optional[list[str]]
     started_at: Optional[datetime]
     finished_at: Optional[datetime]
-    error: Optional[TestResultError]
+    errors: Optional[list[TestResultError]]
+
+
+class SpecTestBrowserResults(BaseModel):
+    """
+    Results for a specific test and browser
+    """
+    browser: str
+    results: Optional[list[TestResult]]
 
 
 class SpecTest(BaseModel):
     title: str
+    line: Optional[int]
     context: Optional[str]
     status: TestResultStatus
-    results: list[TestResult]
+    browser_results: list[SpecTestBrowserResults]
 
 
 class ResultSummary(BaseModel):
