@@ -620,12 +620,6 @@ class SpecFileLog(BaseModel):
         orm_mode = True
 
 
-class CompletedSpecFile(BaseModel):
-    file: str
-    finished: datetime
-    result: SpecResult
-
-
 class SpecFilesList(BaseModel):
     specs: list[str]
 
