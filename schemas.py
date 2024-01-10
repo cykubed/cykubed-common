@@ -354,14 +354,7 @@ class SpecTest(BaseModel):
     title: str
     context: Optional[str]
     status: TestResultStatus
-    video: Optional[str]
     results: list[TestResult]
-
-
-# class SpecResult(BaseModel):
-#     tests: List[TestResult]
-#     video: Optional[str]
-#     timeout: Optional[bool] = False
 
 
 class ResultSummary(BaseModel):
@@ -588,6 +581,7 @@ class TestRunUpdate(BaseModel):
 
 class SpecResult(BaseModel):
     tests: list[SpecTest] = []
+    video: Optional[str]
     timeout: Optional[bool] = False
 
 
