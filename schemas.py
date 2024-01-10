@@ -365,6 +365,12 @@ class SpecTest(BaseModel):
     browser_results: list[SpecTestBrowserResults]
 
 
+class SpecTests(BaseModel):
+    tests: list[SpecTest] = []
+    video: Optional[str]
+    timeout: Optional[bool] = False
+
+
 class ResultSummary(BaseModel):
     total: int = 0
     skipped: int = 0
@@ -587,12 +593,6 @@ class TestRunUpdate(BaseModel):
     status: TestRunStatus
 
 
-class SpecResult(BaseModel):
-    tests: list[SpecTest] = []
-    video: Optional[str]
-    timeout: Optional[bool] = False
-
-
 class SpecFile(BaseModel):
     file: str
     status: Optional[SpecFileStatus]
@@ -602,7 +602,7 @@ class SpecFile(BaseModel):
     termination_count: Optional[int] = 0
     duration: Optional[int]
     failures: int = 0
-    result: Optional[SpecResult]
+    result: Optional[SpecTests]
 
     class Config:
         orm_mode = True
@@ -988,7 +988,7 @@ class AgentRunnerStopped(BaseModel):
 class AgentSpecCompleted(BaseModel):
     file: str
     finished: datetime
-    result: SpecResult
+    result: SpecTests
 
 
 class AgentSpecRequest(BaseModel):
