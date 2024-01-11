@@ -350,8 +350,6 @@ class TestResult(BaseModel):
     retry: int = 0
     duration: Optional[int]
     failure_screenshots: Optional[list[str]]
-    started_at: Optional[datetime]
-    finished_at: Optional[datetime]
     errors: Optional[list[TestResultError]]
 
 
@@ -360,13 +358,24 @@ class SpecTest(BaseModel):
     line: Optional[int]
     context: Optional[str]
     status: TestResultStatus
-    results: Optional[list[TestResult]]
+    failed: Optional[list[TestResult]]
+    flakey: Optional[list[TestResult]]
+    passed: Optional[list[TestResult]]
 
 
 class SpecTests(BaseModel):
     tests: list[SpecTest] = []
     video: Optional[str]
     timeout: Optional[bool] = False
+
+    def merge(self, spectests):
+        for test in spectests.tests:
+            existing_test = [x for x in self.tests if x.title == test.title][0]
+            if test.status != TestResultStatus.passed:
+                existing_test.status = test.status
+            existing_test.passed += test.passed
+            existing_test.failed += test.failed
+            existing_test.flakey += test.flakey
 
 
 class ResultSummary(BaseModel):
@@ -380,7 +389,6 @@ class DockerImage(BaseModel):
     image: str = Field(description="Docker image")
     node_major_version: int = Field(description="Node major version")
     description: Optional[str] = Field(description="Description")
-    browser: Optional[Browser] = Field(description="Browser (if blank then use built-in electron)")
 
     class Config:
         orm_mode = True
@@ -393,6 +401,7 @@ class BaseProject(BaseModel):
     platform: PlatformEnum = Field(description="Git platform")
     organisation_id: int = Field(description="Owner organisation ID")
     default_branch: str = Field(description="Default branch")
+    browsers: Optional[list[str]] = Field(description="List of browsers to test against. If blank then just use the built-in electron browser")
     url: str = Field(description="URL to git repository")
     owner: Optional[str]
 
@@ -980,7 +989,8 @@ class AgentRunnerStopped(BaseModel):
 class AgentSpecCompleted(BaseModel):
     file: str
     finished: datetime
-    result: SpecTests
+    result: SpecTest
+    video: Optional[str]
 
 
 class AgentSpecRequest(BaseModel):

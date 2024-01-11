@@ -165,6 +165,7 @@ PLATFORMS_SUPPORTING_SPOT = ['gke', 'aks']
 class TestResultStatus(str, enum.Enum):
     passed = 'passed'
     skipped = 'skipped'
+    flakey = 'flakey'
     failed = 'failed'
 
 
