@@ -989,7 +989,7 @@ class AgentRunnerStopped(BaseModel):
 class AgentSpecCompleted(BaseModel):
     file: str
     finished: datetime
-    result: SpecTest
+    result: SpecTests
     video: Optional[str]
 
 
