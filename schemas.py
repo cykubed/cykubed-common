@@ -385,17 +385,20 @@ class ResultSummary(BaseModel):
     failures: int = 0
 
 
-class DockerImage(BaseModel):
-    image: str = Field(description="Docker image")
-    node_major_version: int = Field(description="Node major version")
-    description: Optional[str] = Field(description="Description")
-
-    class Config:
-        orm_mode = True
+# class DockerImage(BaseModel):
+#     image: str = Field(description="Docker image")
+#     node_major_version: int = Field(description="Node major version")
+#     description: Optional[str] = Field(description="Description")
+#     browser: Optional[Browser] = Field(description="Browser (if blank then use built-in electron)")
+#
+#     class Config:
+#         orm_mode = True
 
 
 class BaseProject(BaseModel):
     name: str = Field(description="Project name e.g Git repository name")
+
+    browsers: list[Browser] = None
 
     repos: str = Field(description="Repository name")
     platform: PlatformEnum = Field(description="Git platform")
@@ -459,8 +462,6 @@ class BaseProject(BaseModel):
 class NewProject(BaseProject):
     node_major_version: int = Field(description="Node major version", ge=14, le=20)
 
-    browser: Browser = None
-
     class Config:
         orm_mode = True
 
@@ -473,8 +474,6 @@ class NewProject(BaseProject):
 
 class Project(BaseProject):
     id: int
-
-    docker_image: DockerImage = Field(description="Docker image used for both build and run steps")
 
     class Config:
         orm_mode = True
