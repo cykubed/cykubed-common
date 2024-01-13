@@ -119,14 +119,6 @@ class TestRunStatusFilter(str, enum.Enum):
     flakey = 'flakey'
 
 
-class SpecFileStatus(str, enum.Enum):
-    started = 'started'
-    passed = 'passed'
-    failed = 'failed'
-    timeout = 'timeout'
-    cancelled = 'cancelled'
-
-
 class NotificationStates(str, enum.Enum):
     failed = 'failed'
     passed = 'passed'
@@ -163,8 +155,19 @@ PLATFORMS_SUPPORTING_SPOT = ['gke', 'aks']
 
 
 class TestResultStatus(str, enum.Enum):
+    started = 'started'
     passed = 'passed'
-    skipped = 'skipped'
+    flakey = 'flakey'
+    failed = 'failed'
+    timeout = 'timeout'
+    cancelled = 'cancelled'
+
+
+class SpecFileStatus(str, enum.Enum):
+    started = 'started'
+    timeout = 'timeout'
+    cancelled = 'cancelled'
+    passed = 'passed'
     flakey = 'flakey'
     failed = 'failed'
 

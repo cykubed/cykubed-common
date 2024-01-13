@@ -1,5 +1,6 @@
 import uuid
 from datetime import date, datetime
+from itertools import chain
 from typing import Optional
 
 from pydantic import BaseModel, validator, NonNegativeInt, AnyHttpUrl, root_validator
@@ -367,6 +368,12 @@ class SpecTests(BaseModel):
     tests: list[SpecTest] = []
     video: Optional[str]
     timeout: Optional[bool] = False
+
+    def get_failed_test_results(self):
+        return list(chain.from_iterable([t.failed for t in self.tests if t.failed]))
+
+    def get_flakey_test_results(self):
+        return list(chain.from_iterable([t.failed for t in self.tests if t.flakey]))
 
     def merge(self, spectests):
         for test in spectests.tests:
