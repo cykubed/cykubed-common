@@ -359,9 +359,7 @@ class SpecTest(BaseModel):
     line: Optional[int]
     context: Optional[str]
     status: TestResultStatus
-    failed: Optional[list[TestResult]]
-    flakey: Optional[list[TestResult]]
-    passed: Optional[list[TestResult]]
+    results: list[TestResult]
 
 
 class SpecTests(BaseModel):
@@ -379,10 +377,9 @@ class SpecTests(BaseModel):
         for test in spectests.tests:
             existing_test = [x for x in self.tests if x.title == test.title][0]
             if test.status != TestResultStatus.passed:
-                existing_test.status = test.status
-            existing_test.passed += test.passed
-            existing_test.failed += test.failed
-            existing_test.flakey += test.flakey
+                if test.status == TestResultStatus.failed and test.status != existing_test.status:
+                    existing_test.status = test.status
+            existing_test.results += test.results
 
 
 class ResultSummary(BaseModel):
