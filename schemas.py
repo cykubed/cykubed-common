@@ -9,7 +9,7 @@ from pydantic.fields import Field
 from .enums import (PlatformEnum, TestRunStatus, TestRunStatusFilter,
                     TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
                     SpecFileStatus, AppFramework, KubernetesPlatform, PlatformType, JobType, ErrorType, Currency, \
-                    OrganisationDeleteReason, OnboardingState, Browser)
+                    OrganisationDeleteReason, OnboardingState)
 
 
 class DummyTestRunStatusFilter(BaseModel):
@@ -405,13 +405,14 @@ class ResultSummary(BaseModel):
 class BaseProject(BaseModel):
     name: str = Field(description="Project name e.g Git repository name")
 
-    browsers: list[Browser] = None
-
     repos: str = Field(description="Repository name")
     platform: PlatformEnum = Field(description="Git platform")
     organisation_id: int = Field(description="Owner organisation ID")
     default_branch: str = Field(description="Default branch")
     browsers: Optional[list[str]] = Field(description="List of browsers to test against. If blank then just use the built-in electron browser")
+
+    node_major_version: int = Field(description="Major version of Node", default=18)
+
     url: str = Field(description="URL to git repository")
     owner: Optional[str]
 
