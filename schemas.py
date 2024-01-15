@@ -405,7 +405,7 @@ class BaseProject(BaseModel):
     platform: PlatformEnum = Field(description="Git platform")
     organisation_id: int = Field(description="Owner organisation ID")
     default_branch: str = Field(description="Default branch")
-    browsers: Optional[list[str]] = Field(description="List of browsers to test against. If blank then just use the built-in electron browser")
+    browsers: Optional[list[str]] = Field(description="List of browsers to test against. If blank then just use the built-in electron browser for Cypress, or all available browsers for Playwright")
 
     node_major_version: int = Field(description="Major version of Node", default=18)
 
