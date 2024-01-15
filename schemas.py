@@ -1,6 +1,5 @@
 import uuid
 from datetime import date, datetime
-from itertools import chain
 from typing import Optional
 
 from pydantic import BaseModel, validator, NonNegativeInt, AnyHttpUrl, root_validator
@@ -367,11 +366,11 @@ class SpecTests(BaseModel):
     video: Optional[str]
     timeout: Optional[bool] = False
 
-    def get_failed_test_results(self):
-        return list(chain.from_iterable([t.failed for t in self.tests if t.failed]))
-
-    def get_flakey_test_results(self):
-        return list(chain.from_iterable([t.failed for t in self.tests if t.flakey]))
+    def get_filtered_test_results(self, status: TestResultStatus):
+        ret = []
+        for test in self.tests:
+            ret += [result for result in test.results if result.status == status]
+        return ret
 
     def merge(self, spectests):
         for test in spectests.tests:
@@ -413,7 +412,9 @@ class BaseProject(BaseModel):
     url: str = Field(description="URL to git repository")
     owner: Optional[str]
 
-    framework: AppFramework = AppFramework.generic
+    app_framework: AppFramework
+    test_framework: TestFramework
+
     parallelism: int = Field(description="Number of runner pods i.e the parallelism of the runner job",
                              default=4, ge=0, le=30)
     checks_integration: bool = True
