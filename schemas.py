@@ -9,7 +9,7 @@ from pydantic.fields import Field
 from .enums import (PlatformEnum, TestRunStatus, TestRunStatusFilter,
                     TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
                     SpecFileStatus, AppFramework, KubernetesPlatform, PlatformType, JobType, ErrorType, Currency, \
-                    OrganisationDeleteReason, OnboardingState)
+                    OrganisationDeleteReason, OnboardingState, TestFramework)
 
 
 class DummyTestRunStatusFilter(BaseModel):
@@ -482,6 +482,11 @@ class Project(BaseProject):
 
     class Config:
         orm_mode = True
+
+
+class DetectedFrameworks(BaseModel):
+    app_framework: Optional[AppFramework]
+    test_framework: Optional[TestFramework]
 
 
 class Workspace(BaseModel):
