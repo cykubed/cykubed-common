@@ -585,6 +585,7 @@ class NewTestRun(BaseTestRun, SpotEnabledModel):
     url: str
     project: Project
     total_files: int = 0
+    image: str
     preprovision: Optional[bool]
     status: Optional[TestRunStatus]
     buildstate: TestRunBuildState
