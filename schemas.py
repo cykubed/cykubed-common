@@ -460,8 +460,8 @@ class BaseProject(BaseModel):
                                           ge=1, le=20)
 
     timezone: str = Field(description="Timezone used in runners", default='UTC')
-    cypress_retries: int = Field(
-        description="Number of retries of failed tests. If 0 then default to any retry value set in the Cypress config file",
+    runner_retries: int = Field(
+        description="Number of retries of failed tests. If 0 then default to any retry value set in the config file",
         default=0, le=10, ge=0)
 
 
