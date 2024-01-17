@@ -448,7 +448,7 @@ class BaseProject(BaseModel):
 
     server_cmd: Optional[str] = Field(
         description="Command to serve your app if you don't want to use the built-in SPA server")
-    server_port: Optional[int] = Field(description="If server_cmd is specifed then this will be the port used")
+    server_port: Optional[int] = Field(description="Port used for local server", default=4200)
     runner_cpu: float = Field(description="Number of vCPU units to assign to each runner Pod", default=2,
                               ge=1,
                               le=10)
