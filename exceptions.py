@@ -3,8 +3,10 @@ class AuthException(Exception):
 
 
 class BuildFailedException(Exception):
-    def __init__(self, stage='building', msg=None, status_code=None):
+    def __init__(self, stage='building', msg=None, status_code=None,
+                 testrun_id=None):
         super().__init__(msg)
+        self.testrun_id=testrun_id
         self.msg = msg
         self.stage = stage
         self.status_code = status_code
