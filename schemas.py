@@ -390,8 +390,12 @@ class SpecTests(BaseModel):
         for test in spectests.tests:
             existing_test = [x for x in self.tests if x.title == test.title][0]
             if test.status != TestResultStatus.passed:
-                if test.status == TestResultStatus.failed and test.status != existing_test.status:
-                    existing_test.status = test.status
+                if test.status == TestResultStatus.failed:
+                    existing_test.status = TestResultStatus.failed
+                else:
+                    # must be flakey
+                    if existing_test.status != TestResultStatus.failed:
+                        existing_test.status = TestResultStatus.flakey
             existing_test.results += test.results
 
 
