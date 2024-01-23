@@ -379,7 +379,8 @@ class SpecTests(BaseModel):
         for test in self.tests:
             all_browsers = {r.browser for r in test.results}
             total += len(all_browsers)
-            browsers = {r.browser for r in test.results if r.status == TestResultStatus.failed}
+            browsers = {r.browser for r in test.results if r.status == TestResultStatus.failed
+                        or (r.status == TestResultStatus.passed and r.retry > 0)}
             if test.status == TestResultStatus.failed:
                 failed += len(browsers)
             elif test.status == TestResultStatus.flakey:
