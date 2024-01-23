@@ -372,6 +372,20 @@ class SpecTests(BaseModel):
             ret += [result for result in test.results if result.status == status]
         return ret
 
+    def count(self):
+        failed = 0
+        flakes = 0
+        total = 0
+        for test in self.tests:
+            all_browsers = {r.browser for r in test.results}
+            total += len(all_browsers)
+            browsers = {r.browser for r in test.results if r.status == TestResultStatus.failed}
+            if test.status == TestResultStatus.failed:
+                failed += len(browsers)
+            elif test.status == TestResultStatus.flakey:
+                flakes += len(browsers)
+        return total, flakes, failed
+
     def merge(self, spectests):
         for test in spectests.tests:
             existing_test = [x for x in self.tests if x.title == test.title][0]
