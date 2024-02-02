@@ -68,6 +68,7 @@ class PlatformEnum(str, enum.Enum):
     SLACK = 'slack'
     ROCKETCHAT = 'rocketchat'
     GITHUB = 'github'
+    GITLAB = 'gitlab'
 
 
 class NotificationPlatformEnum(str, enum.Enum):
@@ -81,7 +82,8 @@ class PlatformType(str, enum.Enum):
 
 
 GIT_PLATFORMS = [PlatformEnum.GITHUB,
-                 PlatformEnum.BITBUCKET]
+                 PlatformEnum.BITBUCKET,
+                 PlatformEnum.GITLAB]
 
 
 NOTIFICATION_PLATFORMS = [PlatformEnum.SLACK, PlatformEnum.ROCKETCHAT]
@@ -227,7 +229,8 @@ platform_types = {
     PlatformEnum.BITBUCKET: PlatformType.git,
     PlatformEnum.GITHUB: PlatformType.git,
     PlatformEnum.SLACK: PlatformType.messaging,
-    PlatformEnum.ROCKETCHAT: PlatformType.messaging
+    PlatformEnum.ROCKETCHAT: PlatformType.messaging,
+    PlatformEnum.GITLAB: PlatformType.git
 }
 
 

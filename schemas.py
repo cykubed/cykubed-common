@@ -509,6 +509,11 @@ class DetectedFrameworks(BaseModel):
     test_framework: Optional[TestFramework]
 
 
+class GitLabProject(BaseModel):
+    id: str
+    name: str
+
+
 class Workspace(BaseModel):
     slug: str
     name: str
