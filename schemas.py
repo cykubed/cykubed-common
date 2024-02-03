@@ -421,6 +421,7 @@ class BaseProject(BaseModel):
     name: str = Field(description="Project name e.g Git repository name")
 
     repos: str = Field(description="Repository name")
+    platform_id: Optional[str] = Field(description="Optional platform-specific ID")
     platform: PlatformEnum = Field(description="Git platform")
     organisation_id: int = Field(description="Owner organisation ID")
     default_branch: str = Field(description="Default branch")
@@ -533,6 +534,7 @@ class Repository(BaseModel):
     id: str
     owner: Optional[str]
     name: str
+    full_path: Optional[str]
     url: str
     platform: PlatformEnum
     default_branch: Optional[str]
