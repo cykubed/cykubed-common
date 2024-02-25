@@ -153,7 +153,7 @@ class KubernetesPlatform(str, enum.Enum):
     minikube = 'minikube'
 
 
-PLATFORMS_SUPPORTING_SPOT = ['gke', 'aks']
+PLATFORMS_SUPPORTING_SPOT = ['gke', 'aks', 'eks']
 
 
 class TestResultStatus(str, enum.Enum):
