@@ -147,6 +147,12 @@ class Country(BaseModel):
     code: str
 
 
+class AdminOrganisationSummary(BaseModel):
+    id: int
+    name: str
+    plan: str
+
+
 class AdminOrganisation(OrganisationBase):
     """
     Additional information available to staff users
@@ -184,6 +190,10 @@ class AdminUserList(PaginatedModel):
 
 class AdminOrganisationList(PaginatedModel):
     items: list[AdminOrganisation]
+
+
+class AdminOrganisationSummaryList(PaginatedModel):
+    items: list[AdminOrganisationSummary]
 
 
 class AdminOrgPlanChange(BaseModel):
