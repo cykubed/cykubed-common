@@ -24,7 +24,13 @@ class AppFramework(str, enum.Enum):
     angular = 'angular'
     vue = 'vue'
     nextjs = 'next.js'
+    react = 'react'
     generic = 'generic'
+
+
+class TestFramework(str, enum.Enum):
+    cypress = 'cypress'
+    playwright = 'playwright'
 
 
 class VersionType(str, enum.Enum):
@@ -43,6 +49,13 @@ class JobType(str, enum.Enum):
     runner = 'runner'
 
 
+class Browser(str, enum.Enum):
+    electron = 'electron'
+    chrome = 'chrome'
+    firefox = 'firefox'
+    edge = 'edge'
+
+
 class Region(str, enum.Enum):
     europe = 'europe'
     us = 'us'
@@ -55,6 +68,7 @@ class PlatformEnum(str, enum.Enum):
     SLACK = 'slack'
     ROCKETCHAT = 'rocketchat'
     GITHUB = 'github'
+    GITLAB = 'gitlab'
 
 
 class NotificationPlatformEnum(str, enum.Enum):
@@ -68,7 +82,8 @@ class PlatformType(str, enum.Enum):
 
 
 GIT_PLATFORMS = [PlatformEnum.GITHUB,
-                 PlatformEnum.BITBUCKET]
+                 PlatformEnum.BITBUCKET,
+                 PlatformEnum.GITLAB]
 
 
 NOTIFICATION_PLATFORMS = [PlatformEnum.SLACK, PlatformEnum.ROCKETCHAT]
@@ -106,14 +121,6 @@ class TestRunStatusFilter(str, enum.Enum):
     flakey = 'flakey'
 
 
-class SpecFileStatus(str, enum.Enum):
-    started = 'started'
-    passed = 'passed'
-    failed = 'failed'
-    timeout = 'timeout'
-    cancelled = 'cancelled'
-
-
 class NotificationStates(str, enum.Enum):
     failed = 'failed'
     passed = 'passed'
@@ -146,12 +153,24 @@ class KubernetesPlatform(str, enum.Enum):
     minikube = 'minikube'
 
 
-PLATFORMS_SUPPORTING_SPOT = [KubernetesPlatform.gke]
+PLATFORMS_SUPPORTING_SPOT = ['gke', 'aks', 'eks']
 
 
 class TestResultStatus(str, enum.Enum):
+    started = 'started'
     passed = 'passed'
-    skipped = 'skipped'
+    flakey = 'flakey'
+    failed = 'failed'
+    timeout = 'timeout'
+    cancelled = 'cancelled'
+
+
+class SpecFileStatus(str, enum.Enum):
+    started = 'started'
+    timeout = 'timeout'
+    cancelled = 'cancelled'
+    passed = 'passed'
+    flakey = 'flakey'
     failed = 'failed'
 
 
@@ -163,12 +182,14 @@ class AppWebSocketActions(str, enum.Enum):
     spec_finished = 'spec-finished'
     spec_log_update = 'spec-log-update'
     buildlog = 'buildlog'
+    exceeded_build_credits = 'exceeded-build-credits'
     agent = 'agent'
     error = 'error'
     payment_failed = 'payment-failed'
     subscription_cancelled = 'subscription-cancelled'
     subscription_updated = 'subscription-updated'
     webhook_notified = 'webhook_called'
+    build_credits_updated = 'build_credits_updated'
 
 
 class AgentWebsocketActions(str, enum.Enum):
@@ -208,7 +229,8 @@ platform_types = {
     PlatformEnum.BITBUCKET: PlatformType.git,
     PlatformEnum.GITHUB: PlatformType.git,
     PlatformEnum.SLACK: PlatformType.messaging,
-    PlatformEnum.ROCKETCHAT: PlatformType.messaging
+    PlatformEnum.ROCKETCHAT: PlatformType.messaging,
+    PlatformEnum.GITLAB: PlatformType.git
 }
 
 

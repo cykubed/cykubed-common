@@ -1,6 +1,6 @@
 import uuid
 from datetime import date, datetime
-from typing import Optional, List
+from typing import Optional
 
 from pydantic import BaseModel, validator, NonNegativeInt, AnyHttpUrl, root_validator
 from pydantic.fields import Field
@@ -8,7 +8,7 @@ from pydantic.fields import Field
 from .enums import (PlatformEnum, TestRunStatus, TestRunStatusFilter,
                     TestResultStatus, AppWebSocketActions, LogLevel, AgentEventType, \
                     SpecFileStatus, AppFramework, KubernetesPlatform, PlatformType, JobType, ErrorType, Currency, \
-                    OrganisationDeleteReason, OnboardingState)
+                    OrganisationDeleteReason, OnboardingState, TestFramework)
 
 
 class DummyTestRunStatusFilter(BaseModel):
@@ -31,7 +31,6 @@ class PaginationParams(BaseModel):
 
 class PaginatedModel(PaginationParams):
     total: NonNegativeInt
-
 
 #
 # Auth
@@ -59,7 +58,7 @@ class IntegrationSummary(BaseModel):
 class Prices(BaseModel):
     currency: Currency
     flat_fee: float
-    per_1k_tests: float
+    per_10k_tests: float
     per_10k_build_credits: float
 
     class Config:
@@ -101,7 +100,7 @@ class SubscriptionPlanWithPrices(SubscriptionPlan):
 
 
 class Subscription(BaseModel):
-    started: date
+    started: Optional[date]
     active: bool
     expires: Optional[date]
     plan: SubscriptionPlan
@@ -126,18 +125,18 @@ class AccountDetails(BaseModel):
     new_stripe_subscription_id: Optional[str]
     new_subscription_id: Optional[int]
     test_results_used: int
-    build_credits_used: int
+    build_credits_used_this_month: Optional[int]
+    build_credits_remaining_before_topup: Optional[int]
     users: int
+
+    payment_failed: Optional[bool]
+    exceeded_free_plan: Optional[bool]
 
 
 class OrganisationBase(BaseModel):
     id: int
-    name: str
+    name: Optional[str]
     prefer_self_host: bool
-
-
-class Organisation(OrganisationBase):
-    subscription: Optional[Subscription]
 
     class Config:
         orm_mode = True
@@ -148,7 +147,7 @@ class Country(BaseModel):
     code: str
 
 
-class StaffOrganisation(OrganisationBase):
+class AdminOrganisation(OrganisationBase):
     """
     Additional information available to staff users
     """
@@ -156,8 +155,44 @@ class StaffOrganisation(OrganisationBase):
     stripe: Optional[OrganisationStripeDetails]
 
 
-class StaffOrganisationList(PaginatedModel):
-    items: list[StaffOrganisation]
+class IdName(BaseModel):
+    id: int
+    name: str
+
+
+class IdOptionalName(BaseModel):
+    id: int
+    name: Optional[str]
+
+
+class AdminUser(BaseModel):
+    id: int
+    name: str
+    email: str
+    is_active: bool
+    is_pending: bool
+    created: datetime
+    organisations: Optional[list[IdOptionalName]]
+
+    class Config:
+        orm_mode = True
+
+
+class AdminUserList(PaginatedModel):
+    items: list[AdminUser]
+
+
+class AdminOrganisationList(PaginatedModel):
+    items: list[AdminOrganisation]
+
+
+class AdminOrgPlanChange(BaseModel):
+    plan: str
+    expires: Optional[date]
+
+
+class BuildCredits(BaseModel):
+    credits: int
 
 
 class OrgTimeAdvance(BaseModel):
@@ -295,36 +330,74 @@ class CodeFrame(BaseModel):
     file: Optional[str]  # TODO make this required
     line: int
     column: int
-    frame: str
-    language: str
+    frame: Optional[str]
+    language: Optional[str]
 
 
 class TestResultError(BaseModel):
-    title: str
+    message: str
+    title: Optional[str]
     type: Optional[str]
     test_line: Optional[int]
-    message: str
-    stack: str
+    stack: Optional[str]
     code_frame: Optional[CodeFrame]
     video: Optional[str]
 
 
 class TestResult(BaseModel):
-    title: str
-    context: str
+    browser: str
     status: TestResultStatus
     retry: int = 0
     duration: Optional[int]
     failure_screenshots: Optional[list[str]]
-    started_at: Optional[datetime]
-    finished_at: Optional[datetime]
-    error: Optional[TestResultError]
+    errors: Optional[list[TestResultError]]
 
 
-class SpecResult(BaseModel):
-    tests: List[TestResult]
+class SpecTest(BaseModel):
+    title: str
+    line: Optional[int]
+    context: Optional[str]
+    status: TestResultStatus
+    results: list[TestResult]
+
+
+class SpecTests(BaseModel):
+    tests: list[SpecTest] = []
     video: Optional[str]
     timeout: Optional[bool] = False
+
+    def get_filtered_test_results(self, status: TestResultStatus):
+        ret = []
+        for test in self.tests:
+            ret += [result for result in test.results if result.status == status]
+        return ret
+
+    def count(self):
+        failed = 0
+        flakes = 0
+        total = 0
+        for test in self.tests:
+            all_browsers = {r.browser for r in test.results}
+            total += len(all_browsers)
+            browsers = {r.browser for r in test.results if r.status == TestResultStatus.failed
+                        or (r.status == TestResultStatus.passed and r.retry > 0)}
+            if test.status == TestResultStatus.failed:
+                failed += len(browsers)
+            elif test.status == TestResultStatus.flakey:
+                flakes += len(browsers)
+        return total, flakes, failed
+
+    def merge(self, spectests):
+        for test in spectests.tests:
+            existing_test = [x for x in self.tests if x.title == test.title][0]
+            if test.status != TestResultStatus.passed:
+                if test.status == TestResultStatus.failed:
+                    existing_test.status = TestResultStatus.failed
+                else:
+                    # must be flakey
+                    if existing_test.status != TestResultStatus.failed:
+                        existing_test.status = TestResultStatus.flakey
+            existing_test.results += test.results
 
 
 class ResultSummary(BaseModel):
@@ -334,24 +407,40 @@ class ResultSummary(BaseModel):
     failures: int = 0
 
 
-class NewProject(BaseModel):
-    name: str = Field(description="Project name i.e name of Git repository")
-    organisation_id: int = Field(description="Owner organisation ID")
+# class DockerImage(BaseModel):
+#     image: str = Field(description="Docker image")
+#     node_major_version: int = Field(description="Node major version")
+#     description: Optional[str] = Field(description="Description")
+#     browser: Optional[Browser] = Field(description="Browser (if blank then use built-in electron)")
+#
+#     class Config:
+#         orm_mode = True
 
+
+class BaseProject(BaseModel):
+    name: str = Field(description="Project name e.g Git repository name")
+
+    repos: str = Field(description="Repository name")
+    platform_id: Optional[str] = Field(description="Optional platform-specific ID")
+    platform: PlatformEnum = Field(description="Git platform")
+    organisation_id: int = Field(description="Owner organisation ID")
+    default_branch: str = Field(description="Default branch")
+    browsers: Optional[list[str]] = Field(description="List of browsers to test against. If blank then just use the built-in electron browser for Cypress, or all available browsers for Playwright")
+
+    node_major_version: int = Field(description="Major version of Node", default=18)
+
+    url: str = Field(description="URL to git repository")
     owner: Optional[str]
 
-    framework: AppFramework = AppFramework.generic
-    default_branch: str = Field(description="Default branch")
-    platform: PlatformEnum = Field(description="Git platform")
-    url: str = Field(description="URL to git repository")
+    app_framework: AppFramework
+    test_framework: TestFramework
+
     parallelism: int = Field(description="Number of runner pods i.e the parallelism of the runner job",
                              default=4, ge=0, le=30)
     checks_integration: bool = True
 
     agent_id: Optional[int] = Field(description="ID of the agent that should be used to run this test. "
                                                 "Only required for self-hosted agents")
-
-    browser: str = None
 
     spec_deadline: Optional[int] = Field(
         description="Deadline in seconds to assign to an individual spec. If 0 then there will be no deadline set "
@@ -360,7 +449,11 @@ class NewProject(BaseModel):
         le=3600)
     spec_filter: Optional[str] = Field(description="Only test specs matching this regex")
 
-    build_cmd: str = Field(description="Command used to build the app distribution")
+    max_failures: Optional[int] = Field(description="Maximum number of failed test allowed before we quit and mark the"
+                                                    " run as failed")
+
+    build_cmd: Optional[str] = Field(description="Command used to build the app distribution. "
+                                                 "Optional if the only build step required is node install")
     build_cpu: float = Field(description="Number of vCPU units to assign to the builder Job", default=2,
                              ge=2,
                              le=10)
@@ -373,8 +466,9 @@ class NewProject(BaseModel):
     build_storage: int = Field(description="Build working storage size in GB", default=10,
                                ge=1, le=100)
 
-    runner_image: Optional[str] = Field(
-        description="Docker image to use in the runner. Can only be specified for self-hosted agents")
+    server_cmd: Optional[str] = Field(
+        description="Command to serve your app if you don't want to use the built-in SPA server")
+    server_port: Optional[int] = Field(description="Port used for local server", default=4200)
     runner_cpu: float = Field(description="Number of vCPU units to assign to each runner Pod", default=2,
                               ge=1,
                               le=10)
@@ -386,43 +480,39 @@ class NewProject(BaseModel):
                                           ge=1, le=20)
 
     timezone: str = Field(description="Timezone used in runners", default='UTC')
-    cypress_retries: int = Field(
-        description="Number of retries of failed tests. If 0 then default to any retry value set in the Cypress config file",
+    runner_retries: int = Field(
+        description="Number of retries of failed tests. If 0 then default to any retry value set in the config file",
         default=0, le=10, ge=0)
 
+
+class NewProject(BaseProject):
+    node_major_version: int = Field(description="Node major version", ge=14, le=20)
+
     class Config:
         orm_mode = True
 
+    @root_validator
+    def check_server_port(cls, values):
+        if values.get('server_cmd') and not values.get('server_port'):
+            raise ValueError("Must specify the server_port")
+        return values
 
-class Project(NewProject):
+
+class Project(BaseProject):
     id: int
 
     class Config:
         orm_mode = True
 
 
-class NewRunnerImage(BaseModel):
-    tag: str = Field(description="Docker image tag")
-    node_version: str = Field(description="Node version")
-    description: Optional[str] = Field(description="Description")
-    chrome: Optional[bool] = Field(description="True if this image contains Chrome", default=True)
-    firefox: Optional[bool] = Field(description="True if this image contains Firefox", default=False)
-    edge: Optional[bool] = Field(description="True if this image contains Edge", default=False)
-
-    class Config:
-        orm_mode = True
+class DetectedFrameworks(BaseModel):
+    app_framework: Optional[AppFramework]
+    test_framework: Optional[TestFramework]
 
 
-class NewRunnerImages(BaseModel):
-    images: list[NewRunnerImage] = Field(description="List of Docker images")
-    replace: bool = Field(description="If true then replace all existing images with this list", default=False)
-
-
-class RunnerImage(NewRunnerImage):
-    id: int
-
-    class Config:
-        orm_mode = True
+class GitLabProject(BaseModel):
+    id: str
+    name: str
 
 
 class Workspace(BaseModel):
@@ -444,6 +534,7 @@ class Repository(BaseModel):
     id: str
     owner: Optional[str]
     name: str
+    full_path: Optional[str]
     url: str
     platform: PlatformEnum
     default_branch: Optional[str]
@@ -489,26 +580,55 @@ class SpotEnabledModel(BaseModel):
                                  default=0, ge=0, le=100)
 
 
+class TestRunBuildState(BaseModel):
+    testrun_id: int
+    specs: list[str] = []
+    cache_key: str = None
+    build_snapshot_name: str = None
+    node_snapshot_name: str = None
+    build_job: str = None
+    prepare_cache_job: str = None
+    preprovision_job: str = None
+    run_job: str = None
+    runner_deadline: datetime = None
+    run_job_index = 0
+    completed: bool = False
+    rw_build_pvc: Optional[str]
+    ro_build_pvc: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+def get_build_snapshot_name(testrun):
+    return f'{testrun.project.organisation_id}-build-{testrun.sha}'
+
+
 class NewTestRun(BaseTestRun, SpotEnabledModel):
     """
     Sent to the agent to kick off a run.
     """
     url: str
     project: Project
+    total_files: int = 0
+    image: str
     preprovision: Optional[bool]
     status: Optional[TestRunStatus]
+    buildstate: TestRunBuildState
 
     class Config:
         orm_mode = True
 
 
 class CacheItem(BaseModel):
-    organisation_id: int
     name: str
-    ttl: int  # TTL in secs
+    organisation_id: int
     storage_size: int  # Size in GB
-    expires: datetime  # expiry date
+    expires: Optional[datetime]  # expiry date
     specs: Optional[list[str]]
+
+    class Config:
+        orm_mode = True
 
 
 class TestRunUpdate(BaseModel):
@@ -526,7 +646,7 @@ class SpecFile(BaseModel):
     termination_count: Optional[int] = 0
     duration: Optional[int]
     failures: int = 0
-    result: Optional[SpecResult]
+    result: Optional[SpecTests]
 
     class Config:
         orm_mode = True
@@ -544,16 +664,15 @@ class SpecFileLog(BaseModel):
         orm_mode = True
 
 
-class CompletedSpecFile(BaseModel):
-    file: str
-    finished: datetime
-    result: SpecResult
+class SpecFilesList(BaseModel):
+    specs: list[str]
 
 
 class PodDuration(BaseModel):
     """
     Duration in seconds for a single pod
     """
+    pod_name: str
     job_type: JobType
     is_spot: bool = False
     duration: int = 0
@@ -710,14 +829,14 @@ class TestRunJobStats(BaseModel):
 
 
 class KubernetesPlatformPricingModel(BaseModel):
-    platform: KubernetesPlatform
-    updated: datetime
-    region: str
-    cpu_spot_price: Optional[float]
-    cpu_normal_price: Optional[float]
-    memory_spot_price: Optional[float]
-    memory_normal_price: Optional[float]
-    ephemeral_price: Optional[float]
+    platform: KubernetesPlatform = Field(description="Target platform")
+    updated: datetime = Field(description="Last update")
+    region: str = Field(description="Platform region")
+    cpu_spot_price: Optional[float] = Field(description="Spot VM price per CPU hour")
+    cpu_normal_price: Optional[float] = Field(description="Normal VM price per CPU hour")
+    memory_spot_price: Optional[float] = Field(description="Spot VM price per GB hour")
+    memory_normal_price: Optional[float] = Field(description="Normal VM price per GB hour")
+    ephemeral_price: Optional[float] = Field(description="Ephemeral storage price per GB hour")
 
     class Config:
         orm_mode = True
@@ -750,6 +869,8 @@ class UpdatedAgentModel(SpotEnabledModel):
     name: Optional[str] = 'A'
     platform: Optional[KubernetesPlatform] = KubernetesPlatform.generic
     replicated: Optional[bool] = False
+    namespace: Optional[str]
+    storage_class: Optional[str]
     platform_project_id: Optional[str]
     preprovision: Optional[bool]
 
@@ -761,6 +882,10 @@ class AgentModel(UpdatedAgentModel, NewAgentModel):
     id: int
     token: uuid.UUID
     name: str
+    storage_class: Optional[str]
+    namespace: Optional[str]
+    organisation_id: int
+    organisation_name: Optional[str]
     first_connected: Optional[datetime]
     version: Optional[str]
     connected: int = 0
@@ -768,6 +893,11 @@ class AgentModel(UpdatedAgentModel, NewAgentModel):
 
     class Config:
         orm_mode = True
+
+
+class AgentListModel(BaseModel):
+    agents: list[AgentModel]
+    latest_version: str
 
 
 class NotificationChannel(BaseModel):
@@ -828,6 +958,10 @@ class TestRunDetailUpdateMessage(BaseAppSocketMessage):
 class SubscriptionUpdatedMessage(BaseAppSocketMessage):
     action: AppWebSocketActions = AppWebSocketActions.subscription_updated
     subscription: Subscription
+
+
+class ExceededIncludeBuildCredits(BaseAppSocketMessage):
+    action: AppWebSocketActions = AppWebSocketActions.exceeded_build_credits
 
 
 class SpecFileMessage(BaseAppSocketMessage):
@@ -892,7 +1026,16 @@ class AgentRunnerStopped(BaseModel):
 class AgentSpecCompleted(BaseModel):
     file: str
     finished: datetime
-    result: SpecResult
+    result: SpecTests
+    video: Optional[str]
+
+
+class AgentSpecRequest(BaseModel):
+    pod_name: Optional[str]
+
+
+class AgentReturnedSpec(BaseModel):
+    file: str
 
 
 class AgentSpecStarted(BaseModel):
@@ -917,11 +1060,6 @@ class AgentTestRunErrorEvent(AgentEvent):
     report: TestRunErrorReport
 
 
-class AgentBuildCompletedEvent(AgentEvent):
-    type: AgentEventType = AgentEventType.build_completed
-    specs: list[str]
-
-
 class AgentLogMessage(AgentEvent):
     type: AgentEventType = AgentEventType.log
     msg: AppLogMessage
@@ -931,4 +1069,11 @@ class AgentErrorMessage(AgentEvent):
     type: AgentEventType = AgentEventType.error
     source: str
     message: str
+
+
+####
+
+
+class AdminDateTime(BaseModel):
+    dt: Optional[datetime]
 
