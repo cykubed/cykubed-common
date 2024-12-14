@@ -30,11 +30,11 @@ jobs:
         run: sudo apt-get install -y redis-tools redis-server
       - name: Verify that redis is up
         run: redis-cli ping
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Run image
-        uses: Gr1N/setup-poetry@v8
+        uses: abatilo/actions-poetry@v2
         with:
           poetry-version: ${{ matrix.poetry-version }}
       - name: Install deps
