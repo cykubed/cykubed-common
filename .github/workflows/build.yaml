@@ -6,7 +6,10 @@ permissions:
 
 on:
   workflow_call:
-
+    inputs:
+      tag:
+        required: true
+        type: string
 # Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
 env:
   REGISTRY: ghcr.io
@@ -93,4 +96,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: "ghcr.io/${{env.IMAGE_NAME}}:1.1"
+          tags: "ghcr.io/${{env.IMAGE_NAME}}:${{ inputs.tag }}"
