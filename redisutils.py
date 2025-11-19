@@ -4,7 +4,7 @@ from time import sleep
 
 import dns.resolver
 from loguru import logger
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 from redis import Sentinel as SyncSentinel, Redis as SyncRedis, BusyLoadingError, ConnectionError, TimeoutError
 from redis.asyncio import Sentinel as AsyncSentinel, Redis as AsyncRedis
 from redis.asyncio.retry import Retry as AsyncRetry
@@ -14,13 +14,13 @@ from redis.retry import Retry as SyncRetry
 
 class RedisSettings(BaseSettings):
     K8: bool = True
-    REDIS_HOST = 'localhost'
+    REDIS_HOST: str = 'localhost'
     REDIS_DB: int = 0
     REDIS_NODES: int = 3
-    REDIS_PASSWORD = ''
-    REDIS_PORT = 6379
+    REDIS_PASSWORD: str = ''
+    REDIS_PORT: int = 6379
     REDIS_SENTINEL_PREFIX: str = ''
-    NAMESPACE = 'cykubed'
+    NAMESPACE: str = 'cykubed'
 
     def get_redis_sentinel_hosts(self):
         return list(set([(x.target.to_text(), 26379) for x in
