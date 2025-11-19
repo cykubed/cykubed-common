@@ -499,7 +499,7 @@ class GitOrganisation(BaseModel):
 
 
 class Repository(BaseModel):
-    id: str
+    id: int
     owner: Optional[str] = None
     name: str
     full_path: Optional[str] = None
