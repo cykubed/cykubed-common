@@ -40,37 +40,39 @@ class MaxBodySizeValidator:
 
 
 def get_headers():
-    token = os.environ.get('API_TOKEN')
-    return {'Authorization': f'Bearer {token}',
-            'Accept': 'application/json'}
+    token = os.environ.get("API_TOKEN")
+    return {"Authorization": f"Bearer {token}", "Accept": "application/json"}
 
 
 def disable_hc_logging():
     class HCFilter(logging.Filter):
         def filter(self, record: logging.LogRecord) -> bool:
             msg = record.getMessage()
-            return msg.find("GET / ") == -1 and record.getMessage().find("kube-probe") == -1
+            return (
+                msg.find("GET / ") == -1
+                and record.getMessage().find("kube-probe") == -1
+            )
 
     # disable logging for health check
     logging.getLogger("uvicorn.access").addFilter(HCFilter())
 
 
 def get_hostname():
-    with open('/etc/hostname') as f:
+    with open("/etc/hostname") as f:
         return f.read().strip()
 
 
 def get_lock_hash(build_dir):
     m = hashlib.sha256()
-    lockfile = os.path.join(build_dir, 'package-lock.json')
+    lockfile = os.path.join(build_dir, "package-lock.json")
     if not os.path.exists(lockfile):
-        lockfile = os.path.join(build_dir, 'yarn.lock')
+        lockfile = os.path.join(build_dir, "yarn.lock")
 
     if not os.path.exists(lockfile):
         raise BuildFailedException("No lock file")
 
     # hash the lock
-    with open(lockfile, 'rb') as f:
+    with open(lockfile, "rb") as f:
         m.update(f.read())
     return m.hexdigest()
 
@@ -81,4 +83,6 @@ def utcnow() -> datetime.datetime:
 
 def mytoday() -> datetime.date:
     dt = utcnow()
-    return datetime.datetime.combine(dt.date(), datetime.time(0, tzinfo=datetime.timezone.utc))
+    return datetime.datetime.combine(
+        dt.date(), datetime.time(0, tzinfo=datetime.timezone.utc)
+    )

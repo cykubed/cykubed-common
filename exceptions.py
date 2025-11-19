@@ -3,8 +3,7 @@ class AuthException(Exception):
 
 
 class BuildFailedException(Exception):
-    def __init__(self, stage='building', msg=None, status_code=None,
-                 testrun_id=None):
+    def __init__(self, stage="building", msg=None, status_code=None, testrun_id=None):
         super().__init__(msg)
         self.testrun_id = testrun_id
         self.msg = msg
@@ -12,12 +11,12 @@ class BuildFailedException(Exception):
         self.status_code = status_code
 
     def __str__(self):
-        return f'{self.msg}'
+        return f"{self.msg}"
 
 
 class RunFailedException(BuildFailedException):
     def __init__(self, *args, **kwargs):
-        super().__init__('running', *args, **kwargs)
+        super().__init__("running", *args, **kwargs)
 
 
 class NoBranchesException(Exception):
@@ -38,4 +37,3 @@ class InvalidTemplateException(Exception):
 
 class ServerConnectionFailed(Exception):
     pass
-
